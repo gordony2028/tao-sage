@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sage - AI-Powered Yijing Life Guidance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2d5016;
+            --accent-color: #4a7c1c;
+            --light-accent: #6b9c2f;
+            --text-dark: #1a1a1a;
+            --text-medium: #4a4a4a;
+            --text-light: #7a7a7a;
+            --bg-primary: #fafafa;
+            --bg-secondary: #f5f5f5;
+            --bg-card: #ffffff;
+            --border-light: #e0e0e0;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-light: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-primary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header {
+            background: var(--bg-card);
+            box-shadow: var(--shadow-light);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "☯";
+            font-size: 1.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-medium);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .main-content {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .section {
+            display: none;
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-medium);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Dashboard Section */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-light);
+            height: fit-content;
+        }
+
+        .main-panel {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .hexagram-display {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .hexagram {
+            font-size: 4rem;
+            margin: 1rem 0;
+            font-family: serif;
+        }
+
+        .hexagram-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .line {
+            width: 60px;
+            height: 8px;
+            background: var(--text-dark);
+            border-radius: 4px;
+        }
+
+        .line.broken {
+            background: linear-gradient(to right, var(--text-dark) 0%, var(--text-dark) 40%, transparent 40%, transparent 60%, var(--text-dark) 60%, var(--text-dark) 100%);
+        }
+
+        .consultation-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .coins {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .coin {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #d4af37, #ffd700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .coin:hover {
+            transform: scale(1.1) rotateY(180deg);
+        }
+
+        .coin.flipping {
+            animation: flip 1s ease-in-out;
+        }
+
+        @keyframes flip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(180deg) scale(1.2); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-light);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .insight-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Learning Section */
+        .hexagram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .hexagram-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-light);
+        }
+
+        .hexagram-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .hexagram-card .mini-hexagram {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hexagram-card .name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .hexagram-card .number {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        /* Journal Section */
+        .journal-entry {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-light);
+        }
+
+        .journal-input {
+            width: 100%;
+            min-height: 200px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .journal-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .pricing-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow);
+        }
+
+        .pricing-card.featured {
+            border: 3px solid var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        .pricing-card.featured::before {
+            content: "Most Popular";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .price-period {
+            font-size: 1rem;
+            color: var(--text-medium);
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .features-list li {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        /* Calendar Integration Demo */
+        .calendar-demo {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: var(--shadow-light);
+        }
+
+        .calendar-event {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin: 0.5rem 0;
+        }
+
+        .event-time {
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 80px;
+        }
+
+        .event-guidance {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .hexagram-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-light);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* AI Insight Animation */
+        .ai-insight {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-insight::before {
+            content: "🤖 AI Insight";
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .typing-animation {
+            border-right: 2px solid white;
+            animation: typing 3s steps(40) infinite;
+        }
+
+        @keyframes typing {
+            0%, 50% { border-right-color: transparent; }
+            51%, 100% { border-right-color: white; }
+        }
+
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--accent-color);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1001;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">Sage</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showSection('home')" class="active">Home</a></li>
+                <li><a href="#" onclick="showSection('compass')">Compass</a></li>
+                <li><a href="#" onclick="showSection('consult')">Consult</a></li>
+                <li><a href="#" onclick="showSection('patterns')">Patterns</a></li>
+                <li><a href="#" onclick="showSection('learn')">Learn</a></li>
+                <li><a href="#" onclick="showSection('pricing')">Pricing</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="container">
+                    <h1>Your AI-Powered Wisdom Companion</h1>
+                    <p class="subtitle">
+                        Transform your life with proactive guidance from the ancient I Ching, 
+                        delivered through cutting-edge AI that understands your unique journey.
+                    </p>
+                    <div class="cta-buttons">
+                        <a href="#" class="btn btn-primary" onclick="showSection('compass')">Start Your Journey</a>
+                        <a href="#" class="btn btn-secondary" onclick="showSection('consult')">Try Consultation</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="insight-card fade-in">
+                    <h3>🌟 What makes Sage different?</h3>
+                    <p>Unlike reactive spiritual apps, Sage proactively monitors your life patterns and offers timely wisdom before you even ask. Experience the future of spiritual guidance.</p>
+                </div>
+
+                <div class="pricing-grid" style="margin-top: 3rem;">
+                    <div class="insight-card">
+                        <h3>🧠 AI-Powered Insights</h3>
+                        <p>Our advanced AI learns your patterns and delivers personalized I Ching wisdom exactly when you need it most.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>📅 Proactive Guidance</h3>
+                        <p>Calendar integration provides pre-meeting wisdom and life transition support, helping you navigate challenges with confidence.</p>
+                    </div>
+                    <div class="insight-card">
+                        <h3>🏮 Cultural Authenticity</h3>
+                        <p>Developed with I Ching scholars to ensure authentic, respectful interpretation of this 5,000-year-old wisdom tradition.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compass Section -->
+        <section id="compass" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">Your Daily Compass</h2>
+                
+                <div class="dashboard">
+                    <div class="sidebar">
+                        <h3>Today's Energy</h3>
+                        <div class="calendar-demo">
+                            <div class="calendar-event">
+                                <span class="event-time">9:00 AM</span>
+                                <span>Team Meeting</span>
+                                <span class="event-guidance">Patience</span>
+                            </div>
+                            <div class="calendar-event">
+                                <span class="event-time">2:00 PM</span>
+                                <span>Project Review</span>
+                                <span class="event-guidance">Clarity</span>
+                            </div>
+                            <div class="calendar-event">
+                                <span class="event-time">4:30 PM</span>
+                                <span>1:1 with Manager</span>
+                                <span class="event-guidance">Openness</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <h4>Life Phase</h4>
+                            <p style="color: var(--text-medium); font-size: 0.9rem;">
+                                Growth & Expansion<br>
+                                <small>Based on 30-day pattern analysis</small>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="main-panel">
+                        <h3 style="text-align: center;">Hexagram 53: Gradual Progress</h3>
+                        <div class="hexagram-display">
+                            <div class="hexagram-lines">
+                                <div class="line"></div>
+                                <div class="line broken"></div>
+                                <div class="line"></div>
+                                <div class="line"></div>
+                                <div class="line broken"></div>
+                                <div class="line broken"></div>
+                            </div>
+                            <h4>漸 - Jiàn</h4>
+                        </div>
+
+                        <div class="ai-insight">
+                            <h4>🤖 Your Personalized Insight</h4>
+                            <p class="typing-animation">
+                                Today's energy supports steady, consistent progress. Your upcoming team meeting 
+                                would benefit from patient listening rather than pushing new ideas. Trust the 
+                                natural timing of your current projects.
+                            </p>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>Traditional Wisdom</h4>
+                            <p>
+                                "Like a tree growing slowly but surely, progress comes through patience and persistence. 
+                                Each small step builds upon the last, creating lasting transformation."
+                            </p>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>Practical Guidance</h4>
+                            <ul style="margin-left: 1rem;">
+                                <li>Focus on incremental improvements in ongoing projects</li>
+                                <li>Avoid rushing important decisions today</li>
+                                <li>Listen more than you speak in meetings</li>
+                                <li>Take time for reflection this evening</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3>Pattern Insights</h3>
+                        <div class="insight-card">
+                            <h4>Weekly Theme</h4>
+                            <p style="font-size: 0.9rem;">
+                                Hexagrams 5, 53, 61 appearing frequently - 
+                                a cycle of waiting, gradual progress, and inner truth.
+                            </p>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>Energy Forecast</h4>
+                            <p style="font-size: 0.9rem;">
+                                Tomorrow favors creative endeavors. 
+                                Consider scheduling brainstorming or artistic activities.
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 2rem;">
+                            <h4>Mood Check-in</h4>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center; margin: 1rem 0;">
+                                <button onclick="setMood('peaceful')" style="background: var(--accent-color); border: none; color: white; padding: 0.5rem; border-radius: 8px; cursor: pointer;">😌</button>
+                                <button onclick="setMood('energetic')" style="background: var(--accent-color); border: none; color: white; padding: 0.5rem; border-radius: 8px; cursor: pointer;">⚡</button>
+                                <button onclick="setMood('contemplative')" style="background: var(--accent-color); border: none; color: white; padding: 0.5rem; border-radius: 8px; cursor: pointer;">🤔</button>
+                                <button onclick="setMood('challenged')" style="background: var(--accent-color); border: none; color: white; padding: 0.5rem; border-radius: 8px; cursor: pointer;">😤</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Consult Section -->
+        <section id="consult" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">I Ching Consultation</h2>
+                
+                <div class="main-panel" style="max-width: 800px; margin: 0 auto;">
+                    <div class="consultation-panel">
+                        <h3 style="text-align: center;">Ask Your Question</h3>
+                        <textarea 
+                            id="questionInput" 
+                            placeholder="What situation would you like guidance on? Be specific and heartfelt..."
+                            style="width: 100%; height: 100px; margin: 1rem 0; padding: 1rem; border: 2px solid var(--border-light); border-radius: 8px; resize: vertical; font-family: inherit;"
+                        ></textarea>
+
+                        <div style="text-align: center; margin: 2rem 0;">
+                            <p style="margin-bottom: 1rem; color: var(--text-medium);">
+                                Focus on your question, then click the coins to cast your hexagram
+                            </p>
+                            <div class="coins">
+                                <div class="coin" onclick="flipCoin(0)">陽</div>
+                                <div class="coin" onclick="flipCoin(1)">陰</div>
+                                <div class="coin" onclick="flipCoin(2)">陽</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="castHexagram()" style="margin-top: 1rem;">
+                                Cast Hexagram
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="hexagramResult" style="display: none;">
+                        <div class="hexagram-display">
+                            <h3 id="hexagramName">Hexagram Will Appear Here</h3>
+                            <div id="hexagramLines" class="hexagram-lines"></div>
+                            <p id="hexagramNumber" style="color: var(--text-medium);"></p>
+                        </div>
+
+                        <div class="ai-insight">
+                            <h4>🤖 Personalized Interpretation</h4>
+                            <p id="aiInterpretation">Your AI-powered interpretation will appear here...</p>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>Traditional Meaning</h4>
+                            <p id="traditionalMeaning">Traditional wisdom will be displayed here...</p>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>Guidance for Your Situation</h4>
+                            <p id="specificGuidance">Contextual guidance based on your question...</p>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <button class="btn btn-secondary" onclick="saveReading()">Save This Reading</button>
+                            <button class="btn btn-primary" onclick="newConsultation()" style="margin-left: 1rem;">New Consultation</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Patterns Section -->
+        <section id="patterns" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">Your Life Patterns</h2>
+                
+                <div class="dashboard">
+                    <div class="main-panel" style="grid-column: 1 / -1;">
+                        <h3>Pattern Analysis Dashboard</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0;">
+                            <div class="insight-card">
+                                <h4>🔄 Recurring Themes</h4>
+                                <p><strong>Patience & Timing</strong> - 65% of readings</p>
+                                <p><strong>Creative Expression</strong> - 35% of readings</p>
+                                <p><strong>Leadership Challenges</strong> - 28% of readings</p>
+                                <small style="color: var(--text-light);">Based on last 90 days</small>
+                            </div>
+
+                            <div class="insight-card">
+                                <h4>📈 Growth Indicators</h4>
+                                <p><strong>Decision Confidence:</strong> ↗️ +25%</p>
+                                <p><strong>Stress Levels:</strong> ↘️ -18%</p>
+                                <p><strong>Goal Alignment:</strong> ↗️ +42%</p>
+                                <small style="color: var(--text-light);">Compared to baseline</small>
+                            </div>
+
+                            <div class="insight-card">
+                                <h4>🎯 Current Focus</h4>
+                                <p><strong>Life Phase:</strong> Gradual Progress</p>
+                                <p><strong>Key Energy:</strong> Building Foundation</p>
+                                <p><strong>Challenge:</strong> Balancing Speed vs Quality</p>
+                                <small style="color: var(--text-light);">AI-detected from patterns</small>
+                            </div>
+                        </div>
+
+                        <div class="ai-insight">
+                            <h4>🤖 Pattern Insight</h4>
+                            <p>
+                                Your consultation history shows a strong theme around timing and patience. 
+                                You've received guidance about "waiting" (Hexagram 5) three times this month, 
+                                followed by "gradual progress" themes. This suggests you're in a natural 
+                                growth cycle that requires trust in the process rather than forcing outcomes.
+                            </p>
+                        </div>
+
+                        <div style="margin: 2rem 0;">
+                            <h4>Timeline of Guidance</h4>
+                            <div class="calendar-demo">
+                                <div class="calendar-event">
+                                    <span class="event-time">Last Week</span>
+                                    <span>Hexagram 25: Innocence - Trust your instincts regarding the new project</span>
+                                </div>
+                                <div class="calendar-event">
+                                    <span class="event-time">5 Days Ago</span>
+                                    <span>Hexagram 5: Waiting - Patience with team dynamics will yield better results</span>
+                                </div>
+                                <div class="calendar-event">
+                                    <span class="event-time">3 Days Ago</span>
+                                    <span>Hexagram 53: Gradual Progress - Small consistent steps in leadership approach</span>
+                                </div>
+                                <div class="calendar-event">
+                                    <span class="event-time">Today</span>
+                                    <span>Hexagram 53: Gradual Progress - Continue building on foundation you've established</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>📊 Correlation Insights</h4>
+                            <p>
+                                Your consultation frequency increases by 40% during high-stress periods (detected via calendar analysis). 
+                                Readings focusing on "patience" correlate with 85% positive outcomes in subsequent projects.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learn Section -->
+        <section id="learn" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">Learn the I Ching</h2>
+                
+                <div class="main-panel" style="max-width: 1000px; margin: 0 auto;">
+                    <div class="insight-card">
+                        <h3>🎓 Your Learning Path</h3>
+                        <p>
+                            Master the I Ching through progressive lessons, interactive exploration, 
+                            and practical application. Our AI adapts to your learning style and pace.
+                        </p>
+                    </div>
+
+                    <div style="margin: 2rem 0;">
+                        <h3>Explore the 64 Hexagrams</h3>
+                        <div class="hexagram-grid" id="hexagramGrid">
+                            <!-- Hexagrams will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 3rem 0;">
+                        <div class="insight-card">
+                            <h4>📚 Fundamentals</h4>
+                            <ul style="margin-left: 1rem;">
+                                <li>What is the I Ching?</li>
+                                <li>Yin and Yang principles</li>
+                                <li>The 8 Trigrams</li>
+                                <li>How to read hexagrams</li>
+                                <li>Changing lines explained</li>
+                            </ul>
+                            <button class="btn btn-secondary" style="margin-top: 1rem;">Start Learning</button>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>🎯 Practical Application</h4>
+                            <ul style="margin-left: 1rem;">
+                                <li>Formulating good questions</li>
+                                <li>Timing your consultations</li>
+                                <li>Interpreting guidance</li>
+                                <li>Tracking patterns</li>
+                                <li>Integration with daily life</li>
+                            </ul>
+                            <button class="btn btn-secondary" style="margin-top: 1rem;">Practice Now</button>
+                        </div>
+
+                        <div class="insight-card">
+                            <h4>🏮 Cultural Context</h4>
+                            <ul style="margin-left: 1rem;">
+                                <li>5,000 years of history</li>
+                                <li>Confucian commentaries</li>
+                                <li>Taoist philosophy</li>
+                                <li>Modern applications</li>
+                                <li>Respectful practice</li>
+                            </ul>
+                            <button class="btn btn-secondary" style="margin-top: 1rem;">Explore Culture</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-insight">
+                        <h4>🤖 Personalized Learning</h4>
+                        <p>
+                            Based on your consultation history, we recommend focusing on hexagrams related to 
+                            leadership and timing. You've shown particular interest in decision-making guidance, 
+                            so studying Hexagrams 5 (Waiting), 25 (Innocence), and 53 (Gradual Progress) 
+                            would deepen your understanding.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">Choose Your Path</h2>
+                
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Seeker</h3>
+                        <div class="price">Free</div>
+                        <p class="price-period">Forever</p>
+                        <ul class="features-list">
+                            <li>3 I Ching consultations per week</li>
+                            <li>Daily guiding hexagram</li>
+                            <li>Basic educational content</li>
+                            <li>Simple journal (30-day history)</li>
+                            <li>Community access (read-only)</li>
+                        </ul>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 2rem;">Start Free</button>
+                    </div>
+
+                    <div class="pricing-card featured">
+                        <h3>Sage+</h3>
+                        <div class="price">$6.99</div>
+                        <p class="price-period">per month</p>
+                        <ul class="features-list">
+                            <li>Unlimited I Ching consultations</li>
+                            <li>AI-powered personalized insights</li>
+                            <li>Full calendar integration</li>
+                            <li>Advanced pattern recognition</li>
+                            <li>Complete learning curriculum</li>
+                            <li>Unlimited journal history</li>
+                            <li>Community participation</li>
+                            <li>Email support</li>
+                        </ul>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Start 14-Day Trial</button>
+                        <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">$59.99/year (save 30%)</p>
+                    </div>
+
+                    <div class="pricing-card">
+                        <h3>Sage Pro</h3>
+                        <div class="price">$16.99</div>
+                        <p class="price-period">per month</p>
+                        <ul class="features-list">
+                            <li>All Sage+ features</li>
+                            <li>Proactive life monitoring</li>
+                            <li>Advanced calendar analysis</li>
+                            <li>Health app integration</li>
+                            <li>Crisis detection & intervention</li>
+                            <li>White-label for professionals</li>
+                            <li>Priority support</li>
+                            <li>API access</li>
+                        </ul>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 2rem;">Start Pro Trial</button>
+                        <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">$149.99/year (save 30%)</p>
+                    </div>
+                </div>
+
+                <div class="insight-card" style="text-align: center; margin-top: 3rem;">
+                    <h3>💎 Enterprise & Partnerships</h3>
+                    <p>
+                        Custom solutions for life coaches, therapists, corporate wellness programs, 
+                        and educational institutions. White-label options available.
+                    </p>
+                    <button class="btn btn-secondary" style="margin-top: 1rem;">Contact Sales</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <strong>✨ Wisdom Delivered</strong><br>
+        <span id="notificationText">Your insight has been saved!</span>
+    </div>
+
+    <script>
+        // App State
+        let currentSection = 'home';
+        let consultationHistory = [];
+        let coinFlips = [0, 0, 0]; // 0 for yin, 1 for yang
+
+        // Hexagram Data (simplified set for demo)
+        const hexagrams = [
+            { number: 1, name: "The Creative", chinese: "乾", keywords: "creativity, leadership, power", lines: [1,1,1,1,1,1] },
+            { number: 2, name: "The Receptive", chinese: "坤", keywords: "receptivity, yielding, earth", lines: [0,0,0,0,0,0] },
+            { number: 5, name: "Waiting", chinese: "需", keywords: "patience, timing, nourishment", lines: [1,1,1,0,1,0] },
+            { number: 25, name: "Innocence", chinese: "無妄", keywords: "spontaneity, naturalness, truth", lines: [1,0,0,1,1,1] },
+            { number: 53, name: "Gradual Progress", chinese: "漸", keywords: "development, patience, marriage", lines: [0,0,1,1,0,1] },
+            { number: 61, name: "Inner Truth", chinese: "中孚", keywords: "sincerity, understanding, influence", lines: [1,1,0,0,1,1] }
+        ];
+
+        // Sample hexagram set for learning grid
+        const sampleHexagrams = [
+            { number: 1, name: "Creative", lines: [1,1,1,1,1,1] },
+            { number: 2, name: "Receptive", lines: [0,0,0,0,0,0] },
+            { number: 3, name: "Initial Difficulty", lines: [1,0,0,0,1,0] },
+            { number: 4, name: "Youthful Folly", lines: [0,1,0,0,0,1] },
+            { number: 5, name: "Waiting", lines: [1,1,1,0,1,0] },
+            { number: 6, name: "Conflict", lines: [0,1,0,1,1,1] },
+            { number: 7, name: "The Army", lines: [0,1,0,0,0,0] },
+            { number: 8, name: "Holding Together", lines: [0,0,0,0,1,0] },
+            { number: 9, name: "Small Taming", lines: [1,1,1,0,1,1] },
+            { number: 10, name: "Treading", lines: [1,1,0,1,1,1] },
+            { number: 11, name: "Peace", lines: [1,1,1,0,0,0] },
+            { number: 12, name: "Standstill", lines: [0,0,0,1,1,1] },
+            { number: 25, name: "Innocence", lines: [1,0,0,1,1,1] },
+            { number: 53, name: "Gradual Progress", lines: [0,0,1,1,0,1] },
+            { number: 61, name: "Inner Truth", lines: [1,1,0,0,1,1] },
+            { number: 64, name: "Before Completion", lines: [1,0,1,0,1,0] }
+        ];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            generateHexagramGrid();
+            // Simulate proactive notification after 10 seconds
+            setTimeout(() => {
+                showNotification("🔮 Your afternoon energy forecast is ready to view in Compass!");
+            }, 10000);
+        });
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            currentSection = sectionName;
+
+            // Add fade-in animation
+            document.getElementById(sectionName).classList.add('fade-in');
+        }
+
+        function flipCoin(index) {
+            const coin = document.querySelectorAll('.coin')[index];
+            coin.classList.add('flipping');
+            
+            setTimeout(() => {
+                coinFlips[index] = Math.random() > 0.5 ? 1 : 0;
+                coin.textContent = coinFlips[index] ? '陽' : '陰';
+                coin.classList.remove('flipping');
+            }, 1000);
+        }
+
+        function castHexagram() {
+            const question = document.getElementById('questionInput').value;
+            if (!question.trim()) {
+                alert('Please enter your question first.');
+                return;
+            }
+
+            // Generate random hexagram for demo
+            const randomHexagram = hexagrams[Math.floor(Math.random() * hexagrams.length)];
+            
+            // Show result
+            document.getElementById('hexagramResult').style.display = 'block';
+            document.getElementById('hexagramResult').scrollIntoView({ behavior: 'smooth' });
+            
+            // Populate result
+            document.getElementById('hexagramName').textContent = 
+                `Hexagram ${randomHexagram.number}: ${randomHexagram.name}`;
+            document.getElementById('hexagramNumber').textContent = 
+                `${randomHexagram.chinese} - ${randomHexagram.keywords}`;
+            
+            // Generate hexagram lines
+            const linesContainer = document.getElementById('hexagramLines');
+            linesContainer.innerHTML = '';
+            randomHexagram.lines.forEach(line => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = line ? 'line' : 'line broken';
+                linesContainer.appendChild(lineDiv);
+            });
+
+            // AI interpretation
+            setTimeout(() => {
+                document.getElementById('aiInterpretation').innerHTML = 
+                    generateAIInterpretation(randomHexagram, question);
+            }, 1500);
+
+            // Traditional meaning
+            setTimeout(() => {
+                document.getElementById('traditionalMeaning').innerHTML = 
+                    generateTraditionalMeaning(randomHexagram);
+            }, 2000);
+
+            // Specific guidance
+            setTimeout(() => {
+                document.getElementById('specificGuidance').innerHTML = 
+                    generateSpecificGuidance(randomHexagram, question);
+            }, 2500);
+        }
+
+        function generateAIInterpretation(hexagram, question) {
+            const interpretations = {
+                1: "Your question relates to leadership and creative power. The AI detects this is a time for bold action and taking initiative.",
+                2: "The receptive energy suggests patience and allowing situations to unfold naturally. Trust in the process.",
+                5: "This hexagram appearing suggests you're in a period where patience and right timing are crucial. Don't force outcomes.",
+                25: "Your authentic, natural response to this situation will yield the best results. Trust your instincts.",
+                53: "Small, consistent steps will lead to significant progress. This is not a time for dramatic changes.",
+                61: "Inner truth and sincerity are your greatest tools right now. Communication should come from the heart."
+            };
+            return interpretations[hexagram.number] || "Trust the wisdom that emerges from this reading.";
+        }
+
+        function generateTraditionalMeaning(hexagram) {
+            const meanings = {
+                1: "Heaven's creative force moves with power and persistence. The dragon represents rising energy and leadership potential.",
+                2: "Earth's receptive nature teaches us about yielding and supporting. Great results come from cooperation.",
+                5: "Clouds gathering before rain. Nourishment comes to those who wait for the right moment with patience.",
+                25: "The unexpected and natural. When we act from innocence and truth, we align with the Tao.",
+                53: "The gradual progress of a tree growing, or a relationship developing. Steady advancement brings lasting success.",
+                61: "The wind over the lake creates resonance. Inner truth has the power to influence and transform."
+            };
+            return meanings[hexagram.number] || "Ancient wisdom teaches us about the cycles of change and adaptation.";
+        }
+
+        function generateSpecificGuidance(hexagram, question) {
+            const isCareerQuestion = question.toLowerCase().includes('job') || question.toLowerCase().includes('work') || question.toLowerCase().includes('career');
+            const isRelationshipQuestion = question.toLowerCase().includes('relationship') || question.toLowerCase().includes('love') || question.toLowerCase().includes('partner');
+            
+            if (isCareerQuestion) {
+                return "In your professional situation, focus on building solid foundations rather than seeking quick wins. Your current approach should emphasize consistency and gradual skill development.";
+            } else if (isRelationshipQuestion) {
+                return "In matters of the heart, authentic communication and patience will serve you well. Allow relationships to develop naturally without forcing outcomes.";
+            } else {
+                return "For your current situation, the guidance emphasizes taking time to understand all aspects before making decisions. Trust in the natural timing of events.";
+            }
+        }
+
+        function newConsultation() {
+            document.getElementById('questionInput').value = '';
+            document.getElementById('hexagramResult').style.display = 'none';
+            coinFlips = [0, 0, 0];
+            document.querySelectorAll('.coin').forEach((coin, index) => {
+                coin.textContent = index % 2 === 0 ? '陽' : '陰';
+            });
+        }
+
+        function saveReading() {
+            showNotification("📖 Reading saved to your journal!");
+        }
+
+        function generateHexagramGrid() {
+            const grid = document.getElementById('hexagramGrid');
+            sampleHexagrams.forEach(hexagram => {
+                const card = document.createElement('div');
+                card.className = 'hexagram-card';
+                card.onclick = () => showHexagramDetails(hexagram);
+                
+                // Generate mini hexagram visualization
+                const miniLines = hexagram.lines.map(line => 
+                    `<div style="width: 20px; height: 3px; background: ${line ? '#2d5016' : 'linear-gradient(to right, #2d5016 0%, #2d5016 40%, transparent 40%, transparent 60%, #2d5016 60%, #2d5016 100%)'}; margin: 2px auto;"></div>`
+                ).join('');
+                
+                card.innerHTML = `
+                    <div class="mini-hexagram">${miniLines}</div>
+                    <div class="name">${hexagram.name}</div>
+                    <div class="number">#${hexagram.number}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function showHexagramDetails(hexagram) {
+            showNotification(`📚 Learning about Hexagram ${hexagram.number}: ${hexagram.name}`);
+        }
+
+        function setMood(mood) {
+            const moodMessages = {
+                peaceful: "😌 Peaceful mood noted. Today's guidance will emphasize harmony and balance.",
+                energetic: "⚡ High energy detected! Perfect time for creative projects and new initiatives.",
+                contemplative: "🤔 Reflective mood. Today is ideal for deep thinking and inner exploration.",
+                challenged: "😤 Challenging times call for patience and wise counsel. Strength will emerge."
+            };
+            showNotification(moodMessages[mood]);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationText').textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            if (currentSection === 'compass') {
+                // Update time-based guidance
+                const now = new Date();
+                const hour = now.getHours();
+                
+                if (hour === 9 && now.getMinutes() === 0) {
+                    showNotification("⏰ Your 9 AM meeting approaches. Remember: patience and listening.");
+                }
+            }
+        }, 60000); // Check every minute
+
+        // Demo data persistence (in real app, this would be server-side)
+        let userProgress = {
+            consultations: 47,
+            streakDays: 12,
+            favoriteHexagrams: [5, 53, 61],
+            moodHistory: ['peaceful', 'contemplative', 'energetic']
+        };
+    </script>
+</body>
+</html>
