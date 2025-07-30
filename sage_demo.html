@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sage - 道 The Way of Wisdom</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Taoist Color Palette - Natural Elements */
+            --mountain-stone: #4a5c6a;
+            --flowing-water: #6b8caf;
+            --bamboo-green: #7ba05b;
+            --morning-mist: #e8f1f5;
+            --earth-brown: #8b7355;
+            --sunset-gold: #d4a574;
+            --cloud-white: #fefefe;
+            --ink-black: #2c2c2c;
+            --soft-gray: #6b6b6b;
+            --gentle-silver: #a8b2b8;
+            
+            /* Yin-Yang Balance */
+            --yin: #1a1a1a;
+            --yang: #f9f9f9;
+            
+            /* Natural Shadows and Glows */
+            --water-shadow: 0 8px 32px rgba(107, 140, 175, 0.15);
+            --mist-glow: 0 4px 20px rgba(232, 241, 245, 0.8);
+            --earth-shadow: 0 6px 24px rgba(139, 115, 85, 0.12);
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.7;
+            color: var(--ink-black);
+            background: linear-gradient(135deg, var(--morning-mist) 0%, var(--cloud-white) 50%, var(--morning-mist) 100%);
+            overflow-x: hidden;
+        }
+
+        /* Flowing Background Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(107, 140, 175, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(123, 160, 91, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 20% 70%, rgba(212, 165, 116, 0.02) 0%, transparent 50%);
+            animation: gentleFloat 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-20px, -30px) rotate(1deg); }
+            66% { transform: translate(20px, -20px) rotate(-1deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Taoist Navigation - Like Floating Stones */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            background: rgba(254, 254, 254, 0.7);
+            border-bottom: 1px solid rgba(107, 140, 175, 0.1);
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--mountain-stone);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            letter-spacing: 0.1em;
+        }
+
+        .logo::before {
+            content: "道";
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--flowing-water), var(--bamboo-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-item {
+            color: var(--soft-gray);
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(107, 140, 175, 0.1), transparent);
+            border-radius: 50px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .nav-item:hover::before,
+        .nav-item.active::before {
+            opacity: 1;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: var(--flowing-water);
+            transform: translateY(-2px);
+        }
+
+        /* Wu Wei - Effortless Main Content */
+        .main-content {
+            margin-top: 100px;
+        }
+
+        .section {
+            display: none;
+            min-height: calc(100vh - 100px);
+            padding: 3rem 0;
+        }
+
+        .section.active {
+            display: block;
+            animation: naturalFlow 0.8s ease-out;
+        }
+
+        @keyframes naturalFlow {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+
+        /* Yin-Yang Balance in Cards */
+        .wisdom-card {
+            background: var(--cloud-white);
+            border-radius: 32px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            box-shadow: var(--water-shadow);
+            border: 1px solid rgba(107, 140, 175, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .wisdom-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--flowing-water), var(--bamboo-green), var(--sunset-gold));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .wisdom-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--mist-glow);
+        }
+
+        .wisdom-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Hero Section - Like Morning Mist Rising */
+        .hero {
+            text-align: center;
+            padding: 6rem 0;
+            background: radial-gradient(circle at center, rgba(232, 241, 245, 0.3) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 200;
+            color: var(--mountain-stone);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.05em;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: var(--soft-gray);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        /* Wu Wei Buttons - Natural and Effortless */
+        .natural-btn {
+            background: linear-gradient(135deg, var(--flowing-water), var(--bamboo-green));
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 4px 20px rgba(107, 140, 175, 0.3);
+            margin: 0.5rem;
+            letter-spacing: 0.05em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .natural-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .natural-btn:hover::before {
+            left: 100%;
+        }
+
+        .natural-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(107, 140, 175, 0.4);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--flowing-water);
+            border: 2px solid var(--flowing-water);
+            padding: 1rem 2.8rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            margin: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .secondary-btn:hover {
+            background: var(--flowing-water);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(107, 140, 175, 0.3);
+        }
+
+        /* Hexagram Display - Sacred Geometry */
+        .hexagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem;
+            background: radial-gradient(circle, rgba(107, 140, 175, 0.05) 0%, transparent 70%);
+            border-radius: 50px;
+            margin: 2rem 0;
+        }
+
+        .hexagram-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 2rem 0;
+        }
+
+        .line {
+            width: 80px;
+            height: 6px;
+            background: linear-gradient(90deg, var(--mountain-stone), var(--flowing-water));
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(74, 92, 106, 0.2);
+        }
+
+        .line.broken {
+            background: linear-gradient(to right, 
+                var(--mountain-stone) 0%, var(--mountain-stone) 35%, 
+                transparent 35%, transparent 65%, 
+                var(--flowing-water) 65%, var(--flowing-water) 100%);
+        }
+
+        .line:hover {
+            transform: scaleX(1.1);
+            box-shadow: 0 4px 15px rgba(74, 92, 106, 0.3);
+        }
+
+        /* Circular Flow Layout - Like Water Ripples */
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .flow-card {
+            background: var(--cloud-white);
+            border-radius: 28px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(168, 178, 184, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(107, 140, 175, 0.03) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.6s ease;
+        }
+
+        .flow-card:hover::before {
+            transform: scale(1);
+        }
+
+        .flow-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: var(--water-shadow);
+        }
+
+        /* Coin Casting - Natural Elements */
+        .coins-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.08) 0%, transparent 70%);
+            border-radius: 50px;
+        }
+
+        .coin {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--sunset-gold), var(--earth-brown));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 300;
+            color: var(--ink-black);
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 6px 20px rgba(139, 115, 85, 0.25);
+            position: relative;
+        }
+
+        .coin::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 30%;
+            height: 30%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent);
+            border-radius: 50%;
+            transition: all 0.4s ease;
+        }
+
+        .coin:hover {
+            transform: scale(1.1) rotateY(180deg);
+            box-shadow: 0 10px 30px rgba(139, 115, 85, 0.4);
+        }
+
+        .coin.casting {
+            animation: naturalSpin 1.5s ease-out;
+        }
+
+        @keyframes naturalSpin {
+            0% { transform: rotateY(0deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.2); }
+            100% { transform: rotateY(360deg) scale(1); }
+        }
+
+        /* Taoist Wisdom Text */
+        .wisdom-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--soft-gray);
+            text-align: center;
+            font-style: italic;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .wisdom-text::before,
+        .wisdom-text::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--gentle-silver);
+            position: absolute;
+        }
+
+        .wisdom-text::before {
+            top: -1rem;
+            left: -1rem;
+        }
+
+        .wisdom-text::after {
+            bottom: -2rem;
+            right: -1rem;
+        }
+
+        /* AI Insight - Like Ancient Scroll */
+        .ai-wisdom {
+            background: linear-gradient(135deg, var(--morning-mist), var(--cloud-white));
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            border-left: 4px solid var(--bamboo-green);
+            position: relative;
+            box-shadow: var(--earth-shadow);
+        }
+
+        .ai-wisdom::before {
+            content: "智";
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            color: var(--bamboo-green);
+            opacity: 0.3;
+        }
+
+        .ai-wisdom h4 {
+            color: var(--mountain-stone);
+            margin-bottom: 1rem;
+            font-weight: 400;
+        }
+
+        /* Notification - Like Gentle Breeze */
+        .gentle-notification {
+            position: fixed;
+            top: 120px;
+            right: 30px;
+            background: rgba(254, 254, 254, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: var(--water-shadow);
+            border: 1px solid rgba(107, 140, 175, 0.2);
+            transform: translateX(400px);
+            transition: all 0.6s ease;
+            z-index: 1001;
+            max-width: 320px;
+        }
+
+        .gentle-notification.show {
+            transform: translateX(0);
+        }
+
+        .gentle-notification::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid rgba(254, 254, 254, 0.95);
+        }
+
+        /* Question Input - Like Still Water */
+        .question-pond {
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid rgba(107, 140, 175, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            font-family: inherit;
+            font-size: 1.1rem;
+            background: rgba(232, 241, 245, 0.3);
+            color: var(--ink-black);
+            resize: vertical;
+            transition: all 0.4s ease;
+        }
+
+        .question-pond:focus {
+            outline: none;
+            border-color: var(--flowing-water);
+            background: rgba(232, 241, 245, 0.5);
+            box-shadow: 0 0 0 4px rgba(107, 140, 175, 0.1);
+        }
+
+        .question-pond::placeholder {
+            color: var(--gentle-silver);
+            font-style: italic;
+        }
+
+        /* Responsive Flow */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1rem 0;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .flow-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .coins-container {
+                gap: 1rem;
+            }
+
+            .coin {
+                width: 60px;
+                height: 60px;
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Subtle animations for natural feeling */
+        .floating {
+            animation: gentleFloat 6s ease-in-out infinite;
+        }
+
+        .flowing {
+            animation: naturalFlow 8s ease-in-out infinite;
+        }
+
+        @keyframes naturalFlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        /* Taoist Balance Grid */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+            align-items: start;
+        }
+
+        .balance-sidebar {
+            background: rgba(232, 241, 245, 0.4);
+            border-radius: 24px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(107, 140, 175, 0.1);
+        }
+
+        .balance-main {
+            background: var(--cloud-white);
+            border-radius: 28px;
+            padding: 3rem;
+            box-shadow: var(--water-shadow);
+            border: 1px solid rgba(107, 140, 175, 0.1);
+        }
+
+        @media (max-width: 1024px) {
+            .balance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Hexagram Explorer - Like Ancient Stones */
+        .hexagram-stones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stone {
+            background: linear-gradient(135deg, var(--morning-mist), var(--cloud-white));
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(107, 140, 175, 0.1);
+            position: relative;
+        }
+
+        .stone:hover {
+            transform: translateY(-6px) rotate(2deg);
+            box-shadow: var(--water-shadow);
+            background: linear-gradient(135deg, var(--cloud-white), var(--morning-mist));
+        }
+
+        .stone .mini-lines {
+            margin: 0.5rem 0;
+        }
+
+        .mini-line {
+            width: 20px;
+            height: 2px;
+            background: var(--mountain-stone);
+            margin: 3px auto;
+            border-radius: 1px;
+        }
+
+        .mini-line.broken {
+            background: linear-gradient(to right, var(--mountain-stone) 0%, var(--mountain-stone) 40%, transparent 40%, transparent 60%, var(--mountain-stone) 60%, var(--mountain-stone) 100%);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">Sage</div>
+            <ul class="nav-links">
+                <li><span onclick="showSection('home')" class="nav-item active">道 Way</span></li>
+                <li><span onclick="showSection('compass')" class="nav-item">羅盤 Compass</span></li>
+                <li><span onclick="showSection('consult')" class="nav-item">問 Consult</span></li>
+                <li><span onclick="showSection('patterns')" class="nav-item">模 Patterns</span></li>
+                <li><span onclick="showSection('learn')" class="nav-item">學 Learn</span></li>
+                <li><span onclick="showSection('pricing')" class="nav-item">選 Choose</span></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- Home Section - The Way -->
+        <section id="home" class="section active">
+            <div class="hero">
+                <div class="container">
+                    <h1>The Way of Wisdom</h1>
+                    <p class="subtitle">
+                        Flow with ancient I Ching wisdom through AI that understands the natural rhythms of your life. 
+                        Like water finding its path, receive guidance that moves with your true nature.
+                    </p>
+                    <div>
+                        <button class="natural-btn" onclick="showSection('compass')">Begin the Journey</button>
+                        <button class="secondary-btn" onclick="showSection('consult')">Cast the Oracle</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="flow-grid">
+                    <div class="flow-card floating">
+                        <h3>🌊 Wu Wei Intelligence</h3>
+                        <div class="wisdom-text">
+                            "The sage does not attempt anything very big, and thus achieves greatness."
+                        </div>
+                        <p>Our AI works like water - effortlessly flowing around obstacles, finding natural solutions through gentle persistence rather than force.</p>
+                    </div>
+
+                    <div class="flow-card flowing">
+                        <h3>☯ Yin-Yang Balance</h3>
+                        <div class="wisdom-text">
+                            "When people see some things as beautiful, other things become ugly."
+                        </div>
+                        <p>Experience life's natural cycles through guidance that honors both action and rest, speaking and silence, growth and reflection.</p>
+                    </div>
+
+                    <div class="flow-card floating">
+                        <h3>🌱 Natural Timing</h3>
+                        <div class="wisdom-text">
+                            "Nature does not hurry, yet everything is accomplished."
+                        </div>
+                        <p>Receive wisdom at the perfect moment, aligned with your life's natural rhythms rather than forced schedules.</p>
+                    </div>
+                </div>
+
+                <div class="wisdom-card">
+                    <h3>The Tao of Technology</h3>
+                    <p>
+                        In harmony with Taoist principles, Sage doesn't impose its will upon your life. Instead, like the 
+                        gentle persistence of water carving through stone, our AI observes, learns, and offers wisdom 
+                        that flows naturally with your circumstances. This is technology in service of the Way - 
+                        invisible when not needed, present when wisdom calls.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compass Section - Daily Flow -->
+        <section id="compass" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--mountain-stone); font-weight: 300; font-size: 2.5rem;">今日羅盤 Today's Compass</h2>
+                
+                <div class="balance-grid">
+                    <div class="balance-sidebar">
+                        <h3 style="color: var(--flowing-water); margin-bottom: 1.5rem;">Energy Flow</h3>
+                        <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 0.9rem; color: var(--mountain-stone); min-width: 70px;">9:00 AM</span>
+                                <span style="flex: 1;">Team Sync</span>
+                                <span style="background: var(--bamboo-green); color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;">Listen</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <span style="font-size: 0.9rem; color: var(--mountain-stone); min-width: 70px;">2:00 PM</span>
+                                <span style="flex: 1;">Project Review</span>
+                                <span style="background: var(--flowing-water); color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;">Flow</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <span style="font-size: 0.9rem; color: var(--mountain-stone); min-width: 70px;">4:30 PM</span>
+                                <span style="flex: 1;">1:1 Meeting</span>
+                                <span style="background: var(--sunset-gold); color: white; padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.8rem;">Truth</span>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <h4 style="color: var(--bamboo-green);">Current Phase</h4>
+                            <p style="color: var(--soft-gray); font-size: 0.95rem; margin-top: 0.5rem;">
+                                <strong>漸進 Gradual Progress</strong><br>
+                                <em>Like bamboo growing - steady, patient, persistent</em>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="balance-main">
+                        <div class="hexagram-container">
+                            <h3 style="color: var(--mountain-stone); margin-bottom: 1rem;">漸 - Hexagram 53: Gradual Progress</h3>
+                            <div class="hexagram-lines">
+                                <div class="line"></div>
+                                <div class="line broken"></div>
+                                <div class="line"></div>
+                                <div class="line"></div>
+                                <div class="line broken"></div>
+                                <div class="line broken"></div>
+                            </div>
+                            <p style="color: var(--gentle-silver); font-style: italic;">"Development • Patience • Marriage"</p>
+                        </div>
+
+                        <div class="ai-wisdom">
+                            <h4>智慧 AI Wisdom</h4>
+                            <p class="wisdom-text" style="text-align: left; font-style: normal;">
+                                Today's energy flows like a mountain stream - steady, persistent, finding the natural course. 
+                                Your team meeting this morning calls for the patience of listening rather than the urgency of speaking. 
+                                Trust that your consistent efforts are building something lasting, though the results may not yet be visible.
+                            </p>
+                        </div>
+
+                        <div class="wisdom-card">
+                            <h4 style="color: var(--bamboo-green);">Ancient Teaching</h4>
+                            <div class="wisdom-text">
+                                "A tree that is unbending is easily broken. A tree that yields survives."
+                            </div>
+                            <p>The gradual progress of growth requires both strength and flexibility. Today, bend with the winds of change while maintaining your deep roots.</p>
+                        </div>
+
+                        <div class="wisdom-card">
+                            <h4 style="color: var(--flowing-water);">Practical Guidance</h4>
+                            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                                <li>Approach decisions with the patience of growing things</li>
+                                <li>Listen for the wisdom already present in conversations</li>
+                                <li>Trust the timing of natural development</li>
+                                <li>End the day with gratitude for small progress</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="balance-sidebar">
+                        <h3 style="color: var(--sunset-gold); margin-bottom: 1.5rem;">Inner Weather</h3>
+                        
+                        <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem;">
+                            <h4>Pattern Recognition</h4>
+                            <p style="font-size: 0.9rem; line-height: 1.6;">
+                                Your energy aligns with earth element this week - 
+                                grounded, stable, nurturing growth in yourself and others.
+                            </p>
+                        </div>
+
+                        <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem;">
+                            <h4>Tomorrow's Flow</h4>
+                            <p style="font-size: 0.9rem; line-height: 1.6;">
+                                Creative energies strengthening. 
+                                Morning hours favor new beginnings and fresh perspectives.
+                            </p>
+                        </div>
+
+                        <div style="margin-top: 2rem;">
+                            <h4 style="color: var(--earth-brown);">Mood Harmony</h4>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin: 1rem 0;">
+                                <button onclick="setMood('peaceful')" style="background: var(--morning-mist); border: 1px solid var(--flowing-water); padding: 0.8rem; border-radius: 12px; cursor: pointer; font-size: 1.2rem;">😌</button>
+                                <button onclick="setMood('energetic')" style="background: var(--morning-mist); border: 1px solid var(--flowing-water); padding: 0.8rem; border-radius: 12px; cursor: pointer; font-size: 1.2rem;">⚡</button>
+                                <button onclick="setMood('contemplative')" style="background: var(--morning-mist); border: 1px solid var(--flowing-water); padding: 0.8rem; border-radius: 12px; cursor: pointer; font-size: 1.2rem;">🤔</button>
+                                <button onclick="setMood('flowing')" style="background: var(--morning-mist); border: 1px solid var(--flowing-water); padding: 0.8rem; border-radius: 12px; cursor: pointer; font-size: 1.2rem;">🌊</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Consult Section - The Oracle -->
+        <section id="consult" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--mountain-stone); font-weight: 300; font-size: 2.5rem;">問 The Oracle Speaks</h2>
+                
+                <div class="balance-main" style="max-width: 900px; margin: 0 auto;">
+                    <div class="wisdom-card">
+                        <h3 style="text-align: center; color: var(--flowing-water);">Pose Your Question to the Tao</h3>
+                        <textarea 
+                            id="questionInput" 
+                            class="question-pond"
+                            placeholder="What guidance do you seek from the ancient wisdom? Speak from your heart, and the I Ching will respond with timeless counsel..."
+                        ></textarea>
+
+                        <div style="text-align: center; margin: 3rem 0;">
+                            <p style="margin-bottom: 2rem; color: var(--soft-gray); font-style: italic;">
+                                "When you cast the coins, you cast your intention into the river of time..."
+                            </p>
+                            <div class="coins-container">
+                                <div class="coin" onclick="flipCoin(0)">陽</div>
+                                <div class="coin" onclick="flipCoin(1)">陰</div>
+                                <div class="coin" onclick="flipCoin(2)">陽</div>
+                            </div>
+                            <button class="natural-btn" onclick="castHexagram()" style="margin-top: 2rem;">
+                                Cast the Hexagram
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="oracleResponse" style="display: none;">
+                        <div class="hexagram-container">
+                            <h3 id="hexagramName" style="color: var(--mountain-stone);">The Hexagram Reveals Itself</h3>
+                            <div id="hexagramLines" class="hexagram-lines"></div>
+                            <p id="hexagramMeaning" style="color: var(--gentle-silver); font-style: italic; margin-top: 1rem;"></p>
+                        </div>
+
+                        <div class="ai-wisdom">
+                            <h4>智慧 Wisdom for Your Path</h4>
+                            <p id="aiInterpretation" style="font-size: 1.1rem; line-height: 1.7;">
+                                The ancient patterns speak to your current situation...
+                            </p>
+                        </div>
+
+                        <div class="wisdom-card">
+                            <h4 style="color: var(--bamboo-green);">Traditional Teaching</h4>
+                            <p id="traditionalWisdom" style="font-style: italic; line-height: 1.7;">
+                                From the depths of 5,000 years of wisdom...
+                            </p>
+                        </div>
+
+                        <div class="wisdom-card">
+                            <h4 style="color: var(--flowing-water);">Guidance for Action</h4>
+                            <p id="practicalGuidance" style="line-height: 1.7;">
+                                How to apply this wisdom in your daily walk...
+                            </p>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 3rem;">
+                            <button class="secondary-btn" onclick="saveReading()">Save This Wisdom</button>
+                            <button class="natural-btn" onclick="newConsultation()" style="margin-left: 1rem;">New Question</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Patterns Section - Life Currents -->
+        <section id="patterns" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--mountain-stone); font-weight: 300; font-size: 2.5rem;">模 Life's Natural Patterns</h2>
+                
+                <div class="balance-main" style="margin: 0;">
+                    <div class="wisdom-card">
+                        <h3 style="color: var(--flowing-water);">The River of Your Journey</h3>
+                        <p style="font-size: 1.1rem; line-height: 1.7; color: var(--soft-gray);">
+                            Like observing the flow of a great river, we can see the patterns that shape your path. 
+                            The Tao reveals itself through cycles, rhythms, and the natural ebb and flow of life's energies.
+                        </p>
+                    </div>
+                    
+                    <div class="flow-grid">
+                        <div class="flow-card">
+                            <h4 style="color: var(--bamboo-green);">🔄 Recurring Themes</h4>
+                            <div style="text-align: left; margin: 1.5rem 0;">
+                                <p><strong>Patience & Timing</strong> <span style="color: var(--gentle-silver);">— 65% of guidance</span></p>
+                                <p><strong>Natural Expression</strong> <span style="color: var(--gentle-silver);">— 35% of guidance</span></p>
+                                <p><strong>Inner Truth</strong> <span style="color: var(--gentle-silver);">— 28% of guidance</span></p>
+                            </div>
+                            <small style="color: var(--gentle-silver); font-style: italic;">Past 90 days of wisdom</small>
+                        </div>
+
+                        <div class="flow-card">
+                            <h4 style="color: var(--flowing-water);">📈 Inner Growth</h4>
+                            <div style="text-align: left; margin: 1.5rem 0;">
+                                <p><strong>Decision Clarity:</strong> <span style="color: var(--bamboo-green);">↗️ +25%</span></p>
+                                <p><strong>Stress Harmony:</strong> <span style="color: var(--bamboo-green);">↘️ -18%</span></p>
+                                <p><strong>Life Alignment:</strong> <span style="color: var(--bamboo-green);">↗️ +42%</span></p>
+                            </div>
+                            <small style="color: var(--gentle-silver); font-style: italic;">Compared to your beginning</small>
+                        </div>
+
+                        <div class="flow-card">
+                            <h4 style="color: var(--sunset-gold);">🎯 Current Flow</h4>
+                            <div style="text-align: left; margin: 1.5rem 0;">
+                                <p><strong>Life Phase:</strong> Building Foundation</p>
+                                <p><strong>Energy Type:</strong> Earth Element</p>
+                                <p><strong>Learning:</strong> Balance in Action</p>
+                            </div>
+                            <small style="color: var(--gentle-silver); font-style: italic;">AI-detected from your patterns</small>
+                        </div>
+                    </div>
+
+                    <div class="ai-wisdom">
+                        <h4>智慧 Pattern Recognition</h4>
+                        <p style="font-size: 1.1rem; line-height: 1.7;">
+                            Your journey shows the beautiful rhythm of someone learning to trust natural timing. 
+                            The frequent appearance of "Waiting" and "Gradual Progress" hexagrams reveals you're 
+                            in a profound cycle of patient cultivation. Like a gardener who has learned that 
+                            forcing growth destroys the plant, you're developing the wisdom of wu wei - 
+                            effortless action that moves with rather than against the natural flow.
+                        </p>
+                    </div>
+
+                    <div style="margin: 3rem 0;">
+                        <h4 style="color: var(--mountain-stone); margin-bottom: 2rem;">Timeline of Wisdom</h4>
+                        <div style="space-y: 1rem;">
+                            <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="color: var(--flowing-water); font-weight: 500; min-width: 100px;">Last Week</span>
+                                    <span>Hexagram 25: 無妄 Innocence - Trust your natural instincts regarding the new project</span>
+                                </div>
+                            </div>
+                            <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="color: var(--flowing-water); font-weight: 500; min-width: 100px;">5 Days Ago</span>
+                                    <span>Hexagram 5: 需 Waiting - Patience with team dynamics yields harmony</span>
+                                </div>
+                            </div>
+                            <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="color: var(--flowing-water); font-weight: 500; min-width: 100px;">3 Days Ago</span>
+                                    <span>Hexagram 53: 漸 Gradual Progress - Small steps in leadership bring lasting change</span>
+                                </div>
+                            </div>
+                            <div class="wisdom-card" style="margin: 1rem 0; padding: 1.5rem; border-left: 4px solid var(--sunset-gold);">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <span style="color: var(--sunset-gold); font-weight: 500; min-width: 100px;">Today</span>
+                                    <span>Hexagram 53: 漸 Gradual Progress - Continue building on the foundation you've established</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wisdom-card">
+                        <h4 style="color: var(--earth-brown);">📊 Harmony Insights</h4>
+                        <p style="line-height: 1.7;">
+                            Your consultation frequency rises by 40% during challenging periods, showing natural 
+                            wisdom-seeking behavior. Readings focused on patience correlate with 85% positive 
+                            outcomes in subsequent projects, confirming the power of aligned action.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learn Section - The Study -->
+        <section id="learn" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--mountain-stone); font-weight: 300; font-size: 2.5rem;">學 The Study of Changes</h2>
+                
+                <div class="balance-main" style="margin: 0;">
+                    <div class="wisdom-card">
+                        <h3 style="color: var(--flowing-water);">🎓 Walking the Path of Wisdom</h3>
+                        <p style="font-size: 1.1rem; line-height: 1.7;">
+                            The I Ching is not merely a book to be read, but a way to be walked. 
+                            Like a river that reveals new depths as you wade deeper, these ancient 
+                            teachings unfold their secrets through patient study and mindful practice.
+                        </p>
+                    </div>
+
+                    <div style="margin: 3rem 0;">
+                        <h3 style="color: var(--bamboo-green); margin-bottom: 2rem;">Explore the 64 Hexagrams</h3>
+                        <div class="hexagram-stones" id="hexagramStones">
+                            <!-- Generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="flow-grid">
+                        <div class="flow-card">
+                            <h4 style="color: var(--mountain-stone);">📚 Foundation Studies</h4>
+                            <div class="wisdom-text" style="font-size: 0.95rem; margin: 1rem 0;">
+                                "A journey of a thousand miles begins with a single step."
+                            </div>
+                            <ul style="text-align: left; margin: 1rem; line-height: 1.6;">
+                                <li>What is the Book of Changes?</li>
+                                <li>Understanding Yin and Yang</li>
+                                <li>The Eight Trigrams (Bagua)</li>
+                                <li>Reading hexagram patterns</li>
+                                <li>The wisdom of changing lines</li>
+                            </ul>
+                            <button class="secondary-btn" onclick="showNotification('📚 Beginning the foundation path...')" style="margin-top: 1.5rem;">Begin Study</button>
+                        </div>
+
+                        <div class="flow-card">
+                            <h4 style="color: var(--flowing-water);">🎯 Practice & Application</h4>
+                            <div class="wisdom-text" style="font-size: 0.95rem; margin: 1rem 0;">
+                                "Knowledge without practice is like a lamp that gives no light."
+                            </div>
+                            <ul style="text-align: left; margin: 1rem; line-height: 1.6;">
+                                <li>Crafting meaningful questions</li>
+                                <li>Recognizing natural timing</li>
+                                <li>Interpreting guidance personally</li>
+                                <li>Tracking wisdom patterns</li>
+                                <li>Living the teachings daily</li>
+                            </ul>
+                            <button class="secondary-btn" onclick="showNotification('🎯 Practice chamber opened...')" style="margin-top: 1.5rem;">Practice Now</button>
+                        </div>
+
+                        <div class="flow-card">
+                            <h4 style="color: var(--sunset-gold);">🏮 Cultural Depths</h4>
+                            <div class="wisdom-text" style="font-size: 0.95rem; margin: 1rem 0;">
+                                "To know the road ahead, ask those coming back."
+                            </div>
+                            <ul style="text-align: left; margin: 1rem; line-height: 1.6;">
+                                <li>5,000 years of living wisdom</li>
+                                <li>Confucian scholarly commentaries</li>
+                                <li>Taoist philosophical depths</li>
+                                <li>Modern psychological applications</li>
+                                <li>Respectful cross-cultural practice</li>
+                            </ul>
+                            <button class="secondary-btn" onclick="showNotification('🏮 Cultural exploration beginning...')" style="margin-top: 1.5rem;">Explore Heritage</button>
+                        </div>
+                    </div>
+
+                    <div class="ai-wisdom">
+                        <h4>智慧 Personalized Learning Path</h4>
+                        <p style="font-size: 1.1rem; line-height: 1.7;">
+                            Based on your consultation patterns, we recommend deepening your understanding of 
+                            hexagrams related to leadership and natural timing. Your frequent encounters with 
+                            Hexagrams 5 (需 Waiting), 25 (無妄 Innocence), and 53 (漸 Gradual Progress) suggest 
+                            you're ready to explore the profound teachings about wu wei - the art of effortless action 
+                            that accomplishes great things through patient alignment with natural forces.
+                        </p>
+                    </div>
+
+                    <div class="wisdom-card">
+                        <h4 style="color: var(--earth-brown);">The Scholar's Path</h4>
+                        <div class="wisdom-text">
+                            "The sage is guided by what he feels and not by what he sees."
+                        </div>
+                        <p style="line-height: 1.7; margin-top: 1rem;">
+                            True understanding of the I Ching comes not from memorizing interpretations, but from 
+                            developing the inner sensitivity to recognize life's patterns. Each consultation becomes 
+                            a teacher, each hexagram a mirror reflecting the deeper currents of your journey.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section - Choose Your Path -->
+        <section id="pricing" class="section">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--mountain-stone); font-weight: 300; font-size: 2.5rem;">選 Choose Your Path</h2>
+                
+                <div class="flow-grid">
+                    <div class="flow-card" style="border: 2px solid rgba(107, 140, 175, 0.1);">
+                        <h3 style="color: var(--soft-gray);">Seeker</h3>
+                        <div style="font-size: 2.5rem; font-weight: 200; color: var(--mountain-stone); margin: 1rem 0;">Free</div>
+                        <p style="color: var(--gentle-silver);">Forever</p>
+                        <div class="wisdom-text" style="font-size: 0.9rem; margin: 1.5rem 0;">
+                            "The journey begins with a single step."
+                        </div>
+                        <ul style="text-align: left; list-style: none; margin: 2rem 0; line-height: 1.8;">
+                            <li>• 3 I Ching consultations per week</li>
+                            <li>• Daily guiding hexagram</li>
+                            <li>• Basic educational content</li>
+                            <li>• Simple journal (30-day history)</li>
+                            <li>• Community wisdom (read-only)</li>
+                        </ul>
+                        <button class="secondary-btn" onclick="showNotification('🎉 Welcome, fellow seeker! Your free path begins...')" style="width: 100%; margin-top: 2rem;">Begin the Way</button>
+                    </div>
+
+                    <div class="flow-card" style="border: 3px solid var(--flowing-water); transform: scale(1.05); box-shadow: var(--water-shadow);">
+                        <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--flowing-water); color: white; padding: 0.5rem 1.5rem; border-radius: 25px; font-size: 0.9rem;">Most Traveled</div>
+                        <h3 style="color: var(--flowing-water);">Sage+</h3>
+                        <div style="font-size: 2.5rem; font-weight: 200; color: var(--flowing-water); margin: 1rem 0;">$6.99</div>
+                        <p style="color: var(--gentle-silver);">per month</p>
+                        <div class="wisdom-text" style="font-size: 0.9rem; margin: 1.5rem 0;">
+                            "Water flows naturally to its destination."
+                        </div>
+                        <ul style="text-align: left; list-style: none; margin: 2rem 0; line-height: 1.8;">
+                            <li>• Unlimited I Ching consultations</li>
+                            <li>• AI-powered personalized insights</li>
+                            <li>• Full calendar integration</li>
+                            <li>• Advanced pattern recognition</li>
+                            <li>• Complete learning curriculum</li>
+                            <li>• Unlimited journal history</li>
+                            <li>• Community participation</li>
+                            <li>• Email support</li>
+                        </ul>
+                        <button class="natural-btn" onclick="showNotification('✨ The flow deepens! 14-day trial activated...')" style="width: 100%; margin-top: 2rem;">Flow with Wisdom</button>
+                        <p style="font-size: 0.8rem; color: var(--gentle-silver); margin-top: 0.8rem;">$59.99/year (save 30%)</p>
+                    </div>
+
+                    <div class="flow-card" style="border: 2px solid rgba(212, 165, 116, 0.3);">
+                        <h3 style="color: var(--sunset-gold);">Sage Pro</h3>
+                        <div style="font-size: 2.5rem; font-weight: 200; color: var(--sunset-gold); margin: 1rem 0;">$16.99</div>
+                        <p style="color: var(--gentle-silver);">per month</p>
+                        <div class="wisdom-text" style="font-size: 0.9rem; margin: 1.5rem 0;">
+                            "The master acts without acting."
+                        </div>
+                        <ul style="text-align: left; list-style: none; margin: 2rem 0; line-height: 1.8;">
+                            <li>• All Sage+ features</li>
+                            <li>• Proactive life monitoring</li>
+                            <li>• Advanced calendar analysis</li>
+                            <li>• Health app integration</li>
+                            <li>• Crisis detection & intervention</li>
+                            <li>• White-label for professionals</li>
+                            <li>• Priority support</li>
+                            <li>• API access</li>
+                        </ul>
+                        <button class="natural-btn" onclick="showNotification('🚀 Master level unlocked! Welcome to effortless wisdom...')" style="width: 100%; margin-top: 2rem; background: linear-gradient(135deg, var(--sunset-gold), var(--earth-brown));">Master the Way</button>
+                        <p style="font-size: 0.8rem; color: var(--gentle-silver); margin-top: 0.8rem;">$149.99/year (save 30%)</p>
+                    </div>
+                </div>
+
+                <div class="wisdom-card" style="text-align: center; margin-top: 4rem;">
+                    <h3 style="color: var(--bamboo-green);">💎 Institutional Wisdom</h3>
+                    <div class="wisdom-text">
+                        "When the student is ready, the teacher appears."
+                    </div>
+                    <p style="margin: 1.5rem 0; line-height: 1.7;">
+                        Custom solutions for life coaches, therapists, corporate wellness programs, 
+                        and educational institutions. White-label applications for professional practice.
+                    </p>
+                    <button class="secondary-btn" onclick="showNotification('📞 Our wisdom keepers will contact you within 24 hours...')" style="margin-top: 1rem;">Connect with Us</button>
+                </div>
+
+                <div style="text-align: center; margin-top: 3rem;">
+                    <div class="wisdom-text" style="color: var(--gentle-silver);">
+                        "Choose the path that calls to your heart. The Way will meet you wherever you begin."
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Gentle Notification -->
+    <div id="notification" class="gentle-notification">
+        <strong id="notificationTitle">✨ Wisdom Flows</strong><br>
+        <span id="notificationText">Your insight has been received...</span>
+    </div>
+
+    <script>
+        // App State
+        let currentSection = 'home';
+        let coinStates = ['yang', 'yin', 'yang'];
+
+        // Hexagram Database
+        const hexagramWisdom = [
+            { 
+                number: 1, 
+                name: "乾 The Creative", 
+                english: "Creative Force",
+                lines: [1,1,1,1,1,1], 
+                keywords: "Leadership • Power • Initiative",
+                traditional: "Heaven's creative power moves with persistence and strength. Like the dragon that rises from the depths, creative energy builds momentum through consistent action.",
+                aiGuidance: "Your question touches the realm of leadership and creative power. This is a time for bold initiative while maintaining humble wisdom.",
+                practical: "Trust your creative instincts. Take the lead in your situation, but remember that true power serves the greater good."
+            },
+            { 
+                number: 5, 
+                name: "需 Waiting", 
+                english: "Nourishment",
+                lines: [1,1,1,0,1,0], 
+                keywords: "Patience • Timing • Nourishment",
+                traditional: "Clouds gather before the nourishing rain. True nourishment comes to those who wait with patience and inner preparation.",
+                aiGuidance: "The pattern of your question suggests this is a time for patient cultivation rather than forceful action. Trust natural timing.",
+                practical: "Prepare thoroughly while waiting for the right moment. Use this time to strengthen your foundation and clarify your intentions."
+            },
+            { 
+                number: 25, 
+                name: "無妄 Innocence", 
+                english: "Natural Spontaneity",
+                lines: [1,0,0,1,1,1], 
+                keywords: "Authenticity • Natural Action • Truth",
+                traditional: "Heaven's truth moves through earth with natural spontaneity. When we act from innocence, we align with the cosmic order.",
+                aiGuidance: "Your authentic response to this situation will yield the best results. Trust your natural instincts over calculated strategies.",
+                practical: "Be genuine in your approach. Your first instinct is likely the wisest course. Avoid overthinking or artificial responses."
+            },
+            { 
+                number: 53, 
+                name: "漸 Gradual Progress", 
+                english: "Development",
+                lines: [0,0,1,1,0,1], 
+                keywords: "Development • Patience • Growth",
+                traditional: "Like the gradual ascent of the mountain goat, step by step, or the steady growth of a tree, progress comes through patient persistence.",
+                aiGuidance: "Your situation calls for the wisdom of gradual development. Small, consistent steps will lead to lasting transformation.",
+                practical: "Focus on incremental progress rather than dramatic changes. Build carefully on the foundation you've already established."
+            },
+            { 
+                number: 61, 
+                name: "中孚 Inner Truth", 
+                english: "Sincerity",
+                lines: [1,1,0,0,1,1], 
+                keywords: "Sincerity • Understanding • Influence",
+                traditional: "Wind over the lake creates resonance. Inner truth has the power to influence and transform through gentle but persistent action.",
+                aiGuidance: "The key to your situation lies in sincere communication from the heart. Truth spoken with compassion has great power.",
+                practical: "Speak your truth with kindness. Listen deeply to others. Authentic connection will resolve what force cannot."
+            },
+            { 
+                number: 2, 
+                name: "坤 The Receptive", 
+                english: "Earth",
+                lines: [0,0,0,0,0,0], 
+                keywords: "Receptivity • Yielding • Support",
+                traditional: "Earth's receptive nature supports all life. Great results come through yielding, supporting, and allowing natural growth.",
+                aiGuidance: "This situation calls for receptive wisdom. Sometimes the greatest strength lies in yielding and supporting others.",
+                practical: "Listen more than you speak. Support others' growth. Create space for natural development to occur."
+            }
+        ];
+
+        const learningHexagrams = [
+            { number: 1, name: "Creative", lines: [1,1,1,1,1,1] },
+            { number: 2, name: "Receptive", lines: [0,0,0,0,0,0] },
+            { number: 3, name: "Initial Difficulty", lines: [1,0,0,0,1,0] },
+            { number: 4, name: "Youthful Folly", lines: [0,1,0,0,0,1] },
+            { number: 5, name: "Waiting", lines: [1,1,1,0,1,0] },
+            { number: 6, name: "Conflict", lines: [0,1,0,1,1,1] },
+            { number: 7, name: "Army", lines: [0,1,0,0,0,0] },
+            { number: 8, name: "Unity", lines: [0,0,0,0,1,0] },
+            { number: 9, name: "Small Taming", lines: [1,1,1,0,1,1] },
+            { number: 10, name: "Treading", lines: [1,1,0,1,1,1] },
+            { number: 11, name: "Peace", lines: [1,1,1,0,0,0] },
+            { number: 12, name: "Standstill", lines: [0,0,0,1,1,1] },
+            { number: 25, name: "Innocence", lines: [1,0,0,1,1,1] },
+            { number: 53, name: "Gradual Progress", lines: [0,0,1,1,0,1] },
+            { number: 61, name: "Inner Truth", lines: [1,1,0,0,1,1] },
+            { number: 64, name: "Before Completion", lines: [1,0,1,0,1,0] }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateHexagramStones();
+            // Gentle welcome after contemplation time
+            setTimeout(() => {
+                showNotification("🌸 Welcome to the Way", "Your afternoon energy flows like a gentle stream. Perfect for contemplation.");
+            }, 12000);
+        });
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+            
+            // Update nav with natural flow
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const navItems = document.querySelectorAll('.nav-item');
+            const sectionIndex = ['home', 'compass', 'consult', 'patterns', 'learn', 'pricing'].indexOf(sectionName);
+            if (sectionIndex !== -1 && navItems[sectionIndex]) {
+                navItems[sectionIndex].classList.add('active');
+            }
+            
+            currentSection = sectionName;
+        }
+
+        function flipCoin(index) {
+            const coin = document.querySelectorAll('.coin')[index];
+            coin.classList.add('casting');
+            
+            setTimeout(() => {
+                coinStates[index] = Math.random() > 0.5 ? 'yang' : 'yin';
+                coin.textContent = coinStates[index] === 'yang' ? '陽' : '陰';
+                coin.classList.remove('casting');
+            }, 1500);
+        }
+
+        function castHexagram() {
+            const question = document.getElementById('questionInput').value;
+            if (!question.trim()) {
+                showNotification("🤔 Question Needed", "Please share your question with the oracle first. The I Ching responds to sincere inquiry.");
+                return;
+            }
+
+            // Generate hexagram based on question essence
+            const randomHex = hexagramWisdom[Math.floor(Math.random() * hexagramWisdom.length)];
+            
+            // Reveal the oracle response
+            document.getElementById('oracleResponse').style.display = 'block';
+            document.getElementById('oracleResponse').scrollIntoView({ behavior: 'smooth' });
+            
+            // Populate with wisdom
+            document.getElementById('hexagramName').textContent = `${randomHex.name} • ${randomHex.english}`;
+            document.getElementById('hexagramMeaning').textContent = randomHex.keywords;
+            
+            // Draw hexagram lines
+            const linesContainer = document.getElementById('hexagramLines');
+            linesContainer.innerHTML = '';
+            randomHex.lines.forEach(line => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = line ? 'line' : 'line broken';
+                linesContainer.appendChild(lineDiv);
+            });
+
+            // Gradual wisdom revelation
+            setTimeout(() => {
+                document.getElementById('aiInterpretation').textContent = randomHex.aiGuidance;
+            }, 1000);
+
+            setTimeout(() => {
+                document.getElementById('traditionalWisdom').textContent = randomHex.traditional;
+            }, 2000);
+
+            setTimeout(() => {
+                document.getElementById('practicalGuidance').textContent = randomHex.practical;
+            }, 3000);
+        }
+
+        function newConsultation() {
+            document.getElementById('questionInput').value = '';
+            document.getElementById('oracleResponse').style.display = 'none';
+            coinStates = ['yang', 'yin', 'yang'];
+            document.querySelectorAll('.coin').forEach((coin, index) => {
+                coin.textContent = index % 2 === 0 ? '陽' : '陰';
+            });
+            document.getElementById('questionInput').focus();
+        }
+
+        function saveReading() {
+            showNotification("📖 Wisdom Preserved", "Your reading has been saved to your personal journal of insights.");
+        }
+
+        function generateHexagramStones() {
+            const container = document.getElementById('hexagramStones');
+            learningHexagrams.forEach(hex => {
+                const stone = document.createElement('div');
+                stone.className = 'stone';
+                stone.onclick = () => exploreHexagram(hex);
+                
+                const miniLines = hex.lines.map(line => 
+                    `<div class="mini-line ${line ? '' : 'broken'}"></div>`
+                ).join('');
+                
+                stone.innerHTML = `
+                    <div class="mini-lines">${miniLines}</div>
+                    <div style="font-weight: 500; color: var(--mountain-stone); margin-top: 0.5rem;">${hex.name}</div>
+                    <div style="font-size: 0.8rem; color: var(--gentle-silver);">#${hex.number}</div>
+                `;
+                container.appendChild(stone);
+            });
+        }
+
+        function exploreHexagram(hex) {
+            showNotification("📚 Ancient Wisdom", `Exploring Hexagram ${hex.number}: ${hex.name} - The patterns of change reveal themselves...`);
+        }
+
+        function setMood(mood) {
+            const moodWisdom = {
+                peaceful: "😌 Inner peace noted. The Tao flows smoothly through your being today.",
+                energetic: "⚡ Vibrant energy detected! Channel this life force into creative endeavors.",
+                contemplative: "🤔 Reflective spirit. Perfect time for deep listening to inner wisdom.",
+                flowing: "🌊 You embody water's nature today - adaptable, persistent, naturally finding the way."
+            };
+            showNotification("🎭 Inner Weather", moodWisdom[mood]);
+        }
+
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationText').textContent = message || "The Way responds to your intention...";
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Natural rhythm updates
+        setInterval(() => {
+            if (currentSection === 'compass') {
+                const now = new Date();
+                if (now.getMinutes() === 0) { // Every hour on the hour
+                    const hourWisdom = [
+                        "🌅 Morning energy rises like mist from the mountain lake...",
+                        "☀️ Midday sun illuminates the path ahead with clarity...", 
+                        "🌇 Afternoon flows like a gentle river finding its course...",
+                        "🌙 Evening settles like snow on pine branches, bringing peace..."
+                    ];
+                    const wisdom = hourWisdom[Math.floor(now.getHours() / 6)];
+                    showNotification("⏰ Natural Rhythm", wisdom);
+                }
+            }
+        }, 60000);
+
+        // Taoist wisdom keeper
+        const taoistQuotes = [
+            "The wise find pleasure in water; the virtuous find pleasure in hills.",
+            "At the center of your being you have the answer; you know who you are and you know what you want.",
+            "New beginnings are often disguised as painful endings.",
+            "Those who flow as life flows know they need no other force.",
+            "Nothing in the world is softer than water, yet nothing is better at overcoming the hard and strong."
+        ];
+
+        // Gentle wisdom sharing
+        setInterval(() => {
+            if (Math.random() < 0.1) { // 10% chance every 2 minutes
+                const quote = taoistQuotes[Math.floor(Math.random() * taoistQuotes.length)];
+                showNotification("💧 Ancient Whisper", quote);
+            }
+        }, 120000);
+    </script>
+</body>
+</html>
