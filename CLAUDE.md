@@ -19,23 +19,61 @@ Sage is an AI-powered I Ching (Yijing) life guidance application that transforms
 
 ### Current State
 
-This is an early-stage project with a complete HTML/CSS prototype (`index.html`) and comprehensive documentation. The actual Next.js application is not yet implemented.
+**Phase: Test-Driven Development Foundation Complete ✅**
+
+The project has evolved from documentation and prototypes to a fully scaffolded Next.js application with comprehensive test coverage:
+
+- **✅ Complete Next.js 14 Setup**: App Router, TypeScript, Tailwind CSS with custom Taoist design system
+- **✅ API Integrations Ready**: Supabase (database/auth) and OpenAI clients configured and tested
+- **✅ Development Tooling**: ESLint, Prettier, Husky pre-commit hooks, Jest + Playwright testing
+- **✅ TDD Foundation**: Comprehensive test suites for I Ching logic, AI integration, and database operations
+- **🔄 Implementation Phase**: Ready to implement core features following test-driven development
+
+**Next Steps**: Implement the core I Ching library, OpenAI consultation service, and Supabase database functions to make the failing tests pass.
 
 ## File Structure
 
 ```
 tao-sage/
-├── index.html              # Complete HTML/CSS prototype with Taoist design
-├── sage_demo_1.html        # Alternative demo version
+├── src/                    # Next.js application source
+│   ├── app/                # App Router pages and layouts
+│   │   ├── layout.tsx      # Root layout with Taoist typography
+│   │   ├── page.tsx        # Homepage component
+│   │   └── globals.css     # Global styles with custom CSS variables
+│   ├── components/         # Reusable React components (to be implemented)
+│   ├── lib/                # Core business logic and integrations
+│   │   ├── iching/         # I Ching calculation engine (to be implemented)
+│   │   ├── openai/         # AI consultation service (to be implemented)
+│   │   └── supabase/       # Database client and operations (to be implemented)
+│   ├── hooks/              # Custom React hooks (to be implemented)
+│   ├── types/              # TypeScript type definitions (to be implemented)
+│   └── styles/             # Additional styling utilities
+├── __tests__/              # Test suites (TDD foundation complete)
+│   ├── unit/lib/           # Unit tests for core business logic
+│   │   ├── iching/         # I Ching calculation tests
+│   │   ├── openai/         # AI integration tests
+│   │   └── supabase/       # Database operation tests
+│   └── utils/              # Test utilities and helpers
+├── e2e/                    # End-to-end tests (Playwright)
+│   └── homepage.spec.ts    # Homepage functionality and accessibility tests
 ├── docs/                   # Comprehensive project documentation
 │   ├── prd.md              # Product Requirements Document (1400+ lines)
 │   ├── modules.md          # Simplified module breakdown for solo dev
-│   ├── api_contracts.md    # API specifications
-│   ├── coding_standards.md # Development guidelines
-│   ├── ui.md               # UI/UX specifications
-│   ├── market.md           # Market analysis
-│   ├── roadmap.md          # Development roadmap
-│   └── testing.md          # Testing strategy
+│   ├── setup.md            # Development environment setup guide
+│   └── [other docs...]     # API specs, coding standards, UI/UX specs
+├── scripts/                # Development and deployment utilities
+│   ├── check-connections.ts # API connectivity validation
+│   └── validate-env.ts     # Environment variable validation
+├── public/                 # Static assets
+├── index.html              # Original HTML/CSS prototype (reference)
+├── sage_demo_1.html        # Alternative demo version (reference)
+├── package.json            # Dependencies and scripts
+├── playwright.config.ts    # E2E testing configuration
+├── jest.config.js          # Unit testing configuration
+├── tailwind.config.js      # Tailwind CSS with custom Taoist theme
+├── tsconfig.json           # TypeScript configuration (strict mode)
+├── .eslintrc.js            # Code linting rules
+├── .prettierrc.json        # Code formatting rules
 └── CLAUDE.md              # This file
 ```
 
@@ -67,19 +105,26 @@ pnpm test:coverage   # Run tests with coverage report
 pre-commit           # Runs lint-staged (ESLint + Prettier)
 commit-msg           # Validates commit messages with commitlint
 
+# Connection Validation
+pnpm check-connections # Test Supabase and OpenAI API connectivity
+
 # Utilities
 pnpm clean           # Clean build artifacts and caches
 pnpm analyze         # Analyze bundle size
-pnpm health-check    # Run project health checks
+pnpm setup           # Run project setup script
 ```
 
 ### Environment Setup
 
-1. Copy `.env.example` to `.env.local`
-2. Add your API keys:
-   - Supabase URL and keys
-   - OpenAI API key
-   - Optional: Cultural Expert API key
+1. **Install Dependencies**: `pnpm install`
+2. **Environment Variables**: Copy `.env.example` to `.env.local` and add:
+   - Supabase URL and keys (database/auth)
+   - OpenAI API key (AI interpretations)
+   - Next.js app URL (for absolute URLs)
+3. **Verify Setup**: Run `pnpm check-connections` to test API connectivity
+4. **Start Development**: `pnpm dev` to launch on http://localhost:3000
+
+**API Status**: ✅ All connections verified and working
 
 ## Core Concepts
 
@@ -171,25 +216,71 @@ user_events         # Analytics and usage tracking
 
 ## Testing Strategy
 
-### Unit Testing
+**Current Status: TDD Foundation Complete ✅**
 
-- Core I Ching calculation algorithms
-- AI prompt engineering and response parsing
-- Database query functions
-- Authentication flows
+The project follows a comprehensive test-driven development approach with complete test coverage for all core functionality.
 
-### Integration Testing
+### Unit Testing (Jest)
 
-- OpenAI API integration and error handling
-- Supabase database operations
-- Payment processing flows
-- Calendar API integrations
+**✅ Implemented Tests**:
+
+- **I Ching Core Logic** (`__tests__/unit/lib/iching/hexagram.test.ts`)
+  - Hexagram generation and validation (6 lines, 64 hexagrams)
+  - Traditional changing lines calculation
+  - Randomness and authenticity validation
+- **OpenAI Integration** (`__tests__/unit/lib/openai/consultation.test.ts`)
+  - AI interpretation generation with cultural sensitivity
+  - Prompt formatting and error handling
+  - Input validation and API failure scenarios
+- **Supabase Database** (`__tests__/unit/lib/supabase/consultations.test.ts`)
+  - Consultation saving and retrieval
+  - User history management
+  - Database error handling and edge cases
+
+### End-to-End Testing (Playwright)
+
+**✅ Implemented Tests** (`e2e/homepage.spec.ts`):
+
+- Cross-browser compatibility (Chrome, Firefox, Safari, Mobile)
+- Responsive design and mobile optimization
+- Accessibility compliance (WCAG 2.1)
+- Performance monitoring and error detection
+- Taoist design system validation
+
+### Test Utilities
+
+**✅ Comprehensive Framework** (`__tests__/utils/test-helpers.ts`):
+
+- Mock data generators for hexagrams and consultations
+- Cultural sensitivity validation helpers
+- API response mocking utilities
+- Data validation and structure verification
 
 ### Cultural Testing
 
-- I Ching scholar review of interpretations
-- Cultural authenticity validation
-- Traditional accuracy verification
+**✅ Built-in Framework**:
+
+- Cultural sensitivity validation in test utilities
+- Respectful language detection and enforcement
+- Traditional accuracy verification through test cases
+- **Planned**: I Ching scholar review process
+
+### Running Tests
+
+```bash
+# Unit tests (Jest) - Currently failing (TDD red phase) ⚠️
+pnpm test            # Shows exactly what needs to be implemented
+
+# E2E tests (Playwright) - Requires browser installation
+pnpm exec playwright install  # One-time setup
+pnpm test:e2e        # Full cross-browser testing
+
+# Coverage and quality
+pnpm test:coverage   # Test coverage reports
+pnpm test:ci         # CI-ready test execution
+```
+
+**TDD Status**: Tests are written and failing ⚠️ - ready for implementation phase to make them pass ✅
 
 ## Deployment
 
@@ -232,13 +323,52 @@ VERCEL_ANALYTICS_ID=
 }
 ```
 
+## Implementation Roadmap
+
+**Current Phase: Test-Driven Implementation 🔄**
+
+Based on the comprehensive test suite, implement features in this order:
+
+### Phase 1: Core I Ching Engine (Week 1)
+
+1. **`src/lib/iching/hexagram.ts`** - Implement to pass hexagram tests
+   - Traditional 64 hexagram system
+   - Changing lines calculation
+   - Hexagram name lookup
+2. **`src/types/iching.ts`** - Type definitions for hexagram structures
+
+### Phase 2: AI Integration (Week 2)
+
+1. **`src/lib/openai/consultation.ts`** - Implement to pass OpenAI tests
+   - Culturally sensitive prompt generation
+   - AI interpretation parsing
+   - Error handling and validation
+2. **Cultural sensitivity validation** - Ensure respectful AI responses
+
+### Phase 3: Database Operations (Week 3)
+
+1. **`src/lib/supabase/consultations.ts`** - Implement to pass database tests
+   - Consultation persistence
+   - User history management
+   - Query optimization
+2. **Database schema creation** - Set up Supabase tables
+
+### Phase 4: UI Components (Week 4)
+
+1. **Consultation interface** - User question and hexagram display
+2. **Results presentation** - AI interpretation with cultural context
+3. **User history** - Past consultations and patterns
+
 ## Important Notes
 
 - **Cultural Respect**: Always prioritize authentic representation over commercial interests
+- **Test-Driven Quality**: All implementations must pass existing tests before adding new features
 - **Privacy First**: Spiritual guidance is deeply personal - implement strong privacy controls
-- **Gradual Rollout**: Start with core consultation features before adding AI complexity
+- **Gradual Enhancement**: Start with core consultation features before adding AI complexity
 - **Community Input**: Engage I Ching practitioners and Chinese cultural experts throughout development
 - **Quality Over Speed**: Take time to get cultural representation right
+
+**Development Philosophy**: Let the tests guide implementation - they encode both functional requirements and cultural sensitivity standards.
 
 ## Resources
 
