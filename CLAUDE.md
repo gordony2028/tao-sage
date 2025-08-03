@@ -60,7 +60,9 @@ tao-sage/
 │   ├── prd.md              # Product Requirements Document (1400+ lines)
 │   ├── modules.md          # Simplified module breakdown for solo dev
 │   ├── setup.md            # Development environment setup guide
-│   └── [other docs...]     # API specs, coding standards, UI/UX specs
+│   ├── enhanced_ui.md      # Complete UI Design System (merged from ui.md)
+│   ├── api_contracts.md    # Complete API specification (merged from enhanced-backend-api.md)
+│   └── [other docs...]     # Architecture, testing, coding standards
 ├── scripts/                # Development and deployment utilities
 │   ├── check-connections.ts # API connectivity validation
 │   └── validate-env.ts     # Environment variable validation
@@ -97,8 +99,10 @@ pnpm format:check    # Check code formatting
 # Testing
 pnpm test            # Run Jest tests
 pnpm test:watch      # Run tests in watch mode
+pnpm test:unit       # Run Jest unit tests only
 pnpm test:ci         # Run tests in CI mode with coverage
 pnpm test:e2e        # Run Playwright E2E tests
+pnpm test:e2e:ui     # Run Playwright tests with UI
 pnpm test:coverage   # Run tests with coverage report
 
 # Git Hooks (automatic)
@@ -112,6 +116,12 @@ pnpm check-connections # Test Supabase and OpenAI API connectivity
 pnpm clean           # Clean build artifacts and caches
 pnpm analyze         # Analyze bundle size
 pnpm setup           # Run project setup script
+pnpm health-check    # Run comprehensive system health check
+pnpm db:generate-types # Generate TypeScript types from Supabase schema
+
+# Cultural & AI Validation
+pnpm cultural:validate # Validate cultural content for authenticity
+pnpm ai:validate     # Validate AI responses for cultural sensitivity
 ```
 
 ### Environment Setup
