@@ -1,4 +1,4 @@
-import { supabase } from './client';
+import { supabaseAdmin } from './client';
 
 export interface ConsultationData {
   user_id: string;
@@ -51,7 +51,7 @@ export interface Consultation {
 export async function saveConsultation(
   data: ConsultationData
 ): Promise<Consultation> {
-  const { data: result, error } = await supabase
+  const { data: result, error } = await supabaseAdmin
     .from('consultations')
     .insert(data)
     .select()
@@ -71,7 +71,7 @@ export async function getUserConsultations(
   userId: string,
   limit: number = 20
 ): Promise<Consultation[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('consultations')
     .select('*')
     .eq('user_id', userId)
@@ -91,7 +91,7 @@ export async function getUserConsultations(
 export async function getConsultationById(
   id: string
 ): Promise<Consultation | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('consultations')
     .select('*')
     .eq('id', id)
@@ -115,7 +115,7 @@ export async function updateConsultation(
   id: string,
   updates: Partial<Pick<Consultation, 'notes' | 'tags' | 'status'>>
 ): Promise<Consultation> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('consultations')
     .update(updates)
     .eq('id', id)
@@ -133,7 +133,7 @@ export async function updateConsultation(
  * Delete a consultation (soft delete by marking as archived)
  */
 export async function deleteConsultation(id: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from('consultations')
     .update({ status: 'archived' })
     .eq('id', id);
@@ -147,7 +147,7 @@ export async function deleteConsultation(id: string): Promise<void> {
  * Get consultation statistics for a user
  */
 export async function getUserConsultationStats(userId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('consultation_stats')
     .select('*')
     .eq('user_id', userId)
@@ -175,7 +175,7 @@ export async function searchConsultations(
   searchTerm: string,
   limit: number = 10
 ): Promise<Consultation[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('consultations')
     .select('*')
     .eq('user_id', userId)

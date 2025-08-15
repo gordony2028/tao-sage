@@ -127,11 +127,11 @@ export default function CoinCasting({
           .map(({ index }) => index + 1),
       };
 
-      // Show result after a brief delay
+      // Show result after extended delay for deep contemplative spiritual experience
       setTimeout(() => {
         setCastingState('complete');
         onComplete(hexagram);
-      }, 2000);
+      }, 12000);
     } else {
       setCurrentLine(currentLine + 1);
     }
@@ -141,6 +141,8 @@ export default function CoinCasting({
     setCastingState('casting');
     setCurrentLine(0);
     setLines([]);
+    // Automatically start the first coin cast
+    setTimeout(() => castCoins(), 100);
   };
 
   const CoinAnimation = ({ isActive }: { isActive: boolean }) => (
@@ -269,7 +271,7 @@ export default function CoinCasting({
               </div>
             )}
 
-            {!isAnimating && currentLine < 5 && (
+            {!isAnimating && currentLine < 6 && (
               <Button onClick={castCoins} size="lg">
                 Cast Next Line
               </Button>

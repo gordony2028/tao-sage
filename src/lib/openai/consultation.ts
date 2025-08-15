@@ -119,14 +119,16 @@ Please provide your interpretation in JSON format with the following structure:
 }
 
 **Important Guidelines:**
+- CRITICAL: Base your interpretation ONLY on Hexagram ${hexagram.number} - ${hexagram.name}. Do not reference other hexagrams unless specifically relevant to transformation.
 - Maintain deep respect for Chinese culture and traditional wisdom
-- Provide culturally authentic interpretations based on traditional I Ching meanings
+- Provide culturally authentic interpretations based on traditional I Ching meanings for this specific hexagram
 - Avoid cultural appropriation by acknowledging the source of this wisdom
 - Connect the ancient wisdom to modern life in a respectful way
-- If changing lines are present, emphasize themes of transformation and change
+- If changing lines are present, emphasize themes of transformation and change within the context of Hexagram ${hexagram.number}
 - Keep interpretations positive and constructive while being honest about challenges
 - Focus on personal growth, decision-making, and life guidance
 - Use language that honors the spiritual and philosophical depth of the I Ching
+- Always begin your interpretation by confirming you are interpreting Hexagram ${hexagram.number} - ${hexagram.name}
 
 Please respond only with the JSON object, no additional text.`;
 
@@ -152,7 +154,7 @@ export async function generateConsultationInterpretation(
 
     // Call OpenAI API for interpretation
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4-1106-preview',
       messages: [
         {
           role: 'user',

@@ -59,7 +59,7 @@ export default function ConsultationResult({
               <div>
                 <h3 className="mb-3 flex items-center text-lg font-medium text-mountain-stone">
                   <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-flowing-water text-sm font-bold text-white">
-                    1
+                    釋
                   </span>
                   Interpretation
                 </h3>
@@ -73,7 +73,7 @@ export default function ConsultationResult({
                 <div>
                   <h3 className="mb-3 flex items-center text-lg font-medium text-mountain-stone">
                     <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-bamboo-green text-sm font-bold text-white">
-                      2
+                      導
                     </span>
                     Guidance
                   </h3>
@@ -88,7 +88,7 @@ export default function ConsultationResult({
                 <div>
                   <h3 className="mb-3 flex items-center text-lg font-medium text-mountain-stone">
                     <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-sunset-gold text-sm font-bold text-white">
-                      3
+                      行
                     </span>
                     Practical Advice
                   </h3>

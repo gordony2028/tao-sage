@@ -39,7 +39,13 @@ export default function ConsultationPage() {
         },
         body: JSON.stringify({
           question,
-          userId: 'demo-user', // TODO: Replace with actual user ID from auth
+          userId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479', // Demo UUID - TODO: Replace with actual user ID from auth
+          hexagram: {
+            number: generatedHexagram.number,
+            name: generatedHexagram.name,
+            lines: generatedHexagram.lines,
+            changingLines: generatedHexagram.changingLines,
+          },
           metadata: {
             method: 'digital_coins',
             userAgent: navigator.userAgent,
@@ -56,7 +62,17 @@ export default function ConsultationPage() {
       setCurrentStep('result');
     } catch (error) {
       console.error('Consultation error:', error);
-      // For now, show the hexagram without AI interpretation
+      // Show the hexagram without AI interpretation but with a message
+      setInterpretation({
+        interpretation:
+          'Unable to generate AI interpretation at this time. Please reflect on your hexagram using traditional I Ching wisdom.',
+        guidance:
+          'Focus on the meaning of your hexagram and any changing lines. The I Ching speaks through symbols and patterns - trust your intuition to find meaning in this reading.',
+        practicalAdvice:
+          'Consider journaling about your question and the hexagram you received. Traditional I Ching wisdom can still guide you even without AI assistance.',
+        culturalContext:
+          'The I Ching has provided guidance for over 3,000 years without AI. The patterns and symbols contain wisdom that transcends technology.',
+      });
       setCurrentStep('result');
     } finally {
       setIsLoading(false);

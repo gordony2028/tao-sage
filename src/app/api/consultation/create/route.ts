@@ -4,7 +4,7 @@ import { createConsultation } from '@/lib/consultation/service';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { question, userId, metadata } = body;
+    const { question, userId, hexagram: receivedHexagram, metadata } = body;
 
     // Validate required fields
     if (!question || typeof question !== 'string') {
@@ -38,18 +38,35 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    const result = await createConsultation(consultationInput);
+    // For demo purposes, skip database and just return AI interpretation
+    const { generateConsultationInterpretation } = await import(
+      '@/lib/openai/consultation'
+    );
+
+    // Use the hexagram data sent from the UI (user's actual coin casting)
+    const hexagram = receivedHexagram || {
+      // Fallback if no hexagram provided (shouldn't happen)
+      number: 1,
+      name: 'Creative',
+      lines: [7, 7, 7, 7, 7, 7],
+      changingLines: [],
+    };
+
+    const interpretation = await generateConsultationInterpretation({
+      question: question.trim(),
+      hexagram,
+    });
 
     return NextResponse.json({
       success: true,
       consultation: {
-        id: result.consultation.id,
-        question: result.consultation.question,
-        hexagram: result.hexagram,
-        createdAt: result.consultation.createdAt,
+        id: 'demo-' + Date.now(),
+        question: question.trim(),
+        hexagram,
+        createdAt: new Date().toISOString(),
       },
-      hexagram: result.hexagram,
-      interpretation: result.interpretation,
+      hexagram,
+      interpretation,
     });
   } catch (error) {
     console.error('Consultation creation error:', error);
