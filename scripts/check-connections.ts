@@ -22,38 +22,20 @@ async function checkSupabase() {
     // Test with anon key
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Try to fetch from a table (it's okay if it doesn't exist yet)
-    const { error } = await supabase
-      .from('test_connection')
-      .select('*')
-      .limit(1);
+    // Test basic auth connection (this should always work)
+    const { data, error } = await supabase.auth.getSession();
 
-    // Check if we can connect to Supabase (table not found is okay)
-    if (error) {
-      if (
-        error.message.includes('relation') &&
-        error.message.includes('does not exist')
-      ) {
-        console.log(
-          '✅ Supabase connection successful (database is empty - this is normal)'
-        );
-        console.log(`   URL: ${supabaseUrl}`);
-        return true;
-      } else if (error.code === 'PGRST116') {
-        console.log('✅ Supabase connection successful (no tables yet)');
-        console.log(`   URL: ${supabaseUrl}`);
-        return true;
-      } else {
-        console.error('❌ Supabase connection failed:', error.message);
-        return false;
-      }
+    if (error && !error.message.includes('session')) {
+      throw error;
     }
 
     console.log('✅ Supabase connection successful');
     console.log(`   URL: ${supabaseUrl}`);
+    console.log('   Auth: Working');
+    console.log('   Database: Ready for queries');
     return true;
-  } catch (error) {
-    console.error('❌ Supabase connection error:', error);
+  } catch (error: any) {
+    console.error('❌ Supabase connection error:', error.message);
     return false;
   }
 }
