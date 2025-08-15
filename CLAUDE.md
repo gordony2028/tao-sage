@@ -81,7 +81,7 @@ tao-sage/
 
 ## Development Commands
 
-The project is now set up with Next.js, TypeScript, and all development tools.
+The project uses pnpm as the package manager. All development tools are configured and ready.
 
 ### Core Commands
 
@@ -127,14 +127,26 @@ pnpm ai:validate     # Validate AI responses for cultural sensitivity
 ### Environment Setup
 
 1. **Install Dependencies**: `pnpm install`
-2. **Environment Variables**: Copy `.env.example` to `.env.local` and add:
-   - Supabase URL and keys (database/auth)
-   - OpenAI API key (AI interpretations)
-   - Next.js app URL (for absolute URLs)
+2. **Environment Variables**: Create `.env.local` with these required variables:
+
+   ```bash
+   # Supabase (database/auth)
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+   # OpenAI (AI interpretations)
+   OPENAI_API_KEY=your_openai_api_key
+
+   # App configuration
+   NODE_ENV=development
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+
 3. **Verify Setup**: Run `pnpm check-connections` to test API connectivity
 4. **Start Development**: `pnpm dev` to launch on http://localhost:3000
 
-**API Status**: ✅ All connections verified and working
+**API Status**: ✅ All connections verified and working (when environment variables are set)
 
 ## Core Concepts
 
@@ -292,6 +304,22 @@ pnpm test:ci         # CI-ready test execution
 
 **TDD Status**: Tests are written and failing ⚠️ - ready for implementation phase to make them pass ✅
 
+### Running Individual Tests
+
+```bash
+# Run specific test file
+pnpm test __tests__/unit/lib/iching/hexagram.test.ts
+
+# Run tests matching pattern
+pnpm test --testNamePattern="generateHexagram"
+
+# Run tests for specific directory
+pnpm test __tests__/unit/lib/
+
+# Debug failing tests
+pnpm test --verbose --no-coverage
+```
+
 ## Deployment
 
 ### Environment Variables
@@ -333,41 +361,44 @@ VERCEL_ANALYTICS_ID=
 }
 ```
 
-## Implementation Roadmap
+## Implementation Status
 
 **Current Phase: Test-Driven Implementation 🔄**
 
-Based on the comprehensive test suite, implement features in this order:
+The project has comprehensive tests written but core implementations are missing. Run `pnpm test` to see exactly what needs to be implemented.
 
-### Phase 1: Core I Ching Engine (Week 1)
+### Missing Core Files (Required to Pass Tests)
 
-1. **`src/lib/iching/hexagram.ts`** - Implement to pass hexagram tests
-   - Traditional 64 hexagram system
-   - Changing lines calculation
-   - Hexagram name lookup
-2. **`src/types/iching.ts`** - Type definitions for hexagram structures
+1. **`src/lib/iching/hexagram.ts`** - Core I Ching engine
 
-### Phase 2: AI Integration (Week 2)
+   - `generateHexagram()` - Generate random hexagram with 6 lines
+   - `getHexagramName(number)` - Get traditional hexagram names (1-64)
+   - `calculateChangingLines(lines)` - Identify changing lines (6 and 9)
 
-1. **`src/lib/openai/consultation.ts`** - Implement to pass OpenAI tests
-   - Culturally sensitive prompt generation
-   - AI interpretation parsing
-   - Error handling and validation
-2. **Cultural sensitivity validation** - Ensure respectful AI responses
+2. **`src/lib/openai/consultation.ts`** - AI integration
 
-### Phase 3: Database Operations (Week 3)
+   - `generateInterpretation()` - Create culturally sensitive AI responses
+   - Prompt formatting with hexagram context
+   - Error handling for API failures
 
-1. **`src/lib/supabase/consultations.ts`** - Implement to pass database tests
-   - Consultation persistence
-   - User history management
-   - Query optimization
-2. **Database schema creation** - Set up Supabase tables
+3. **`src/lib/supabase/consultations.ts`** - Database operations
 
-### Phase 4: UI Components (Week 4)
+   - `saveConsultation()` - Persist consultations with metadata
+   - `getUserConsultations()` - Retrieve user history
+   - Database schema integration
 
-1. **Consultation interface** - User question and hexagram display
-2. **Results presentation** - AI interpretation with cultural context
-3. **User history** - Past consultations and patterns
+4. **`src/types/iching.ts`** - TypeScript definitions
+   - Hexagram interface with lines, number, changingLines
+   - Consultation interface with question, hexagram, interpretation
+
+### Implementation Priority
+
+1. **Start with I Ching core** (`hexagram.ts` + `types/iching.ts`)
+2. **Add AI integration** (`consultation.ts`)
+3. **Implement database layer** (`consultations.ts`)
+4. **Build UI components** to connect everything
+
+**Tip**: Run individual test files while implementing to get immediate feedback
 
 ## Important Notes
 
