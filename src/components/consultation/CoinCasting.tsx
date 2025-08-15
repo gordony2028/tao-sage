@@ -145,21 +145,59 @@ export default function CoinCasting({
     setTimeout(() => castCoins(), 100);
   };
 
-  const CoinAnimation = ({ isActive }: { isActive: boolean }) => (
-    <div className="mb-8 flex justify-center space-x-4">
-      {[1, 2, 3].map(coinNum => (
-        <div
-          key={coinNum}
-          className={`flex h-16 w-16 items-center justify-center rounded-full border-4 border-sunset-gold bg-gradient-to-br from-sunset-gold to-earth-brown text-lg font-bold text-white transition-transform duration-1000 ${
-            isActive ? 'animate-bounce' : ''
-          }`}
-          style={{
-            animationDelay: `${coinNum * 100}ms`,
-            transform: isActive ? 'rotateY(720deg)' : 'rotateY(0deg)',
-          }}
-        >
-          {coinNum}
+  const FengShuiCoin = ({
+    coinNum,
+    isActive,
+    result,
+  }: {
+    coinNum: number;
+    isActive: boolean;
+    result?: CoinResult;
+  }) => (
+    <div
+      className={`relative h-20 w-20 transition-transform duration-1000 ${
+        isActive ? 'animate-bounce' : ''
+      }`}
+      style={{
+        animationDelay: `${coinNum * 100}ms`,
+        transform: isActive ? 'rotateY(720deg)' : 'rotateY(0deg)',
+      }}
+    >
+      {/* Outer coin circle */}
+      <div className="h-20 w-20 rounded-full border-2 border-earth-brown bg-gradient-to-br from-sunset-gold via-earth-brown to-sunset-gold shadow-lg">
+        {/* Inner square hole - traditional feng shui design */}
+        <div className="relative flex h-full w-full items-center justify-center">
+          <div className="flex h-6 w-6 items-center justify-center border border-earth-brown/50 bg-yin">
+            {/* Traditional Chinese characters or symbols */}
+            <div className="text-xs font-bold text-yang">
+              {result === 'heads' ? '陽' : result === 'tails' ? '陰' : '易'}
+            </div>
+          </div>
+
+          {/* Outer ring inscriptions - traditional Chinese coin markings */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            {/* Top character */}
+            <div className="absolute top-1 text-xs font-bold text-yin">康</div>
+            {/* Right character */}
+            <div className="absolute right-1 text-xs font-bold text-yin">
+              熙
+            </div>
+            {/* Bottom character */}
+            <div className="absolute bottom-1 text-xs font-bold text-yin">
+              通
+            </div>
+            {/* Left character */}
+            <div className="absolute left-1 text-xs font-bold text-yin">寶</div>
+          </div>
         </div>
+      </div>
+    </div>
+  );
+
+  const CoinAnimation = ({ isActive }: { isActive: boolean }) => (
+    <div className="mb-8 flex justify-center space-x-6">
+      {[1, 2, 3].map(coinNum => (
+        <FengShuiCoin key={coinNum} coinNum={coinNum} isActive={isActive} />
       ))}
     </div>
   );
@@ -180,25 +218,28 @@ export default function CoinCasting({
             <CoinAnimation isActive={false} />
 
             <div className="mb-6">
-              <p className="mb-4 text-mountain-stone">
-                In the traditional I Ching method, three coins are cast six
-                times to create a hexagram. Each cast determines one line of
-                your hexagram, from bottom to top.
+              <p className="mb-4 text-ink-black">
+                In the traditional I Ching method, three ancient Chinese feng
+                shui coins are cast six times to create a hexagram. Each cast
+                determines one line of your hexagram, from bottom to top.
               </p>
-              <div className="space-y-2 text-sm text-soft-gray">
+              <div className="space-y-2 text-sm text-gentle-silver">
                 <p>
-                  • <strong>3 Heads</strong> = Old Yang (⚊) - changing line
+                  • <strong>3 Yang (陽)</strong> = Old Yang (⚊) - changing line
                 </p>
                 <p>
-                  • <strong>2 Heads</strong> = Young Yang (⚊) - stable line
+                  • <strong>2 Yang (陽)</strong> = Young Yang (⚊) - stable line
                 </p>
                 <p>
-                  • <strong>1 Head</strong> = Young Yin (⚋) - stable line
+                  • <strong>1 Yang (陽)</strong> = Young Yin (⚋) - stable line
                 </p>
                 <p>
-                  • <strong>0 Heads</strong> = Old Yin (⚋) - changing line
+                  • <strong>0 Yang (陽)</strong> = Old Yin (⚋) - changing line
                 </p>
               </div>
+              <p className="mt-3 text-xs text-gentle-silver">
+                <em>康熙通寶</em> - Traditional Kangxi Emperor coins (1661-1722)
+              </p>
             </div>
 
             <Button onClick={startCasting} size="lg" className="min-w-48">
@@ -229,12 +270,15 @@ export default function CoinCasting({
 
             {/* Show result after animation */}
             {currentLineResult && !isAnimating && (
-              <div className="mb-6 rounded-lg bg-cloud-white p-4">
-                <div className="mb-3 flex justify-center space-x-2">
+              <div className="mb-6 rounded-lg bg-morning-mist/30 p-4">
+                <div className="mb-4 flex justify-center space-x-4">
                   {currentLineResult.coins.map((coin, index) => (
-                    <span key={index} className="text-2xl">
-                      {coin === 'heads' ? '🟡' : '⚫'}
-                    </span>
+                    <FengShuiCoin
+                      key={index}
+                      coinNum={index + 1}
+                      isActive={false}
+                      result={coin}
+                    />
                   ))}
                 </div>
                 <p className="font-medium text-mountain-stone">

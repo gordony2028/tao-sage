@@ -71,13 +71,13 @@ export default function ConsultationResult({
               {/* Guidance */}
               {interpretation.guidance && (
                 <div>
-                  <h3 className="mb-3 flex items-center text-lg font-medium text-mountain-stone">
+                  <h3 className="mb-3 flex items-center text-lg font-medium text-ink-black">
                     <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-bamboo-green text-sm font-bold text-white">
                       導
                     </span>
                     Guidance
                   </h3>
-                  <p className="pl-11 leading-relaxed text-soft-gray">
+                  <p className="pl-11 leading-relaxed text-gentle-silver">
                     {interpretation.guidance}
                   </p>
                 </div>
@@ -86,13 +86,13 @@ export default function ConsultationResult({
               {/* Practical Advice */}
               {interpretation.practicalAdvice && (
                 <div>
-                  <h3 className="mb-3 flex items-center text-lg font-medium text-mountain-stone">
+                  <h3 className="mb-3 flex items-center text-lg font-medium text-ink-black">
                     <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-sunset-gold text-sm font-bold text-white">
                       行
                     </span>
                     Practical Advice
                   </h3>
-                  <p className="pl-11 leading-relaxed text-soft-gray">
+                  <p className="pl-11 leading-relaxed text-gentle-silver">
                     {interpretation.practicalAdvice}
                   </p>
                 </div>
@@ -100,14 +100,14 @@ export default function ConsultationResult({
 
               {/* Cultural Context */}
               {interpretation.culturalContext && (
-                <div className="border-stone-gray/20 border-t pt-6">
-                  <h3 className="mb-3 flex items-center text-lg font-medium text-mountain-stone">
+                <div className="border-t border-stone-gray/20 pt-6">
+                  <h3 className="mb-3 flex items-center text-lg font-medium text-ink-black">
                     <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-earth-brown text-sm font-bold text-white">
                       文
                     </span>
                     Cultural Context
                   </h3>
-                  <p className="pl-11 leading-relaxed text-soft-gray">
+                  <p className="pl-11 leading-relaxed text-gentle-silver">
                     {interpretation.culturalContext}
                   </p>
                 </div>

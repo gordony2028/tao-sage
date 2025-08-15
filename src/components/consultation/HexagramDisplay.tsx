@@ -63,10 +63,10 @@ export default function HexagramDisplay({
     <div className="text-center">
       {/* Hexagram Title */}
       <div className="mb-4">
-        <h3 className="mb-2 text-2xl font-bold text-mountain-stone">
+        <h3 className="mb-2 text-2xl font-bold text-ink-black">
           Hexagram {hexagram.number}
         </h3>
-        <h4 className="text-xl text-soft-gray">{hexagram.name}</h4>
+        <h4 className="text-xl text-gentle-silver">{hexagram.name}</h4>
       </div>
 
       {/* Hexagram Symbol */}
@@ -98,7 +98,7 @@ export default function HexagramDisplay({
           <p className="text-sm font-medium text-sunset-gold">
             Changing Lines: {hexagram.changingLines.join(', ')}
           </p>
-          <p className="text-xs text-soft-gray">
+          <p className="text-xs text-gentle-silver">
             These lines indicate transformation and movement
           </p>
         </div>
@@ -107,17 +107,18 @@ export default function HexagramDisplay({
       {/* Detailed Line Information */}
       {showDetails && (
         <div className="mt-6 space-y-3">
-          <h5 className="font-medium text-mountain-stone">
+          <h5 className="font-medium text-ink-black">
             Line Details (bottom to top):
           </h5>
-          {hexagram.lines.map((lineValue, index) => {
+          {[...hexagram.lines].reverse().map((lineValue, displayIndex) => {
             const lineInfo = getLineDescription(lineValue);
-            const lineNumber = index + 1;
+            const actualIndex = hexagram.lines.length - 1 - displayIndex;
+            const lineNumber = actualIndex + 1;
             const isChanging = hexagram.changingLines.includes(lineNumber);
 
             return (
               <div
-                key={index}
+                key={displayIndex}
                 className={`flex items-center justify-between rounded-lg border p-3 ${
                   isChanging
                     ? 'border-sunset-gold/30 bg-sunset-gold/5'
@@ -125,13 +126,13 @@ export default function HexagramDisplay({
                 }`}
               >
                 <div className="flex items-center space-x-3">
-                  <span className="w-12 text-sm font-medium text-soft-gray">
+                  <span className="w-12 text-sm font-medium text-gentle-silver">
                     Line {lineNumber}
                   </span>
                   <span className={`text-2xl ${lineInfo.color}`}>
                     {lineInfo.symbol}
                   </span>
-                  <span className="text-sm text-mountain-stone">
+                  <span className="text-sm text-ink-black">
                     {lineInfo.name}
                   </span>
                 </div>
@@ -148,7 +149,7 @@ export default function HexagramDisplay({
 
       {/* Traditional Context */}
       <div className="mt-6 rounded-lg border border-bamboo-green/20 bg-bamboo-green/5 p-4">
-        <p className="text-xs text-soft-gray">
+        <p className="text-xs text-gentle-silver">
           <strong>Traditional Reading:</strong> Hexagrams are read from bottom
           (Line 1) to top (Line 6). Changing lines (Old Yin/Yang) indicate areas
           of transformation in your situation.

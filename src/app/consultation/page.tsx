@@ -88,14 +88,14 @@ export default function ConsultationPage() {
 
   return (
     <Layout>
-      <div className="px-4 py-8">
+      <div className="bg-yang px-4 py-8">
         <div className="container mx-auto max-w-4xl">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-mountain-stone">
+            <h1 className="mb-4 text-4xl font-bold text-ink-black">
               I Ching Consultation
             </h1>
-            <p className="mb-6 text-lg text-soft-gray">
+            <p className="mb-6 text-lg text-gentle-silver">
               Ask your question and receive guidance through the ancient wisdom
               of the I Ching
             </p>
@@ -211,8 +211,8 @@ export default function ConsultationPage() {
           <div className="mt-12 text-center">
             <Card variant="default" className="mx-auto max-w-2xl">
               <CardContent className="pt-6">
-                <p className="text-sm text-soft-gray">
-                  <span className="font-medium text-mountain-stone">
+                <p className="text-sm text-gentle-silver">
+                  <span className="font-medium text-ink-black">
                     Cultural Note:
                   </span>{' '}
                   The I Ching (易經) is a 3,000-year-old Chinese divination

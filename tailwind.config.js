@@ -29,6 +29,9 @@ module.exports = {
         'ink-black': '#2c2c2c',
         'soft-gray': '#6b6b6b',
         'gentle-silver': '#a8b2b8',
+        'stone-gray': '#8e8e8e',
+        yin: '#1a1a1a',
+        yang: '#f9f9f9',
 
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
