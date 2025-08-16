@@ -4,26 +4,58 @@ import {
   getConsultationById,
 } from '@/lib/supabase/consultations';
 
-// Mock Supabase client
-jest.mock('@/lib/supabase/client', () => ({
-  supabase: {
-    from: jest.fn(() => ({
-      insert: jest.fn(() => ({
-        select: jest.fn(() => ({
-          single: jest.fn(),
-        })),
-      })),
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          order: jest.fn(() => ({
-            limit: jest.fn(),
-          })),
-        })),
-        single: jest.fn(),
-      })),
-    })),
-  },
-}));
+// Mock the Supabase client module
+jest.mock('@/lib/supabase/client', () => {
+  const mockData: any[] = [];
+
+  return {
+    supabaseAdmin: {
+      from: jest.fn((table: string) => {
+        if (table === 'consultations') {
+          return {
+            insert: jest.fn((data: any) => ({
+              select: jest.fn(() => ({
+                single: jest.fn(() => {
+                  const newItem = {
+                    ...data,
+                    id: 'test-id-' + Date.now(),
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                  };
+                  mockData.push(newItem);
+                  return Promise.resolve({ data: newItem, error: null });
+                }),
+              })),
+            })),
+            select: jest.fn(() => ({
+              eq: jest.fn((field: string, value: any) => ({
+                order: jest.fn(() => ({
+                  limit: jest.fn(() => {
+                    const filtered = mockData.filter(
+                      item => item[field] === value
+                    );
+                    return Promise.resolve({ data: filtered, error: null });
+                  }),
+                })),
+                single: jest.fn(() => {
+                  const item = mockData.find(d => d[field] === value);
+                  return Promise.resolve({
+                    data: item || null,
+                    error: item ? null : { code: 'PGRST116' },
+                  });
+                }),
+              })),
+            })),
+            delete: jest.fn(() => ({
+              like: jest.fn(() => Promise.resolve({ error: null })),
+            })),
+          };
+        }
+        return {};
+      }),
+    },
+  };
+});
 
 describe('Supabase Consultations', () => {
   beforeEach(() => {
@@ -32,67 +64,59 @@ describe('Supabase Consultations', () => {
 
   describe('saveConsultation', () => {
     it('should save consultation successfully', async () => {
-      const mockSupabase = require('@/lib/supabase/client').supabase;
-      const mockSingle = jest.fn().mockResolvedValue({
-        data: { id: '123', created_at: '2024-01-01' },
-        error: null,
-      });
-
-      mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: mockSingle,
-          }),
-        }),
-      });
-
-      const consultationData = {
-        user_id: 'user-123',
-        question: 'What should I focus on?',
+      const testData = {
+        user_id: 'test-user-123',
+        question: 'Test question?',
         hexagram_number: 1,
         hexagram_name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [7, 7, 7, 7, 7, 7],
         changing_lines: [],
         interpretation: {
           interpretation: 'Test interpretation',
           guidance: 'Test guidance',
           practicalAdvice: 'Test advice',
-          culturalContext: 'Test context',
         },
+        consultation_method: 'digital_coins',
       };
 
-      const result = await saveConsultation(consultationData);
+      const result = await saveConsultation(testData);
 
-      expect(result).toHaveProperty('id', '123');
-      expect(mockSupabase.from).toHaveBeenCalledWith('consultations');
+      expect(result).toHaveProperty('id');
+      expect(result.user_id).toBe(testData.user_id);
+      expect(result.question).toBe(testData.question);
     });
 
     it('should handle database errors', async () => {
-      const mockSupabase = require('@/lib/supabase/client').supabase;
-      const mockSingle = jest.fn().mockResolvedValue({
-        data: null,
-        error: { message: 'Database error' },
+      const mockSupabaseAdmin = require('@/lib/supabase/client').supabaseAdmin;
+
+      // Mock an error response
+      mockSupabaseAdmin.from.mockReturnValueOnce({
+        insert: jest.fn(() => ({
+          select: jest.fn(() => ({
+            single: jest.fn(() =>
+              Promise.resolve({
+                data: null,
+                error: { message: 'Database error' },
+              })
+            ),
+          })),
+        })),
       });
 
-      mockSupabase.from.mockReturnValue({
-        insert: jest.fn().mockReturnValue({
-          select: jest.fn().mockReturnValue({
-            single: mockSingle,
-          }),
-        }),
-      });
-
-      const consultationData = {
-        user_id: 'user-123',
+      const testData = {
+        user_id: 'test-user',
         question: 'Test question',
         hexagram_number: 1,
         hexagram_name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [7, 7, 7, 7, 7, 7],
         changing_lines: [],
-        interpretation: { interpretation: 'Test' },
+        interpretation: {
+          interpretation: 'Test',
+        },
+        consultation_method: 'digital_coins',
       };
 
-      await expect(saveConsultation(consultationData)).rejects.toThrow(
+      await expect(saveConsultation(testData)).rejects.toThrow(
         'Database error'
       );
     });
@@ -100,100 +124,67 @@ describe('Supabase Consultations', () => {
 
   describe('getUserConsultations', () => {
     it('should retrieve user consultations', async () => {
-      const mockSupabase = require('@/lib/supabase/client').supabase;
-      const mockLimit = jest.fn().mockResolvedValue({
-        data: [
-          { id: '1', question: 'Test 1', created_at: '2024-01-01' },
-          { id: '2', question: 'Test 2', created_at: '2024-01-02' },
-        ],
-        error: null,
+      const userId = 'test-user-456';
+
+      // First save a consultation (this will add to mock data)
+      await saveConsultation({
+        user_id: userId,
+        question: 'Test question',
+        hexagram_number: 1,
+        hexagram_name: 'The Creative',
+        lines: [7, 7, 7, 7, 7, 7],
+        changing_lines: [],
+        interpretation: {
+          interpretation: 'Test',
+        },
+        consultation_method: 'digital_coins',
       });
 
-      mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            order: jest.fn().mockReturnValue({
-              limit: mockLimit,
-            }),
-          }),
-        }),
-      });
+      const consultations = await getUserConsultations(userId);
 
-      const consultations = await getUserConsultations('user-123', 10);
-
-      expect(consultations).toHaveLength(2);
-      expect(consultations[0]).toHaveProperty('question', 'Test 1');
-      expect(mockSupabase.from).toHaveBeenCalledWith('consultations');
+      expect(consultations).toBeInstanceOf(Array);
+      expect(consultations.length).toBeGreaterThan(0);
+      if (consultations.length > 0) {
+        expect(consultations[0]!.user_id).toBe(userId);
+      }
     });
 
     it('should handle empty results', async () => {
-      const mockSupabase = require('@/lib/supabase/client').supabase;
-      const mockLimit = jest.fn().mockResolvedValue({
-        data: [],
-        error: null,
-      });
+      const result = await getUserConsultations('non-existent-user');
 
-      mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            order: jest.fn().mockReturnValue({
-              limit: mockLimit,
-            }),
-          }),
-        }),
-      });
-
-      const consultations = await getUserConsultations('user-123');
-
-      expect(consultations).toEqual([]);
+      expect(result).toBeInstanceOf(Array);
+      expect(result).toHaveLength(0);
     });
   });
 
   describe('getConsultationById', () => {
     it('should retrieve consultation by ID', async () => {
-      const mockSupabase = require('@/lib/supabase/client').supabase;
-      const mockSingle = jest.fn().mockResolvedValue({
-        data: {
-          id: '123',
-          question: 'Test question',
-          hexagram_number: 1,
-          interpretation: { interpretation: 'Test' },
+      // First save a consultation
+      const saved = await saveConsultation({
+        user_id: 'test-user-789',
+        question: 'Test question',
+        hexagram_number: 1,
+        hexagram_name: 'The Creative',
+        lines: [7, 7, 7, 7, 7, 7],
+        changing_lines: [],
+        interpretation: {
+          interpretation: 'Test',
         },
-        error: null,
+        consultation_method: 'digital_coins',
       });
 
-      mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: mockSingle,
-          }),
-        }),
-      });
+      const result = await getConsultationById(saved.id);
 
-      const consultation = await getConsultationById('123');
-
-      expect(consultation).toHaveProperty('id', '123');
-      expect(consultation).toHaveProperty('question', 'Test question');
+      expect(result).not.toBeNull();
+      if (result) {
+        expect(result.id).toBe(saved.id);
+      }
     });
 
     it('should handle not found', async () => {
-      const mockSupabase = require('@/lib/supabase/client').supabase;
-      const mockSingle = jest.fn().mockResolvedValue({
-        data: null,
-        error: { code: 'PGRST116' }, // Not found
-      });
+      const result = await getConsultationById('non-existent-id');
 
-      mockSupabase.from.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            single: mockSingle,
-          }),
-        }),
-      });
-
-      const consultation = await getConsultationById('nonexistent');
-
-      expect(consultation).toBeNull();
+      expect(result).toBeNull();
     });
   });
 });

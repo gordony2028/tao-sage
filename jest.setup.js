@@ -1,10 +1,13 @@
 import '@testing-library/jest-dom';
 
-// Mock environment variables
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
-process.env.OPENAI_API_KEY = 'test-openai-key';
+// Use real environment variables from .env.local for testing
+process.env.NEXT_PUBLIC_SUPABASE_URL =
+  'https://vwjwpbgmtfunjyribmrm.supabase.co';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3andwYmdtdGZ1bmp5cmlibXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyNTg5NDcsImV4cCI6MjA3MDgzNDk0N30.t0htgZSxB-4Pb1Cl84NCA2jkrIFc_LuwlUL0VxLFacY';
+process.env.SUPABASE_SERVICE_ROLE_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3andwYmdtdGZ1bmp5cmlibXJtIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTI1ODk0NywiZXhwIjoyMDcwODM0OTQ3fQ.5FGtGaVUTYUVzWJR0iE0irh5fI8nTWEqmfSUW7Cmh7E';
+process.env.OPENAI_API_KEY = 'test-openai-key'; // Keep OpenAI mocked to avoid charges
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

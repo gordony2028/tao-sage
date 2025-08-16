@@ -16,7 +16,7 @@ export default function HomePage() {
       <section className="px-4 py-20">
         <div className="container mx-auto text-center">
           <h1 className="mb-6 text-5xl font-bold text-mountain-stone md:text-6xl">
-            道 The Way of Wisdom
+            Sage - The Way of Wisdom
           </h1>
           <p className="mx-auto mb-8 max-w-2xl text-xl text-soft-gray">
             Ancient I Ching wisdom enhanced by modern AI. Find guidance for

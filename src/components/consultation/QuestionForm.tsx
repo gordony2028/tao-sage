@@ -63,7 +63,7 @@ export default function QuestionForm({ onSubmit }: QuestionFormProps) {
                 value={question}
                 onChange={e => handleQuestionChange(e.target.value)}
                 placeholder="Enter your question here..."
-                className="border-stone-gray h-32 w-full resize-none rounded-lg border px-4 py-3 transition-colors duration-200 focus:border-flowing-water focus:ring-2 focus:ring-flowing-water"
+                className="h-32 w-full resize-none rounded-lg border border-stone-gray px-4 py-3 transition-colors duration-200 focus:border-flowing-water focus:ring-2 focus:ring-flowing-water"
                 maxLength={500}
               />
               <div className="mt-2 flex items-center justify-between">
@@ -98,7 +98,7 @@ export default function QuestionForm({ onSubmit }: QuestionFormProps) {
                 <button
                   key={index}
                   onClick={() => handleExampleClick(example)}
-                  className="hover:bg-stone-gray/10 hover:border-stone-gray/20 block w-full rounded-lg border border-transparent bg-cloud-white p-3 text-left text-sm text-soft-gray transition-colors duration-200"
+                  className="block w-full rounded-lg border border-transparent bg-cloud-white p-3 text-left text-sm text-soft-gray transition-colors duration-200 hover:border-stone-gray/20 hover:bg-stone-gray/10"
                 >
                   &ldquo;{example}&rdquo;
                 </button>

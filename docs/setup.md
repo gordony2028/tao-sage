@@ -1,10 +1,11 @@
 # Sage Development Tools Setup
+
 ## Complete Development Environment Configuration
 
 **Version:** 1.0  
 **Date:** July 30, 2025  
 **Stack:** Next.js 14, TypeScript, Supabase, OpenAI, Tailwind CSS  
-**Philosophy:** Solo-friendly, automated quality, cultural authenticity focus  
+**Philosophy:** Solo-friendly, automated quality, cultural authenticity focus
 
 ---
 
@@ -30,6 +31,7 @@
 ### 1.1 Required Software
 
 **Node.js Environment**
+
 ```bash
 # Install Node.js 18.17.0+ (LTS recommended)
 # Using nvm for version management
@@ -44,6 +46,7 @@ npm --version   # Should show 9.6.7+
 ```
 
 **Package Manager**
+
 ```bash
 # Enable Corepack for pnpm (recommended for faster installs)
 corepack enable
@@ -57,6 +60,7 @@ pnpm --version  # Should show 8.6.12+
 ```
 
 **Git Configuration**
+
 ```bash
 # Configure Git with your information
 git config --global user.name "Your Name"
@@ -75,6 +79,7 @@ git config --global alias.visual '!gitk'
 ### 1.2 Environment Variables Setup
 
 **Environment Files**
+
 ```bash
 # Create environment files
 touch .env.local .env.example
@@ -106,6 +111,7 @@ cp .env.example .env.local
 ```
 
 **Environment Validation Script**
+
 ```typescript
 // scripts/validate-env.ts
 import { z } from 'zod';
@@ -134,6 +140,7 @@ try {
 ### 2.1 VS Code Setup
 
 **Required Extensions**
+
 ```json
 // .vscode/extensions.json
 {
@@ -141,23 +148,23 @@ try {
     // Language Support
     "bradlc.vscode-tailwindcss",
     "ms-vscode.vscode-typescript-next",
-    
+
     // Code Quality
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    
+
     // Testing
     "orta.vscode-jest",
     "ms-playwright.playwright",
-    
+
     // Database
     "supabase.supabase-sql",
-    
+
     // Productivity
     "christian-kohler.path-intellisense",
     "bradlc.vscode-tailwindcss",
     "ms-vscode.vscode-json",
-    
+
     // Cultural Support
     "ms-ceintl.vscode-language-pack-zh-hans"
   ]
@@ -165,6 +172,7 @@ try {
 ```
 
 **VS Code Settings**
+
 ```json
 // .vscode/settings.json
 {
@@ -174,31 +182,31 @@ try {
     "source.fixAll.eslint": true,
     "source.organizeImports": true
   },
-  
+
   // TypeScript
   "typescript.preferences.importModuleSpecifier": "relative",
   "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  
+
   // Tailwind CSS
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
     ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
-  
+
   // File associations
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  
+
   // I Ching specific settings
   "files.encoding": "utf8",
   "editor.unicodeHighlight.ambiguousCharacters": false,
-  
+
   // Testing
   "jest.autoRun": "off",
   "jest.showCoverageOnLoad": true,
-  
+
   // Search exclusions
   "search.exclude": {
     "**/node_modules": true,
@@ -210,6 +218,7 @@ try {
 ```
 
 **VS Code Tasks**
+
 ```json
 // .vscode/tasks.json
 {
@@ -260,6 +269,7 @@ try {
 ```
 
 **Launch Configuration**
+
 ```json
 // .vscode/launch.json
 {
@@ -293,6 +303,7 @@ try {
 ### 2.2 Alternative IDE Configurations
 
 **WebStorm/IntelliJ Configuration**
+
 ```xml
 <!-- .idea/codeStyles/Project.xml -->
 <component name="ProjectCodeStyleConfiguration">
@@ -312,6 +323,7 @@ try {
 ### 3.1 ESLint Configuration
 
 **ESLint Setup**
+
 ```bash
 # Install ESLint and dependencies
 pnpm add -D eslint @next/eslint-config-next
@@ -321,6 +333,7 @@ pnpm add -D eslint-plugin-tailwindcss
 ```
 
 **ESLint Configuration**
+
 ```javascript
 // .eslintrc.js
 module.exports = {
@@ -345,20 +358,12 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/prefer-const': 'error',
     '@typescript-eslint/no-non-null-assertion': 'error',
-    
+
     // Import organization
     'import/order': [
       'error',
       {
-        groups: [
-          'builtin',
-          'external',
-          'internal',
-          'parent',
-          'sibling',
-          'index',
-          'type',
-        ],
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'type'],
         'newlines-between': 'always',
         alphabetize: {
           order: 'asc',
@@ -366,19 +371,19 @@ module.exports = {
         },
       },
     ],
-    
+
     // Cultural sensitivity
     'no-offensive-language': 'off', // We'll use custom rules for I Ching content
-    
+
     // Next.js specific
     '@next/next/no-html-link-for-pages': 'error',
     '@next/next/no-img-element': 'error',
-    
+
     // Tailwind CSS
     'tailwindcss/classnames-order': 'warn',
     'tailwindcss/no-custom-classname': 'off', // Allow custom classes for design system
     'tailwindcss/enforces-negative-arbitrary-values': 'error',
-    
+
     // Testing
     'testing-library/await-async-query': 'error',
     'testing-library/no-await-sync-query': 'error',
@@ -405,25 +410,21 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: [
-    '.next/',
-    'node_modules/',
-    'coverage/',
-    'public/',
-    '*.config.js',
-  ],
+  ignorePatterns: ['.next/', 'node_modules/', 'coverage/', 'public/', '*.config.js'],
 };
 ```
 
 ### 3.2 Prettier Configuration
 
 **Prettier Setup**
+
 ```bash
 # Install Prettier
 pnpm add -D prettier prettier-plugin-tailwindcss
 ```
 
 **Prettier Configuration**
+
 ```json
 // .prettierrc.json
 {
@@ -459,6 +460,7 @@ pnpm add -D prettier prettier-plugin-tailwindcss
 ```
 
 **Prettier Ignore**
+
 ```gitignore
 # .prettierignore
 .next/
@@ -473,6 +475,7 @@ pnpm-lock.yaml
 ### 3.3 TypeScript Configuration
 
 **TypeScript Config**
+
 ```json
 // tsconfig.json
 {
@@ -506,7 +509,7 @@ pnpm-lock.yaml
       "@/constants/*": ["./src/constants/*"],
       "@/test-utils/*": ["./__tests__/utils/*"]
     },
-    
+
     // Additional strict checks
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -515,30 +518,20 @@ pnpm-lock.yaml
     "noImplicitThis": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    
+
     // Helpful for debugging
     "sourceMap": true,
     "declaration": false,
     "removeComments": false,
     "preserveConstEnums": true
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "**/*.mts"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "coverage",
-    "dist"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.mts"],
+  "exclude": ["node_modules", ".next", "coverage", "dist"]
 }
 ```
 
 **Test TypeScript Config**
+
 ```json
 // tsconfig.test.json
 {
@@ -547,13 +540,7 @@ pnpm-lock.yaml
     "noEmit": true,
     "types": ["jest", "@testing-library/jest-dom", "node"]
   },
-  "include": [
-    "**/__tests__/**/*",
-    "**/*.test.*",
-    "**/*.spec.*",
-    "jest.setup.js",
-    "jest.config.js"
-  ]
+  "include": ["**/__tests__/**/*", "**/*.test.*", "**/*.spec.*", "jest.setup.js", "jest.config.js"]
 }
 ```
 
@@ -564,6 +551,7 @@ pnpm-lock.yaml
 ### 4.1 Husky & Lint-Staged Setup
 
 **Husky Installation**
+
 ```bash
 # Install Husky and lint-staged
 pnpm add -D husky lint-staged
@@ -576,6 +564,7 @@ npm pkg set scripts.prepare="husky install"
 ```
 
 **Git Hooks Configuration**
+
 ```bash
 # Pre-commit hook
 npx husky add .husky/pre-commit "npx lint-staged"
@@ -588,29 +577,16 @@ npx husky add .husky/commit-msg "npx commitlint --edit \$1"
 ```
 
 **Lint-Staged Configuration**
+
 ```json
 // package.json
 {
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write",
-      "bash -c 'pnpm type-check'"
-    ],
-    "*.{js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ],
-    "*.{css,scss}": [
-      "stylelint --fix",
-      "prettier --write"
-    ],
-    "src/lib/i-ching/**/*.ts": [
-      "npm run validate:cultural-content"
-    ]
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write", "bash -c 'pnpm type-check'"],
+    "*.{js,jsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"],
+    "*.{css,scss}": ["stylelint --fix", "prettier --write"],
+    "src/lib/i-ching/**/*.ts": ["npm run validate:cultural-content"]
   }
 }
 ```
@@ -618,12 +594,14 @@ npx husky add .husky/commit-msg "npx commitlint --edit \$1"
 ### 4.2 Conventional Commits
 
 **Commitlint Setup**
+
 ```bash
 # Install commitlint
 pnpm add -D @commitlint/cli @commitlint/config-conventional
 ```
 
 **Commitlint Configuration**
+
 ```javascript
 // commitlint.config.js
 module.exports = {
@@ -633,17 +611,17 @@ module.exports = {
       2,
       'always',
       [
-        'feat',      // New feature
-        'fix',       // Bug fix
-        'docs',      // Documentation
-        'style',     // Code style (formatting, missing semi-colons, etc)
-        'refactor',  // Code refactoring
-        'perf',      // Performance improvement
-        'test',      // Adding or updating tests
-        'chore',     // Maintenance tasks
-        'ci',        // CI/CD changes
-        'cultural',  // I Ching content or cultural accuracy updates
-        'i18n',      // Internationalization
+        'feat', // New feature
+        'fix', // Bug fix
+        'docs', // Documentation
+        'style', // Code style (formatting, missing semi-colons, etc)
+        'refactor', // Code refactoring
+        'perf', // Performance improvement
+        'test', // Adding or updating tests
+        'chore', // Maintenance tasks
+        'ci', // CI/CD changes
+        'cultural', // I Ching content or cultural accuracy updates
+        'i18n', // Internationalization
       ],
     ],
     'scope-enum': [
@@ -673,21 +651,22 @@ module.exports = {
 ```
 
 **Commit Message Template**
+
 ```bash
 # .gitmessage (commit template)
 # <type>(<scope>): <subject>
-# 
+#
 # <body>
-# 
+#
 # <footer>
 
 # Example:
 # feat(consultation): add AI-powered hexagram interpretation
-# 
+#
 # - Implement OpenAI integration for personalized interpretations
 # - Add cultural validation for generated content
 # - Include fallback to traditional interpretations
-# 
+#
 # Closes #123
 
 # Set the template
@@ -701,6 +680,7 @@ git config commit.template .gitmessage
 ### 5.1 Next.js Configuration
 
 **Next.js Config**
+
 ```javascript
 // next.config.js
 /** @type {import('next').NextConfig} */
@@ -709,12 +689,12 @@ const nextConfig = {
     typedRoutes: true,
     serverComponentsExternalPackages: ['@supabase/supabase-js'],
   },
-  
+
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  
+
   // PWA configuration for offline consultation
   async headers() {
     return [
@@ -738,12 +718,12 @@ const nextConfig = {
       },
     ];
   },
-  
+
   // Environment variables validation
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
-  
+
   // Bundle analyzer (development only)
   ...(process.env.ANALYZE === 'true' && {
     experimental: {
@@ -751,13 +731,13 @@ const nextConfig = {
       bundlePagesExternals: false,
     },
   }),
-  
+
   // Image optimization
   images: {
     domains: ['supabase.co'],
     formats: ['image/webp', 'image/avif'],
   },
-  
+
   // Redirects for SEO
   async redirects() {
     return [
@@ -779,6 +759,7 @@ module.exports = withBundleAnalyzer(nextConfig);
 ```
 
 **Environment Variables Validation**
+
 ```typescript
 // src/lib/config/env.ts
 import { z } from 'zod';
@@ -788,11 +769,11 @@ const envSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   NEXT_PUBLIC_APP_URL: z.string().url().default('http://localhost:3000'),
-  
+
   // Private environment variables (server-side only)
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   OPENAI_API_KEY: z.string().min(1),
-  
+
   // Optional variables
   CULTURAL_EXPERT_API_KEY: z.string().optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -811,6 +792,7 @@ declare global {
 ### 5.2 Tailwind CSS Configuration
 
 **Tailwind Setup**
+
 ```bash
 # Install Tailwind CSS
 pnpm add -D tailwindcss postcss autoprefixer
@@ -819,6 +801,7 @@ pnpm add -D tailwindcss-animate class-variance-authority clsx tailwind-merge
 ```
 
 **Tailwind Configuration**
+
 ```javascript
 // tailwind.config.js
 const { fontFamily } = require('tailwindcss/defaultTheme');
@@ -826,12 +809,7 @@ const { fontFamily } = require('tailwindcss/defaultTheme');
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
+  content: ['./pages/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './app/**/*.{ts,tsx}', './src/**/*.{ts,tsx}'],
   theme: {
     container: {
       center: true,
@@ -853,7 +831,7 @@ module.exports = {
         'ink-black': '#2c2c2c',
         'soft-gray': '#6b6b6b',
         'gentle-silver': '#a8b2b8',
-        
+
         // Semantic colors
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -889,14 +867,14 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
       },
-      
+
       // Typography
       fontFamily: {
         sans: ['var(--font-inter)', ...fontFamily.sans],
         serif: ['var(--font-crimson)', ...fontFamily.serif],
         mono: ['var(--font-jetbrains)', ...fontFamily.mono],
       },
-      
+
       // Animation
       keyframes: {
         'natural-spin': {
@@ -918,13 +896,13 @@ module.exports = {
         'fade-in': 'fade-in 0.5s ease-out',
         'slide-in-right': 'slide-in-right 0.3s ease-out',
       },
-      
+
       // Spacing (8px base grid)
       spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
+        18: '4.5rem',
+        88: '22rem',
       },
-      
+
       // Box shadows (matching design system)
       boxShadow: {
         'water-shadow': '0 8px 32px rgba(107, 140, 175, 0.15)',
@@ -935,15 +913,12 @@ module.exports = {
       },
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/typography'),
-  ],
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 };
 ```
 
 **PostCSS Configuration**
+
 ```javascript
 // postcss.config.js
 module.exports = {
@@ -962,6 +937,7 @@ module.exports = {
 ### 6.1 Jest Configuration
 
 **Jest Setup**
+
 ```bash
 # Install Jest and testing utilities
 pnpm add -D jest jest-environment-jsdom
@@ -970,6 +946,7 @@ pnpm add -D jest-axe
 ```
 
 **Jest Configuration**
+
 ```javascript
 // jest.config.js
 const nextJest = require('next/jest');
@@ -1014,24 +991,16 @@ const customJestConfig = {
     },
   },
   testTimeout: 30000,
-  testMatch: [
-    '**/__tests__/**/*.(test|spec).(js|ts|tsx)',
-    '**/*.(test|spec).(js|ts|tsx)',
-  ],
-  testPathIgnorePatterns: [
-    '<rootDir>/.next/',
-    '<rootDir>/node_modules/',
-    '<rootDir>/e2e/',
-  ],
-  transformIgnorePatterns: [
-    '/node_modules/(?!(.*\\.mjs$|@supabase))',
-  ],
+  testMatch: ['**/__tests__/**/*.(test|spec).(js|ts|tsx)', '**/*.(test|spec).(js|ts|tsx)'],
+  testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/', '<rootDir>/e2e/'],
+  transformIgnorePatterns: ['/node_modules/(?!(.*\\.mjs$|@supabase))'],
 };
 
 module.exports = createJestConfig(customJestConfig);
 ```
 
 **Jest Setup File**
+
 ```javascript
 // jest.setup.js
 import '@testing-library/jest-dom';
@@ -1059,8 +1028,8 @@ jest.mock('@/lib/supabase/client', () => ({
   supabase: {
     auth: {
       getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null })),
-      onAuthStateChange: jest.fn(() => ({ 
-        data: { subscription: { unsubscribe: jest.fn() } } 
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
       })),
       signInWithPassword: jest.fn(),
       signUp: jest.fn(),
@@ -1084,10 +1053,12 @@ jest.mock('openai', () => ({
   OpenAI: jest.fn().mockImplementation(() => ({
     chat: {
       completions: {
-        create: jest.fn(() => Promise.resolve({
-          choices: [{ message: { content: 'Test AI response' } }],
-          usage: { total_tokens: 100 },
-        })),
+        create: jest.fn(() =>
+          Promise.resolve({
+            choices: [{ message: { content: 'Test AI response' } }],
+            usage: { total_tokens: 100 },
+          })
+        ),
       },
     },
   })),
@@ -1146,6 +1117,7 @@ expect.extend({
 ### 6.2 Playwright E2E Setup
 
 **Playwright Installation**
+
 ```bash
 # Install Playwright
 pnpm add -D @playwright/test
@@ -1153,6 +1125,7 @@ npx playwright install
 ```
 
 **Playwright Configuration**
+
 ```typescript
 // playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
@@ -1163,11 +1136,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: [
-    ['html'],
-    ['json', { outputFile: 'test-results/results.json' }],
-  ],
-  
+  reporter: [['html'], ['json', { outputFile: 'test-results/results.json' }]],
+
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
@@ -1204,11 +1174,11 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },
-  
+
   expect: {
     timeout: 10 * 1000,
   },
-  
+
   outputDir: 'test-results/',
 });
 ```
@@ -1220,6 +1190,7 @@ export default defineConfig({
 ### 7.1 Development Debugging
 
 **Debug Configuration**
+
 ```typescript
 // src/lib/debug/debug-config.ts
 export const DEBUG_CONFIG = {
@@ -1236,7 +1207,7 @@ export const DEBUG_CONFIG = {
 
 export function debug(module: keyof typeof DEBUG_CONFIG.modules, message: string, data?: any) {
   if (!DEBUG_CONFIG.enabled || !DEBUG_CONFIG.modules[module]) return;
-  
+
   console.group(`🔍 [${module.toUpperCase()}] ${message}`);
   if (data) {
     console.log(data);
@@ -1246,24 +1217,25 @@ export function debug(module: keyof typeof DEBUG_CONFIG.modules, message: string
 
 export function debugPerformance(label: string, fn: () => any) {
   if (!DEBUG_CONFIG.enabled || !DEBUG_CONFIG.performance) return fn();
-  
+
   const start = performance.now();
   const result = fn();
   const end = performance.now();
-  
+
   console.log(`⚡ [PERF] ${label}: ${(end - start).toFixed(2)}ms`);
-  
+
   return result;
 }
 ```
 
 **React Developer Tools Setup**
+
 ```typescript
 // src/lib/debug/react-devtools.ts
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
   // Enable React DevTools profiler
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__?.settings?.profilerEnabled = true;
-  
+
   // Enable component stack traces
   window.__REACT_DEVTOOLS_GLOBAL_HOOK__?.settings?.componentStack = true;
 }
@@ -1272,6 +1244,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
 ### 7.2 Chrome DevTools Extensions
 
 **Install Useful Extensions**
+
 ```bash
 # Chrome extensions for development (install manually)
 # - React Developer Tools
@@ -1283,6 +1256,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
 ```
 
 **Redux DevTools Configuration**
+
 ```typescript
 // src/store/store.ts (if using Redux)
 import { configureStore } from '@reduxjs/toolkit';
@@ -1291,11 +1265,14 @@ export const store = configureStore({
   reducer: {
     // your reducers
   },
-  devTools: process.env.NODE_ENV !== 'production' ? {
-    name: 'Sage App',
-    trace: true,
-    traceLimit: 25,
-  } : false,
+  devTools:
+    process.env.NODE_ENV !== 'production'
+      ? {
+          name: 'Sage App',
+          trace: true,
+          traceLimit: 25,
+        }
+      : false,
 });
 ```
 
@@ -1306,12 +1283,14 @@ export const store = configureStore({
 ### 8.1 Bundle Analysis
 
 **Bundle Analyzer Setup**
+
 ```bash
 # Install bundle analyzer
 pnpm add -D @next/bundle-analyzer
 ```
 
 **Bundle Analysis Scripts**
+
 ```json
 // package.json
 {
@@ -1326,6 +1305,7 @@ pnpm add -D @next/bundle-analyzer
 ### 8.2 Performance Monitoring
 
 **Web Vitals Tracking**
+
 ```typescript
 // src/lib/performance/web-vitals.ts
 import { getCLS, getFID, getFCP, getLCP, getTTFB } from 'web-vitals';
@@ -1347,6 +1327,7 @@ export function initWebVitals() {
 ```
 
 **Performance Budgets**
+
 ```javascript
 // performance-budget.config.js
 module.exports = {
@@ -1355,11 +1336,9 @@ module.exports = {
       path: '/',
       resourceSizes: [
         { resourceType: 'script', budget: 300 }, // 300KB
-        { resourceType: 'total', budget: 500 },  // 500KB
+        { resourceType: 'total', budget: 500 }, // 500KB
       ],
-      resourceCounts: [
-        { resourceType: 'third-party', budget: 10 },
-      ],
+      resourceCounts: [{ resourceType: 'third-party', budget: 10 }],
     },
     {
       path: '/consultation',
@@ -1379,6 +1358,7 @@ module.exports = {
 ### 9.1 I Ching Content Validation
 
 **Cultural Validation Scripts**
+
 ```typescript
 // scripts/validate-cultural-content.ts
 import { HEXAGRAMS_DB } from '../src/lib/i-ching/hexagrams-data';
@@ -1392,37 +1372,37 @@ interface ValidationResult {
 
 function validateHexagramContent(): ValidationResult[] {
   const results: ValidationResult[] = [];
-  
+
   HEXAGRAMS_DB.forEach((hexagram, index) => {
     const issues: string[] = [];
-    
+
     // Validate Chinese characters
     if (!validateChineseCharacters(hexagram.chinese)) {
       issues.push('Invalid Chinese characters');
     }
-    
+
     // Check for fortune-telling language
     const problematicTerms = ['will', 'definitely', 'guaranteed', 'never', 'always'];
     const content = `${hexagram.meaning} ${hexagram.judgment} ${hexagram.image}`.toLowerCase();
-    
+
     problematicTerms.forEach(term => {
       if (content.includes(term)) {
         issues.push(`Contains problematic term: "${term}"`);
       }
     });
-    
+
     // Validate traditional structure
     if (!hexagram.judgment || !hexagram.image) {
       issues.push('Missing traditional components');
     }
-    
+
     results.push({
       hexagramNumber: hexagram.number,
       issues,
       passed: issues.length === 0,
     });
   });
-  
+
   return results;
 }
 
@@ -1443,6 +1423,7 @@ if (failedResults.length > 0) {
 ```
 
 **AI Content Validation**
+
 ```typescript
 // scripts/validate-ai-responses.ts
 import { validateCulturalContent } from '../src/lib/cultural/validation';
@@ -1469,10 +1450,10 @@ const testResponses: AIResponseTest[] = [
 function validateAIResponses() {
   let passed = 0;
   let failed = 0;
-  
+
   testResponses.forEach((test, index) => {
     const isValid = validateCulturalContent.avoidDivinationClaims(test.response);
-    
+
     if (isValid === test.expectedCultural) {
       console.log(`✅ Test ${index + 1} passed`);
       passed++;
@@ -1483,9 +1464,9 @@ function validateAIResponses() {
       failed++;
     }
   });
-  
+
   console.log(`\nResults: ${passed} passed, ${failed} failed`);
-  
+
   if (failed > 0) {
     process.exit(1);
   }
@@ -1501,6 +1482,7 @@ validateAIResponses();
 ### 10.1 Vercel Configuration
 
 **Vercel Configuration**
+
 ```json
 // vercel.json
 {
@@ -1509,7 +1491,7 @@ validateAIResponses();
   "installCommand": "pnpm install",
   "framework": "nextjs",
   "regions": ["sfo1", "lhr1"],
-  
+
   "functions": {
     "src/app/api/consultation/create/route.ts": {
       "maxDuration": 30
@@ -1518,14 +1500,14 @@ validateAIResponses();
       "maxDuration": 60
     }
   },
-  
+
   "crons": [
     {
       "path": "/api/cron/daily-wisdom",
       "schedule": "0 6 * * *"
     }
   ],
-  
+
   "headers": [
     {
       "source": "/api/(.*)",
@@ -1554,7 +1536,7 @@ validateAIResponses();
       ]
     }
   ],
-  
+
   "redirects": [
     {
       "source": "/oracle",
@@ -1566,6 +1548,7 @@ validateAIResponses();
 ```
 
 **Environment Variables Deployment**
+
 ```bash
 # Vercel CLI setup
 npm install -g vercel
@@ -1582,6 +1565,7 @@ vercel env add CULTURAL_EXPERT_API_KEY
 ### 10.2 Docker Configuration (Alternative)
 
 **Dockerfile**
+
 ```dockerfile
 # Dockerfile
 FROM node:18-alpine AS base
@@ -1630,6 +1614,7 @@ CMD ["node", "server.js"]
 ```
 
 **Docker Compose**
+
 ```yaml
 # docker-compose.yml
 version: '3.8'
@@ -1638,7 +1623,7 @@ services:
   sage-app:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
@@ -1646,12 +1631,12 @@ services:
       - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     restart: unless-stopped
-    
+
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./ssl:/etc/ssl
@@ -1667,6 +1652,7 @@ services:
 ### 11.1 Package.json Scripts
 
 **Complete Scripts Configuration**
+
 ```json
 // package.json
 {
@@ -1679,7 +1665,7 @@ services:
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    
+
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --ci --coverage --watchAll=false",
@@ -1688,26 +1674,26 @@ services:
     "test:unit": "jest --testPathIgnorePatterns=e2e",
     "test:integration": "jest --testPathPattern=integration",
     "test:coverage": "jest --coverage",
-    
+
     "cultural:validate": "tsx scripts/validate-cultural-content.ts",
     "ai:validate": "tsx scripts/validate-ai-responses.ts",
     "i18n:extract": "tsx scripts/extract-i18n.ts",
-    
+
     "db:generate-types": "supabase gen types typescript --local > src/types/database.ts",
     "db:reset": "supabase db reset",
     "db:migrate": "supabase migration up",
-    
+
     "analyze": "ANALYZE=true pnpm build",
     "lighthouse": "lhci autorun",
     "perf:audit": "tsx scripts/performance-audit.ts",
-    
+
     "prepare": "husky install",
     "postinstall": "tsx scripts/validate-env.ts",
     "clean": "rm -rf .next node_modules coverage test-results",
-    
+
     "deploy:staging": "vercel --target staging",
     "deploy:production": "vercel --prod",
-    
+
     "setup": "tsx scripts/setup-project.ts",
     "health-check": "tsx scripts/health-check.ts"
   }
@@ -1717,6 +1703,7 @@ services:
 ### 11.2 Utility Scripts
 
 **Project Setup Script**
+
 ```typescript
 // scripts/setup-project.ts
 import { execSync } from 'child_process';
@@ -1725,39 +1712,39 @@ import path from 'path';
 
 async function setupProject() {
   console.log('🚀 Setting up Sage development environment...');
-  
+
   // Check Node.js version
   const nodeVersion = process.version;
   const requiredVersion = '18.17.0';
-  
+
   if (nodeVersion < `v${requiredVersion}`) {
     console.error(`❌ Node.js ${requiredVersion}+ required. Current: ${nodeVersion}`);
     process.exit(1);
   }
-  
+
   // Install dependencies
   console.log('📦 Installing dependencies...');
   execSync('pnpm install', { stdio: 'inherit' });
-  
+
   // Setup environment files
   if (!fs.existsSync('.env.local')) {
     console.log('📝 Creating .env.local from template...');
     fs.copyFileSync('.env.example', '.env.local');
     console.log('⚠️  Please update .env.local with your actual API keys');
   }
-  
+
   // Setup Git hooks
   console.log('🪝 Setting up Git hooks...');
   execSync('npx husky install', { stdio: 'inherit' });
-  
+
   // Validate cultural content
   console.log('🏮 Validating I Ching cultural content...');
   execSync('pnpm cultural:validate', { stdio: 'inherit' });
-  
+
   // Run initial tests
   console.log('🧪 Running initial tests...');
   execSync('pnpm test:ci', { stdio: 'inherit' });
-  
+
   console.log('✅ Setup complete! Run `pnpm dev` to start development.');
 }
 
@@ -1768,6 +1755,7 @@ setupProject().catch(error => {
 ```
 
 **Health Check Script**
+
 ```typescript
 // scripts/health-check.ts
 import { execSync } from 'child_process';
@@ -1843,16 +1831,16 @@ const healthChecks: HealthCheck[] = [
 
 async function runHealthChecks() {
   console.log('🏥 Running health checks...\n');
-  
+
   let passed = 0;
   let critical_failed = 0;
-  
+
   for (const check of healthChecks) {
     process.stdout.write(`${check.name}... `);
-    
+
     try {
       const result = await check.check();
-      
+
       if (result) {
         console.log('✅ PASS');
         passed++;
@@ -1865,9 +1853,9 @@ async function runHealthChecks() {
       if (check.critical) critical_failed++;
     }
   }
-  
+
   console.log(`\n📊 Results: ${passed}/${healthChecks.length} checks passed`);
-  
+
   if (critical_failed > 0) {
     console.log(`❌ ${critical_failed} critical checks failed`);
     process.exit(1);
@@ -1886,6 +1874,7 @@ runHealthChecks();
 ### 12.1 Common Issues & Solutions
 
 **TypeScript Issues**
+
 ```bash
 # Clear TypeScript cache
 rm -rf .next/cache
@@ -1899,6 +1888,7 @@ pnpm list typescript
 ```
 
 **ESLint/Prettier Conflicts**
+
 ```bash
 # Check for conflicting rules
 npx eslint-config-prettier src/components/Button.tsx
@@ -1908,20 +1898,19 @@ pnpm format && pnpm lint:fix
 ```
 
 **Supabase Connection Issues**
+
 ```typescript
 // Debug connection
 import { supabase } from '@/lib/supabase/client';
 
 // Test connection
-const { data, error } = await supabase
-  .from('consultations')
-  .select('id')
-  .limit(1);
+const { data, error } = await supabase.from('consultations').select('id').limit(1);
 
 console.log('Supabase connection:', { data, error });
 ```
 
 **OpenAI API Issues**
+
 ```typescript
 // Debug OpenAI connection
 import { openai } from '@/lib/ai/client';
@@ -1939,6 +1928,7 @@ try {
 ```
 
 **Build Issues**
+
 ```bash
 # Clear Next.js cache
 rm -rf .next
@@ -1954,6 +1944,7 @@ DEBUG=1 pnpm build
 ### 12.2 Performance Issues
 
 **Slow Development Server**
+
 ```bash
 # Check Node.js version
 node --version  # Should be 18.17.0+
@@ -1969,6 +1960,7 @@ corepack prepare pnpm@latest --activate
 ```
 
 **Memory Issues**
+
 ```bash
 # Increase Node.js memory limit
 export NODE_OPTIONS="--max-old-space-size=4096"
@@ -1980,6 +1972,7 @@ export NODE_OPTIONS="--max-old-space-size=4096"
 ### 12.3 Testing Issues
 
 **Jest Configuration Problems**
+
 ```bash
 # Clear Jest cache
 npx jest --clearCache
@@ -1992,6 +1985,7 @@ pnpm test src/components/Button.test.tsx
 ```
 
 **Playwright Issues**
+
 ```bash
 # Install Playwright browsers
 npx playwright install
@@ -2024,6 +2018,7 @@ When setting up a new development environment:
 ## Development Workflow
 
 ### Daily Development
+
 1. `git pull origin main`
 2. `pnpm install` (if package.json changed)
 3. `pnpm health-check`
@@ -2034,6 +2029,7 @@ When setting up a new development environment:
 8. Push and create PR
 
 ### Before Deployment
+
 1. `pnpm health-check`
 2. `pnpm build`
 3. `pnpm test:ci`

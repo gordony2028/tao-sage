@@ -3,6 +3,7 @@ import {
   validateConsultationContext,
   formatConsultationSummary,
 } from '@/lib/consultation/service';
+import type { LineValue } from '@/types/iching';
 
 // Mock the dependencies
 jest.mock('@/lib/iching/hexagram', () => ({
@@ -129,7 +130,14 @@ describe('Consultation Service Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
         timestamp: new Date(),
@@ -145,7 +153,14 @@ describe('Consultation Service Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
         timestamp: new Date(),
@@ -168,12 +183,12 @@ describe('Consultation Service Integration', () => {
           number: 1,
           name: 'The Creative',
           lines: [9, 9, 9, 9, 9, 9] as [
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
           ],
           changingLines: [],
         },
@@ -205,12 +220,12 @@ describe('Consultation Service Integration', () => {
           number: 3,
           name: 'Difficulty at the Beginning',
           lines: [6, 7, 8, 9, 7, 8] as [
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
           ],
           changingLines: [1, 4],
         },

@@ -3,6 +3,7 @@ import {
   getHexagramName,
   calculateChangingLines,
 } from '@/lib/iching/hexagram';
+import type { LineValue } from '@/types/iching';
 
 describe('I Ching Hexagram Generation', () => {
   describe('generateHexagram', () => {
@@ -69,21 +70,21 @@ describe('I Ching Hexagram Generation', () => {
 
   describe('calculateChangingLines', () => {
     it('should identify changing lines correctly', () => {
-      const lines = [6, 7, 8, 9, 7, 8]; // 6 and 9 are changing lines
+      const lines = [6, 7, 8, 9, 7, 8] as LineValue[]; // 6 and 9 are changing lines
       const changingLines = calculateChangingLines(lines);
 
       expect(changingLines).toEqual([1, 4]); // 1-indexed positions
     });
 
     it('should return empty array when no changing lines', () => {
-      const lines = [7, 7, 8, 8, 7, 8]; // Only stable lines
+      const lines = [7, 7, 8, 8, 7, 8] as LineValue[]; // Only stable lines
       const changingLines = calculateChangingLines(lines);
 
       expect(changingLines).toEqual([]);
     });
 
     it('should handle all changing lines', () => {
-      const lines = [6, 9, 6, 9, 6, 9]; // All changing
+      const lines = [6, 9, 6, 9, 6, 9] as LineValue[]; // All changing
       const changingLines = calculateChangingLines(lines);
 
       expect(changingLines).toEqual([1, 2, 3, 4, 5, 6]);

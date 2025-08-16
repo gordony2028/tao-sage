@@ -68,7 +68,7 @@ export function generateValidLines(): number[] {
   const validValues = [6, 7, 8, 9];
   return Array.from(
     { length: 6 },
-    () => validValues[Math.floor(Math.random() * validValues.length)]
+    () => validValues[Math.floor(Math.random() * validValues.length)]!
   );
 }
 

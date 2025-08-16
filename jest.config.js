@@ -37,7 +37,7 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/e2e/',
   ],
-  transformIgnorePatterns: ['/node_modules/(?!(.*\\.mjs$|@supabase))'],
+  transformIgnorePatterns: ['/node_modules/(?!(.*\\.mjs$|@supabase|isows))'],
 };
 
 module.exports = createJestConfig(customJestConfig);

@@ -1,10 +1,11 @@
 # Sage Testing Standards
+
 ## Comprehensive Testing Strategy for I Ching Guidance App
 
 **Version:** 1.0  
 **Date:** July 30, 2025  
 **Stack:** Next.js 14, TypeScript, Supabase, OpenAI, Tailwind CSS  
-**Philosophy:** Cultural accuracy, accessibility compliance, user-centric testing  
+**Philosophy:** Cultural accuracy, accessibility compliance, user-centric testing
 
 ---
 
@@ -35,18 +36,21 @@
 ### 1.1 Core Testing Principles
 
 **Wu Wei (無為) - Effortless Testing**
+
 - Tests should be simple, clear, and maintainable
 - Favor readable test names over comments
 - Test behavior, not implementation details
 - Automate repetitive validation processes
 
 **Cultural Integrity Testing**
+
 - Every I Ching interpretation must be culturally validated
 - Chinese characters and terminology accuracy is non-negotiable
 - Spiritual guidance content requires expert review
 - Respect for ancient wisdom traditions in all test scenarios
 
 **User-Centric Approach**
+
 - Test real user workflows, not isolated functions
 - Accessibility testing is mandatory for all components
 - Performance impacts user experience and must be tested
@@ -55,6 +59,7 @@
 ### 1.2 Testing Quality Gates
 
 Before any feature ships:
+
 - [ ] **Cultural Accuracy**: I Ching content validated by expert
 - [ ] **Accessibility**: WCAG 2.1 AA compliance verified
 - [ ] **Performance**: Core Web Vitals meet targets
@@ -76,7 +81,7 @@ Before any feature ships:
                /           \
               🔳 Integration (20%)
              /  \  API contracts
-            /    \  Database operations  
+            /    \  Database operations
            /      \  External service mocks
           /        \  Authentication flows
          /          \
@@ -98,17 +103,20 @@ Before any feature ships:
 ### 2.2 Test Confidence Levels
 
 **High Confidence (E2E)**: Complete user workflows
+
 - User creates account → completes first consultation → receives guidance
 - Daily guidance generation → notification → user interaction
 - Premium subscription → advanced features → billing integration
 
 **Medium Confidence (Integration)**: Service interactions
+
 - Supabase authentication flow
 - OpenAI API integration with error handling
 - Database operations with real data
 - Calendar integration with external providers
 
 **Fast Feedback (Unit/Component)**: Individual pieces
+
 - Hexagram generation algorithm accuracy
 - AI prompt construction logic
 - Component rendering and interactions
@@ -121,6 +129,7 @@ Before any feature ships:
 ### 3.1 I Ching Business Logic Testing
 
 **Hexagram Generation Testing**
+
 ```typescript
 // __tests__/lib/i-ching/hexagram-generator.test.ts
 import { generateHexagram, calculateHexagramNumber, castCoin } from '@/lib/i-ching/hexagram-generator';
@@ -140,7 +149,7 @@ describe('Hexagram Generation', () => {
       const results = Array.from({ length: 1000 }, () => castCoin());
       const yangCount = results.filter(r => r === 3).length;
       const yinCount = results.filter(r => r === 2).length;
-      
+
       // Allow for variance in randomness (40-60% distribution)
       expect(yangCount).toBeGreaterThan(400);
       expect(yangCount).toBeLessThan(600);
@@ -170,7 +179,7 @@ describe('Hexagram Generation', () => {
       // Old yang (9) becomes yin, old yin (6) becomes yang
       const changingLines = [6, 7, 8, 9, 6, 9]; // 6=old yin, 9=old yang
       const hexagramNumber = calculateHexagramNumber(changingLines);
-      
+
       expect(hexagramNumber).toBeGreaterThanOrEqual(1);
       expect(hexagramNumber).toBeLessThanOrEqual(64);
     });
@@ -179,13 +188,13 @@ describe('Hexagram Generation', () => {
   describe('generateHexagram', () => {
     it('should return valid hexagram with all required properties', () => {
       const hexagram = generateHexagram();
-      
+
       expect(hexagram).toHaveProperty('number');
       expect(hexagram).toHaveProperty('name');
       expect(hexagram).toHaveProperty('chinese');
       expect(hexagram).toHaveProperty('lines');
       expect(hexagram).toHaveProperty('changingLines');
-      
+
       expect(hexagram.number).toBeGreaterThanOrEqual(1);
       expect(hexagram.number).toBeLessThanOrEqual(64);
       expect(hexagram.lines).toHaveLength(6);
@@ -195,7 +204,7 @@ describe('Hexagram Generation', () => {
     it('should return hexagram data from database', () => {
       const hexagram = generateHexagram();
       const dbHexagram = HEXAGRAMS_DB[hexagram.number - 1];
-      
+
       expect(hexagram.name).toBe(dbHexagram.name);
       expect(hexagram.chinese).toBe(dbHexagram.chinese);
       expect(hexagram.meaning).toBe(dbHexagram.meaning);
@@ -205,9 +214,14 @@ describe('Hexagram Generation', () => {
 ```
 
 **Consultation Logic Testing**
+
 ```typescript
 // __tests__/lib/consultation/consultation-service.test.ts
-import { validateQuestion, categorizeQuestion, generateConsultationContext } from '@/lib/consultation/consultation-service';
+import {
+  validateQuestion,
+  categorizeQuestion,
+  generateConsultationContext,
+} from '@/lib/consultation/consultation-service';
 
 describe('Consultation Service', () => {
   describe('validateQuestion', () => {
@@ -216,13 +230,13 @@ describe('Consultation Service', () => {
         'Should I accept the new job offer in Seattle?',
         'How can I improve my relationship with my partner?',
         'What is the best approach for starting my own business?',
-        'How should I handle the conflict with my colleague?'
+        'How should I handle the conflict with my colleague?',
       ];
 
       validQuestions.forEach(question => {
         expect(validateQuestion(question)).toEqual({
           isValid: true,
-          errors: []
+          errors: [],
         });
       });
     });
@@ -241,7 +255,7 @@ describe('Consultation Service', () => {
       const fortuneQuestions = [
         'Will I win the lottery tomorrow?',
         'When will I meet my soulmate?',
-        'Will my ex come back to me?'
+        'Will my ex come back to me?',
       ];
 
       fortuneQuestions.forEach(question => {
@@ -257,7 +271,7 @@ describe('Consultation Service', () => {
       const careerQuestions = [
         'Should I quit my job?',
         'How can I advance in my career?',
-        'What skills should I develop professionally?'
+        'What skills should I develop professionally?',
       ];
 
       careerQuestions.forEach(question => {
@@ -269,7 +283,7 @@ describe('Consultation Service', () => {
       const relationshipQuestions = [
         'How can I improve communication with my partner?',
         'Should I forgive my friend?',
-        'How do I handle family conflict?'
+        'How do I handle family conflict?',
       ];
 
       relationshipQuestions.forEach(question => {
@@ -281,7 +295,7 @@ describe('Consultation Service', () => {
       const generalQuestions = [
         'What should I focus on today?',
         'How can I find more balance?',
-        'What direction should I take?'
+        'What direction should I take?',
       ];
 
       generalQuestions.forEach(question => {
@@ -295,14 +309,10 @@ describe('Consultation Service', () => {
 ### 3.2 Utility Function Testing
 
 **String and Validation Utilities**
+
 ```typescript
 // __tests__/lib/utils/validation.test.ts
-import { 
-  sanitizeQuestion, 
-  validateChineseCharacters, 
-  formatHexagramName,
-  isValidEmail
-} from '@/lib/utils/validation';
+import { sanitizeQuestion, validateChineseCharacters, formatHexagramName, isValidEmail } from '@/lib/utils/validation';
 
 describe('Validation Utilities', () => {
   describe('sanitizeQuestion', () => {
@@ -346,6 +356,7 @@ describe('Validation Utilities', () => {
 ### 3.3 AI Integration Unit Testing
 
 **Prompt Generation Testing**
+
 ```typescript
 // __tests__/lib/ai/prompts.test.ts
 import { createInterpretationPrompt, createDailyGuidancePrompt } from '@/lib/ai/prompts';
@@ -358,9 +369,9 @@ describe('AI Prompt Generation', () => {
     it('should include question and hexagram information', () => {
       const question = 'Should I start a new business?';
       const category = 'career';
-      
+
       const prompt = createInterpretationPrompt(question, sampleHexagram, category);
-      
+
       expect(prompt).toContain(question);
       expect(prompt).toContain(sampleHexagram.name);
       expect(prompt).toContain(sampleHexagram.chinese);
@@ -368,12 +379,8 @@ describe('AI Prompt Generation', () => {
     });
 
     it('should include cultural authenticity guidelines', () => {
-      const prompt = createInterpretationPrompt(
-        'Test question', 
-        sampleHexagram, 
-        'general'
-      );
-      
+      const prompt = createInterpretationPrompt('Test question', sampleHexagram, 'general');
+
       expect(prompt).toContain('cultural authenticity');
       expect(prompt).toContain('traditional I Ching wisdom');
       expect(prompt).toContain('respectful');
@@ -381,23 +388,14 @@ describe('AI Prompt Generation', () => {
 
     it('should include user context when provided', () => {
       const userContext = 'User is a software developer with 5 years experience';
-      const prompt = createInterpretationPrompt(
-        'Career guidance?',
-        sampleHexagram,
-        'career',
-        userContext
-      );
-      
+      const prompt = createInterpretationPrompt('Career guidance?', sampleHexagram, 'career', userContext);
+
       expect(prompt).toContain(userContext);
     });
 
     it('should avoid fortune-telling language in guidelines', () => {
-      const prompt = createInterpretationPrompt(
-        'Test question',
-        sampleHexagram,
-        'general'
-      );
-      
+      const prompt = createInterpretationPrompt('Test question', sampleHexagram, 'general');
+
       expect(prompt).toContain('Avoid fortune-telling');
       expect(prompt).toContain('focus on wisdom and reflection');
     });
@@ -412,6 +410,7 @@ describe('AI Prompt Generation', () => {
 ### 4.1 React Component Testing Setup
 
 **Testing Library Configuration**
+
 ```typescript
 // __tests__/setup/test-utils.tsx
 import { render, RenderOptions } from '@testing-library/react';
@@ -458,6 +457,7 @@ export { customRender as render };
 ### 4.2 UI Component Testing
 
 **Button Component Testing**
+
 ```typescript
 // __tests__/components/ui/Button.test.tsx
 import { render, screen, fireEvent, waitFor } from '@/test-utils';
@@ -472,7 +472,7 @@ describe('Button Component', () => {
   it('should handle click events', async () => {
     const handleClick = jest.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     fireEvent.click(screen.getByRole('button'));
     await waitFor(() => {
       expect(handleClick).toHaveBeenCalledTimes(1);
@@ -492,10 +492,10 @@ describe('Button Component', () => {
   it('should meet accessibility standards', () => {
     render(<Button variant="primary">Primary Action</Button>);
     const button = screen.getByRole('button');
-    
+
     // Should be focusable
     expect(button).not.toHaveAttribute('tabindex', '-1');
-    
+
     // Should have appropriate ARIA attributes
     expect(button).toHaveAttribute('type', 'button');
   });
@@ -503,14 +503,14 @@ describe('Button Component', () => {
   it('should support keyboard navigation', () => {
     const handleClick = jest.fn();
     render(<Button onClick={handleClick}>Keyboard Test</Button>);
-    
+
     const button = screen.getByRole('button');
     button.focus();
-    
+
     // Enter key should trigger click
     fireEvent.keyDown(button, { key: 'Enter', code: 'Enter' });
     expect(handleClick).toHaveBeenCalled();
-    
+
     // Space key should trigger click
     fireEvent.keyDown(button, { key: ' ', code: 'Space' });
     expect(handleClick).toHaveBeenCalledTimes(2);
@@ -519,6 +519,7 @@ describe('Button Component', () => {
 ```
 
 **Hexagram Display Component Testing**
+
 ```typescript
 // __tests__/components/consultation/HexagramDisplay.test.tsx
 import { render, screen } from '@/test-utils';
@@ -540,7 +541,7 @@ describe('HexagramDisplay Component', () => {
 
   it('should render hexagram with correct name and number', () => {
     render(<HexagramDisplay hexagram={sampleHexagram} />);
-    
+
     expect(screen.getByText('Hexagram 1')).toBeInTheDocument();
     expect(screen.getByText('Heaven')).toBeInTheDocument();
     expect(screen.getByText('乾')).toBeInTheDocument();
@@ -548,34 +549,34 @@ describe('HexagramDisplay Component', () => {
 
   it('should display correct number of lines', () => {
     render(<HexagramDisplay hexagram={sampleHexagram} />);
-    
+
     const lines = screen.getAllByTestId(/hexagram-line-/);
     expect(lines).toHaveLength(6);
   });
 
   it('should mark changing lines correctly', () => {
     render(<HexagramDisplay hexagram={sampleHexagram} />);
-    
+
     const changingLine = screen.getByTestId('hexagram-line-3');
     expect(changingLine).toHaveClass('changing');
   });
 
   it('should provide proper accessibility labels', () => {
     render(<HexagramDisplay hexagram={sampleHexagram} />);
-    
+
     const hexagramImage = screen.getByRole('img');
     expect(hexagramImage).toHaveAccessibleName(/Hexagram 1.*Heaven/);
   });
 
   it('should handle animation state', () => {
     render(<HexagramDisplay hexagram={sampleHexagram} isAnimating />);
-    
+
     expect(screen.getByText(/Generating your hexagram/)).toBeInTheDocument();
   });
 
   it('should display hexagram meaning', () => {
     render(<HexagramDisplay hexagram={sampleHexagram} showMeaning />);
-    
+
     expect(screen.getByText(sampleHexagram.meaning)).toBeInTheDocument();
   });
 });
@@ -584,6 +585,7 @@ describe('HexagramDisplay Component', () => {
 ### 4.3 Form Component Testing
 
 **Consultation Form Testing**
+
 ```typescript
 // __tests__/components/consultation/ConsultationForm.test.tsx
 import { render, screen, fireEvent, waitFor } from '@/test-utils';
@@ -599,7 +601,7 @@ describe('ConsultationForm Component', () => {
 
   it('should render form fields correctly', () => {
     render(<ConsultationForm onSubmit={mockOnSubmit} />);
-    
+
     expect(screen.getByLabelText(/your question/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/category/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /generate consultation/i })).toBeInTheDocument();
@@ -608,33 +610,33 @@ describe('ConsultationForm Component', () => {
   it('should validate question length', async () => {
     const user = userEvent.setup();
     render(<ConsultationForm onSubmit={mockOnSubmit} />);
-    
+
     const questionField = screen.getByLabelText(/your question/i);
     const submitButton = screen.getByRole('button', { name: /generate consultation/i });
-    
+
     // Enter too short question
     await user.type(questionField, 'Help?');
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/please provide a more detailed question/i)).toBeInTheDocument();
     });
-    
+
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
   it('should submit valid form data', async () => {
     const user = userEvent.setup();
     render(<ConsultationForm onSubmit={mockOnSubmit} />);
-    
+
     const questionField = screen.getByLabelText(/your question/i);
     const categorySelect = screen.getByLabelText(/category/i);
     const submitButton = screen.getByRole('button', { name: /generate consultation/i });
-    
+
     await user.type(questionField, 'Should I accept the new job opportunity in San Francisco?');
     await user.selectOptions(categorySelect, 'career');
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith({
         question: 'Should I accept the new job opportunity in San Francisco?',
@@ -646,15 +648,15 @@ describe('ConsultationForm Component', () => {
   it('should show loading state during submission', async () => {
     const user = userEvent.setup();
     const slowSubmit = jest.fn(() => new Promise(resolve => setTimeout(resolve, 1000)));
-    
+
     render(<ConsultationForm onSubmit={slowSubmit} />);
-    
+
     const questionField = screen.getByLabelText(/your question/i);
     const submitButton = screen.getByRole('button', { name: /generate consultation/i });
-    
+
     await user.type(questionField, 'What should I do about my career?');
     await user.click(submitButton);
-    
+
     expect(screen.getByText(/generating wisdom/i)).toBeInTheDocument();
     expect(submitButton).toBeDisabled();
   });
@@ -662,15 +664,15 @@ describe('ConsultationForm Component', () => {
   it('should handle submission errors gracefully', async () => {
     const user = userEvent.setup();
     const failingSubmit = jest.fn(() => Promise.reject(new Error('Network error')));
-    
+
     render(<ConsultationForm onSubmit={failingSubmit} />);
-    
+
     const questionField = screen.getByLabelText(/your question/i);
     const submitButton = screen.getByRole('button', { name: /generate consultation/i });
-    
+
     await user.type(questionField, 'What guidance do you have for me?');
     await user.click(submitButton);
-    
+
     await waitFor(() => {
       expect(screen.getByText(/failed to generate consultation/i)).toBeInTheDocument();
     });
@@ -678,10 +680,10 @@ describe('ConsultationForm Component', () => {
 
   it('should meet accessibility requirements', () => {
     render(<ConsultationForm onSubmit={mockOnSubmit} />);
-    
+
     const form = screen.getByRole('form');
     expect(form).toHaveAccessibleName();
-    
+
     const questionField = screen.getByLabelText(/your question/i);
     expect(questionField).toHaveAttribute('aria-describedby');
     expect(questionField).toBeRequired();
@@ -696,6 +698,7 @@ describe('ConsultationForm Component', () => {
 ### 5.1 Supabase Integration Testing
 
 **Database Operations Testing**
+
 ```typescript
 // __tests__/integration/supabase/consultations.test.ts
 import { createTestSupabase, cleanupTestData } from '@/test-utils/supabase-test-utils';
@@ -723,13 +726,13 @@ describe('Consultation Database Integration', () => {
       interpretations: {
         traditional: 'Traditional interpretation',
         ai: 'AI-generated interpretation',
-        practical: 'Practical guidance'
-      }
+        practical: 'Practical guidance',
+      },
     };
 
     // Create consultation
     const created = await createConsultation(consultationData);
-    
+
     expect(created).toHaveProperty('id');
     expect(created.question).toBe(consultationData.question);
     expect(created.category).toBe(consultationData.category);
@@ -737,7 +740,7 @@ describe('Consultation Database Integration', () => {
 
     // Retrieve consultation
     const consultations = await getUserConsultations(testUserId);
-    
+
     expect(consultations).toHaveLength(1);
     expect(consultations[0].id).toBe(created.id);
   });
@@ -751,8 +754,8 @@ describe('Consultation Database Integration', () => {
       interpretations: {
         traditional: 'test',
         ai: 'test',
-        practical: 'test'
-      }
+        practical: 'test',
+      },
     };
 
     await expect(createConsultation(invalidData)).rejects.toThrow();
@@ -765,7 +768,7 @@ describe('Consultation Database Integration', () => {
       question: 'First question',
       category: 'general' as const,
       hexagram: HEXAGRAMS_DB[0],
-      interpretations: { traditional: 't', ai: 'a', practical: 'p' }
+      interpretations: { traditional: 't', ai: 'a', practical: 'p' },
     });
 
     // Small delay to ensure different timestamps
@@ -776,11 +779,11 @@ describe('Consultation Database Integration', () => {
       question: 'Second question',
       category: 'general' as const,
       hexagram: HEXAGRAMS_DB[1],
-      interpretations: { traditional: 't', ai: 'a', practical: 'p' }
+      interpretations: { traditional: 't', ai: 'a', practical: 'p' },
     });
 
     const consultations = await getUserConsultations(testUserId);
-    
+
     expect(consultations).toHaveLength(2);
     expect(consultations[0].id).toBe(consultation2.id); // Most recent first
     expect(consultations[1].id).toBe(consultation1.id);
@@ -791,6 +794,7 @@ describe('Consultation Database Integration', () => {
 ### 5.2 Authentication Integration Testing
 
 **Auth Flow Testing**
+
 ```typescript
 // __tests__/integration/auth/auth-flow.test.ts
 import { render, screen, waitFor } from '@/test-utils';
@@ -800,9 +804,9 @@ import { createTestSupabase } from '@/test-utils/supabase-test-utils';
 // Test component to interact with auth
 function AuthTestComponent() {
   const { user, signIn, signUp, signOut, loading } = useAuth();
-  
+
   if (loading) return <div>Loading...</div>;
-  
+
   return (
     <div>
       {user ? (
@@ -890,6 +894,7 @@ describe('Authentication Integration', () => {
 ### 6.1 Playwright E2E Setup
 
 **Playwright Configuration**
+
 ```typescript
 // playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
@@ -901,7 +906,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
-  
+
   use: {
     baseURL: process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
@@ -942,6 +947,7 @@ export default defineConfig({
 ### 6.2 Complete User Journey Testing
 
 **Consultation Journey E2E Test**
+
 ```typescript
 // e2e/consultation-journey.spec.ts
 import { test, expect } from '@playwright/test';
@@ -953,7 +959,7 @@ test.describe('Complete Consultation Journey', () => {
     await page.fill('[data-testid="email-input"]', 'test@example.com');
     await page.fill('[data-testid="password-input"]', 'testpassword');
     await page.click('[data-testid="login-button"]');
-    
+
     // Wait for redirect to dashboard
     await expect(page).toHaveURL('/dashboard');
   });
@@ -966,34 +972,34 @@ test.describe('Complete Consultation Journey', () => {
     // Fill in question
     const question = 'Should I accept the job offer in San Francisco?';
     await page.fill('[data-testid="question-input"]', question);
-    
+
     // Select category
     await page.selectOption('[data-testid="category-select"]', 'career');
-    
+
     // Generate consultation
     await page.click('[data-testid="generate-consultation"]');
-    
+
     // Wait for hexagram generation
     await expect(page.getByTestId('hexagram-display')).toBeVisible({ timeout: 10000 });
-    
+
     // Verify hexagram details are shown
     await expect(page.getByTestId('hexagram-number')).toBeVisible();
     await expect(page.getByTestId('hexagram-name')).toBeVisible();
     await expect(page.getByTestId('hexagram-chinese')).toBeVisible();
-    
+
     // Verify interpretation tabs
     await expect(page.getByTestId('traditional-interpretation')).toBeVisible();
     await expect(page.getByTestId('ai-interpretation')).toBeVisible();
     await expect(page.getByTestId('practical-interpretation')).toBeVisible();
-    
+
     // Test tab switching
     await page.click('[data-testid="ai-interpretation-tab"]');
     await expect(page.getByTestId('ai-interpretation-content')).toBeVisible();
-    
+
     // Save consultation
     await page.click('[data-testid="save-consultation"]');
     await expect(page.getByText('Consultation saved')).toBeVisible();
-    
+
     // Verify it appears in history
     await page.click('[data-testid="nav-history"]');
     await expect(page.getByText(question)).toBeVisible();
@@ -1001,17 +1007,17 @@ test.describe('Complete Consultation Journey', () => {
 
   test('should handle consultation errors gracefully', async ({ page }) => {
     await page.goto('/consultation');
-    
+
     // Try to submit without question
     await page.click('[data-testid="generate-consultation"]');
-    
+
     // Should show validation error
     await expect(page.getByText(/please provide a more detailed question/i)).toBeVisible();
-    
+
     // Fill in very short question
     await page.fill('[data-testid="question-input"]', 'Help?');
     await page.click('[data-testid="generate-consultation"]');
-    
+
     // Should show length validation error
     await expect(page.getByText(/question must be at least 10 characters/i)).toBeVisible();
   });
@@ -1019,19 +1025,19 @@ test.describe('Complete Consultation Journey', () => {
   test('should work offline', async ({ page, context }) => {
     // Enable offline mode
     await context.setOffline(true);
-    
+
     await page.goto('/consultation');
-    
+
     // Should show offline indicator
     await expect(page.getByText(/you are offline/i)).toBeVisible();
-    
+
     // Should still allow basic consultation (cached)
     await page.fill('[data-testid="question-input"]', 'What should I focus on today?');
     await page.click('[data-testid="generate-consultation"]');
-    
+
     // Should generate hexagram from cached data
     await expect(page.getByTestId('hexagram-display')).toBeVisible();
-    
+
     // Should show offline notice for AI interpretation
     await expect(page.getByText(/ai interpretation unavailable offline/i)).toBeVisible();
   });
@@ -1041,6 +1047,7 @@ test.describe('Complete Consultation Journey', () => {
 ### 6.3 Mobile-Specific E2E Testing
 
 **Mobile User Experience Testing**
+
 ```typescript
 // e2e/mobile-experience.spec.ts
 import { test, expect, devices } from '@playwright/test';
@@ -1050,35 +1057,35 @@ test.use({ ...devices['iPhone 12'] });
 test.describe('Mobile User Experience', () => {
   test('should handle touch interactions for coin casting', async ({ page }) => {
     await page.goto('/consultation');
-    
+
     // Fill question first
     await page.fill('[data-testid="question-input"]', 'What path should I take?');
-    
+
     // Test coin casting with touch
     const coin1 = page.getByTestId('coin-1');
     const coin2 = page.getByTestId('coin-2');
     const coin3 = page.getByTestId('coin-3');
-    
+
     // Touch each coin
     await coin1.tap();
     await coin2.tap();
     await coin3.tap();
-    
+
     // Should show coin animation
     await expect(coin1).toHaveClass(/casting/);
     await expect(coin2).toHaveClass(/casting/);
     await expect(coin3).toHaveClass(/casting/);
-    
+
     // Wait for animation to complete and show results
     await expect(page.getByTestId('hexagram-line-1')).toBeVisible({ timeout: 5000 });
   });
 
   test('should have proper touch target sizes', async ({ page }) => {
     await page.goto('/consultation');
-    
+
     // All interactive elements should be at least 44px
     const buttons = await page.getByRole('button').all();
-    
+
     for (const button of buttons) {
       const box = await button.boundingBox();
       if (box) {
@@ -1090,15 +1097,15 @@ test.describe('Mobile User Experience', () => {
 
   test('should handle viewport orientation changes', async ({ page }) => {
     await page.goto('/consultation');
-    
+
     // Portrait mode
     await page.setViewportSize({ width: 375, height: 812 });
     await expect(page.getByTestId('consultation-form')).toBeVisible();
-    
+
     // Landscape mode
     await page.setViewportSize({ width: 812, height: 375 });
     await expect(page.getByTestId('consultation-form')).toBeVisible();
-    
+
     // Content should still be accessible
     await expect(page.getByTestId('question-input')).toBeVisible();
   });
@@ -1112,6 +1119,7 @@ test.describe('Mobile User Experience', () => {
 ### 7.1 API Route Testing
 
 **Consultation API Testing**
+
 ```typescript
 // __tests__/api/consultation/create.test.ts
 import { POST } from '@/app/api/consultation/create/route';
@@ -1126,22 +1134,22 @@ describe('/api/consultation/create', () => {
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Mock authenticated user
     jest.mocked(createServerClient).mockReturnValue({
       auth: {
         getUser: jest.fn().mockResolvedValue({
           data: { user: { id: 'test-user-id', email: 'test@example.com' } },
-          error: null
-        })
-      }
+          error: null,
+        }),
+      },
     } as any);
   });
 
   it('should create consultation with valid data', async () => {
     const requestBody = {
       question: 'Should I accept this new job opportunity?',
-      category: 'career'
+      category: 'career',
     };
 
     const request = new NextRequest('http://localhost:3000/api/consultation/create', {
@@ -1155,7 +1163,7 @@ describe('/api/consultation/create', () => {
     // Mock successful AI interpretation
     jest.mocked(generateAIInterpretation).mockResolvedValue({
       interpretation: 'This hexagram suggests careful consideration...',
-      tokensUsed: 150
+      tokensUsed: 150,
     });
 
     // Mock successful database save
@@ -1167,7 +1175,7 @@ describe('/api/consultation/create', () => {
       hexagram: expect.any(Object),
       interpretations: expect.any(Object),
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     });
 
     const response = await POST(request);
@@ -1185,21 +1193,21 @@ describe('/api/consultation/create', () => {
       auth: {
         getUser: jest.fn().mockResolvedValue({
           data: { user: null },
-          error: { message: 'Invalid token' }
-        })
-      }
+          error: { message: 'Invalid token' },
+        }),
+      },
     } as any);
 
     const request = new NextRequest('http://localhost:3000/api/consultation/create', {
       method: 'POST',
       body: JSON.stringify({
         question: 'Test question',
-        category: 'general'
+        category: 'general',
       }),
     });
 
     const response = await POST(request);
-    
+
     expect(response.status).toBe(401);
     expect(await response.json()).toEqual({ error: 'Unauthorized' });
   });
@@ -1219,7 +1227,7 @@ describe('/api/consultation/create', () => {
       });
 
       const response = await POST(request);
-      
+
       expect(response.status).toBe(400);
       const errorData = await response.json();
       expect(errorData).toHaveProperty('error');
@@ -1231,21 +1239,19 @@ describe('/api/consultation/create', () => {
       method: 'POST',
       body: JSON.stringify({
         question: 'What should I do about my career?',
-        category: 'career'
+        category: 'career',
       }),
     });
 
     // Mock AI service failure
-    jest.mocked(generateAIInterpretation).mockRejectedValue(
-      new Error('OpenAI service unavailable')
-    );
+    jest.mocked(generateAIInterpretation).mockRejectedValue(new Error('OpenAI service unavailable'));
 
     const response = await POST(request);
-    
+
     expect(response.status).toBe(500);
     expect(await response.json()).toMatchObject({
       error: 'Internal server error',
-      message: 'Something went wrong'
+      message: 'Something went wrong',
     });
   });
 
@@ -1257,15 +1263,15 @@ describe('/api/consultation/create', () => {
       method: 'POST',
       body: JSON.stringify({
         question: 'Test question',
-        category: 'general'
+        category: 'general',
       }),
     });
 
     const response = await POST(request);
-    
+
     expect(response.status).toBe(429);
     expect(await response.json()).toMatchObject({
-      error: 'Rate limit exceeded'
+      error: 'Rate limit exceeded',
     });
   });
 });
@@ -1274,6 +1280,7 @@ describe('/api/consultation/create', () => {
 ### 7.2 API Contract Testing
 
 **OpenAPI Schema Validation**
+
 ```typescript
 // __tests__/api/schema-validation.test.ts
 import { validateApiResponse, validateApiRequest } from '@/test-utils/schema-validation';
@@ -1297,16 +1304,16 @@ describe('API Schema Validation', () => {
             { position: 3, type: 'yin', changing: false },
             { position: 4, type: 'yang', changing: false },
             { position: 5, type: 'yang', changing: false },
-            { position: 6, type: 'yang', changing: false }
-          ]
+            { position: 6, type: 'yang', changing: false },
+          ],
         },
         interpretations: {
           traditional: 'Traditional interpretation...',
           ai: 'AI interpretation...',
-          practical: 'Practical guidance...'
+          practical: 'Practical guidance...',
         },
         createdAt: '2025-07-30T10:00:00Z',
-        updatedAt: '2025-07-30T10:00:00Z'
+        updatedAt: '2025-07-30T10:00:00Z',
       };
 
       const result = validateApiResponse(consultationApiSchema.create.response, validResponse);
@@ -1316,7 +1323,7 @@ describe('API Schema Validation', () => {
     it('should reject invalid consultation request', () => {
       const invalidRequest = {
         question: 'Too short', // Too short
-        category: 'invalid-category' // Invalid category
+        category: 'invalid-category', // Invalid category
       };
 
       const result = validateApiRequest(consultationApiSchema.create.request, invalidRequest);
@@ -1335,6 +1342,7 @@ describe('API Schema Validation', () => {
 ### 8.1 I Ching Content Validation
 
 **Traditional Content Testing**
+
 ```typescript
 // __tests__/cultural/i-ching-accuracy.test.ts
 import { HEXAGRAMS_DB } from '@/lib/i-ching/hexagrams-data';
@@ -1350,7 +1358,7 @@ describe('I Ching Cultural Accuracy', () => {
     it('should have unique hexagram numbers 1-64', () => {
       const numbers = HEXAGRAMS_DB.map(h => h.number);
       const uniqueNumbers = new Set(numbers);
-      
+
       expect(uniqueNumbers.size).toBe(64);
       expect(Math.min(...numbers)).toBe(1);
       expect(Math.max(...numbers)).toBe(64);
@@ -1360,7 +1368,7 @@ describe('I Ching Cultural Accuracy', () => {
       HEXAGRAMS_DB.forEach((hexagram, index) => {
         expect(hexagram.chinese).toBeTruthy();
         expect(hexagram.chinese).toMatch(/^[\u4e00-\u9fff]+$/); // Chinese Unicode range
-        
+
         // Validate with cultural expert data
         const isValid = validateCulturalContent.validateChineseCharacters(hexagram.chinese);
         expect(isValid).toBe(true);
@@ -1369,13 +1377,19 @@ describe('I Ching Cultural Accuracy', () => {
 
     it('should have authentic traditional interpretations', () => {
       const problematicTerms = [
-        'fortune', 'luck', 'predict', 'will happen', 
-        'guaranteed', 'certain', 'never', 'always'
+        'fortune',
+        'luck',
+        'predict',
+        'will happen',
+        'guaranteed',
+        'certain',
+        'never',
+        'always',
       ];
 
       HEXAGRAMS_DB.forEach(hexagram => {
         const content = `${hexagram.meaning} ${hexagram.judgment} ${hexagram.image}`.toLowerCase();
-        
+
         problematicTerms.forEach(term => {
           expect(content).not.toContain(term);
         });
@@ -1386,11 +1400,11 @@ describe('I Ching Cultural Accuracy', () => {
       // First hexagram should be Heaven (Qián)
       expect(HEXAGRAMS_DB[0].name).toBe('Heaven');
       expect(HEXAGRAMS_DB[0].chinese).toBe('乾');
-      
-      // Second hexagram should be Earth (Kūn)  
+
+      // Second hexagram should be Earth (Kūn)
       expect(HEXAGRAMS_DB[1].name).toBe('Earth');
       expect(HEXAGRAMS_DB[1].chinese).toBe('坤');
-      
+
       // Verify King Wen sequence is maintained
       const kingWenSequence = [1, 2, 3, 4, 5, 6, 7, 8]; // First 8
       const actualSequence = HEXAGRAMS_DB.slice(0, 8).map(h => h.number);
@@ -1408,7 +1422,7 @@ describe('I Ching Cultural Accuracy', () => {
       expect(heaven?.name).toBe('Heaven');
       expect(heaven?.element).toBe('Metal');
       expect(heaven?.direction).toBe('Northwest');
-      
+
       const earth = TRIGRAMS_DB.find(t => t.chinese === '坤');
       expect(earth?.name).toBe('Earth');
       expect(earth?.element).toBe('Earth');
@@ -1421,6 +1435,7 @@ describe('I Ching Cultural Accuracy', () => {
 ### 8.2 AI Cultural Sensitivity Testing
 
 **AI Interpretation Cultural Testing**
+
 ```typescript
 // __tests__/cultural/ai-interpretation-validation.test.ts
 import { generateAIInterpretation } from '@/lib/ai/interpretations';
@@ -1437,7 +1452,7 @@ describe('AI Cultural Sensitivity', () => {
     const testQuestions = [
       'Should I invest in cryptocurrency?',
       'Will my relationship work out?',
-      'What will happen to my career?'
+      'What will happen to my career?',
     ];
 
     for (const question of testQuestions) {
@@ -1448,12 +1463,10 @@ describe('AI Cultural Sensitivity', () => {
 
       jest.mocked(openai.chat.completions.create).mockResolvedValue({
         choices: [{ message: { content: mockAIResponse } }],
-        usage: { total_tokens: 100 }
+        usage: { total_tokens: 100 },
       } as any);
 
-      await expect(
-        generateAIInterpretation(question, HEXAGRAMS_DB[0], 'general')
-      ).rejects.toThrow(/fortune.*telling/i);
+      await expect(generateAIInterpretation(question, HEXAGRAMS_DB[0], 'general')).rejects.toThrow(/fortune.*telling/i);
     }
   });
 
@@ -1466,14 +1479,10 @@ describe('AI Cultural Sensitivity', () => {
 
     jest.mocked(openai.chat.completions.create).mockResolvedValue({
       choices: [{ message: { content: respectfulResponse } }],
-      usage: { total_tokens: 80 }
+      usage: { total_tokens: 80 },
     } as any);
 
-    const result = await generateAIInterpretation(
-      'How should I approach this decision?',
-      HEXAGRAMS_DB[0],
-      'general'
-    );
+    const result = await generateAIInterpretation('How should I approach this decision?', HEXAGRAMS_DB[0], 'general');
 
     expect(result.interpretation).toContain('I Ching wisdom');
     expect(result.interpretation).toContain('ancient guidance');
@@ -1489,7 +1498,7 @@ describe('AI Cultural Sensitivity', () => {
 
     jest.mocked(openai.chat.completions.create).mockResolvedValue({
       choices: [{ message: { content: validResponse } }],
-      usage: { total_tokens: 75 }
+      usage: { total_tokens: 75 },
     } as any);
 
     const result = await generateAIInterpretation(
@@ -1512,6 +1521,7 @@ describe('AI Cultural Sensitivity', () => {
 ### 9.1 Automated Accessibility Testing
 
 **axe-core Integration**
+
 ```typescript
 // __tests__/accessibility/axe-compliance.test.ts
 import { render } from '@/test-utils';
@@ -1526,7 +1536,7 @@ describe('Accessibility Compliance', () => {
   it('should have no axe violations on consultation interface', async () => {
     const { container } = render(<ConsultationInterface />);
     const results = await axe(container);
-    
+
     expect(results).toHaveNoViolations();
   });
 
@@ -1535,7 +1545,7 @@ describe('Accessibility Compliance', () => {
       <HexagramDisplay hexagram={HEXAGRAMS_DB[0]} />
     );
     const results = await axe(container);
-    
+
     expect(results).toHaveNoViolations();
   });
 
@@ -1559,6 +1569,7 @@ describe('Accessibility Compliance', () => {
 ### 9.2 Keyboard Navigation Testing
 
 **Keyboard Accessibility Testing**
+
 ```typescript
 // __tests__/accessibility/keyboard-navigation.test.ts
 import { render, screen } from '@/test-utils';
@@ -1639,6 +1650,7 @@ describe('Keyboard Navigation', () => {
 ### 9.3 Screen Reader Testing
 
 **ARIA and Screen Reader Support**
+
 ```typescript
 // __tests__/accessibility/screen-reader.test.ts
 import { render, screen } from '@/test-utils';
@@ -1663,7 +1675,7 @@ describe('Screen Reader Support', () => {
 
     // Should announce when animating
     rerender(<HexagramDisplay hexagram={HEXAGRAMS_DB[0]} isAnimating={true} />);
-    
+
     const liveRegion = screen.getByRole('status');
     expect(liveRegion).toHaveTextContent(/generating.*hexagram/i);
   });
@@ -1672,10 +1684,10 @@ describe('Screen Reader Support', () => {
     render(<ConsultationForm onSubmit={jest.fn()} />);
 
     const questionInput = screen.getByLabelText(/your question/i);
-    
+
     // Should have describedby for help text
     expect(questionInput).toHaveAttribute('aria-describedby');
-    
+
     // Help text should be accessible
     const helpText = screen.getByText(/ask a specific question/i);
     expect(helpText).toBeInTheDocument();
@@ -1696,10 +1708,10 @@ describe('Screen Reader Support', () => {
     render(<ConsultationForm onSubmit={jest.fn()} />);
 
     const submitButton = screen.getByRole('button', { name: /generate consultation/i });
-    
+
     // Should not be pressed (toggle button state)
     expect(submitButton).not.toHaveAttribute('aria-pressed');
-    
+
     // Should have appropriate role
     expect(submitButton).toHaveAttribute('type', 'submit');
   });
@@ -1713,6 +1725,7 @@ describe('Screen Reader Support', () => {
 ### 10.1 Core Web Vitals Testing
 
 **Performance Metrics Testing**
+
 ```typescript
 // __tests__/performance/core-web-vitals.test.ts
 import { chromium } from 'playwright';
@@ -1732,7 +1745,7 @@ describe('Core Web Vitals', () => {
 
   it('should meet LCP target on consultation page', async () => {
     await page.goto('http://localhost:3000/consultation');
-    
+
     const lcp = await page.evaluate(() => {
       return new Promise(resolve => {
         new PerformanceObserver(list => {
@@ -1740,7 +1753,7 @@ describe('Core Web Vitals', () => {
           const lastEntry = entries[entries.length - 1];
           resolve(lastEntry.startTime);
         }).observe({ entryTypes: ['largest-contentful-paint'] });
-        
+
         // Timeout after 10 seconds
         setTimeout(() => resolve(0), 10000);
       });
@@ -1751,13 +1764,13 @@ describe('Core Web Vitals', () => {
 
   it('should meet FID target for user interactions', async () => {
     await page.goto('http://localhost:3000/consultation');
-    
+
     // Click on an interactive element
     const button = page.getByTestId('generate-consultation');
     const startTime = Date.now();
-    
+
     await button.click();
-    
+
     const fid = await page.evaluate(() => {
       return new Promise(resolve => {
         new PerformanceObserver(list => {
@@ -1765,7 +1778,7 @@ describe('Core Web Vitals', () => {
           const fidEntry = entries.find(entry => entry.name === 'first-input');
           resolve(fidEntry ? fidEntry.processingStart - fidEntry.startTime : 0);
         }).observe({ entryTypes: ['first-input'] });
-        
+
         setTimeout(() => resolve(0), 5000);
       });
     });
@@ -1775,14 +1788,14 @@ describe('Core Web Vitals', () => {
 
   it('should meet CLS target during content loading', async () => {
     await page.goto('http://localhost:3000/consultation');
-    
+
     // Wait for page to fully load
     await page.waitForLoadState('networkidle');
-    
+
     const cls = await page.evaluate(() => {
       return new Promise(resolve => {
         let cumulativeScore = 0;
-        
+
         new PerformanceObserver(list => {
           const entries = list.getEntries();
           entries.forEach(entry => {
@@ -1792,7 +1805,7 @@ describe('Core Web Vitals', () => {
           });
           resolve(cumulativeScore);
         }).observe({ entryTypes: ['layout-shift'] });
-        
+
         setTimeout(() => resolve(cumulativeScore), 5000);
       });
     });
@@ -1805,6 +1818,7 @@ describe('Core Web Vitals', () => {
 ### 10.2 Bundle Size Testing
 
 **JavaScript Bundle Analysis**
+
 ```typescript
 // __tests__/performance/bundle-analysis.test.ts
 import { analyze } from '@next/bundle-analyzer';
@@ -1812,42 +1826,34 @@ import fs from 'fs';
 
 describe('Bundle Size Analysis', () => {
   it('should keep total bundle size under limits', async () => {
-    const buildInfo = JSON.parse(
-      fs.readFileSync('.next/build-manifest.json', 'utf8')
-    );
+    const buildInfo = JSON.parse(fs.readFileSync('.next/build-manifest.json', 'utf8'));
 
     const mainBundleSize = getMainBundleSize(buildInfo);
-    
+
     // Main bundle should be under 300KB
     expect(mainBundleSize).toBeLessThan(300 * 1024);
   });
 
   it('should have optimal code splitting', async () => {
-    const buildInfo = JSON.parse(
-      fs.readFileSync('.next/build-manifest.json', 'utf8')
-    );
+    const buildInfo = JSON.parse(fs.readFileSync('.next/build-manifest.json', 'utf8'));
 
     // Should have separate chunks for major features
     expect(buildInfo.pages['/consultation']).toBeDefined();
     expect(buildInfo.pages['/dashboard']).toBeDefined();
-    
+
     // Heavy dependencies should be in separate chunks
     const consultationChunks = buildInfo.pages['/consultation'];
-    const hasAIChunk = consultationChunks.some((chunk: string) => 
-      chunk.includes('ai') || chunk.includes('openai')
-    );
-    
+    const hasAIChunk = consultationChunks.some((chunk: string) => chunk.includes('ai') || chunk.includes('openai'));
+
     expect(hasAIChunk).toBe(true);
   });
 
   it('should not include unnecessary dependencies', async () => {
-    const packageJson = JSON.parse(
-      fs.readFileSync('package.json', 'utf8')
-    );
+    const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 
     // Should not have unused heavy dependencies
     const heavyPackages = ['lodash', 'moment', 'jquery'];
-    
+
     heavyPackages.forEach(pkg => {
       expect(packageJson.dependencies?.[pkg]).toBeUndefined();
       expect(packageJson.devDependencies?.[pkg]).toBeUndefined();
@@ -1857,10 +1863,8 @@ describe('Bundle Size Analysis', () => {
 
 function getMainBundleSize(buildInfo: any): number {
   // Implementation to calculate main bundle size
-  const mainFiles = buildInfo.pages['/'].filter((file: string) => 
-    file.endsWith('.js') && !file.includes('chunk')
-  );
-  
+  const mainFiles = buildInfo.pages['/'].filter((file: string) => file.endsWith('.js') && !file.includes('chunk'));
+
   return mainFiles.reduce((total: number, file: string) => {
     const filePath = `.next/static/${file}`;
     if (fs.existsSync(filePath)) {
@@ -1878,6 +1882,7 @@ function getMainBundleSize(buildInfo: any): number {
 ### 11.1 Authentication Security Testing
 
 **Auth Vulnerability Testing**
+
 ```typescript
 // __tests__/security/auth-security.test.ts
 import { POST as loginPost } from '@/app/api/auth/login/route';
@@ -1885,23 +1890,19 @@ import { NextRequest } from 'next/server';
 
 describe('Authentication Security', () => {
   it('should prevent SQL injection in login', async () => {
-    const maliciousInputs = [
-      "admin'; DROP TABLE users; --",
-      "' OR '1'='1",
-      "' UNION SELECT * FROM users --"
-    ];
+    const maliciousInputs = ["admin'; DROP TABLE users; --", "' OR '1'='1", "' UNION SELECT * FROM users --"];
 
     for (const maliciousEmail of maliciousInputs) {
       const request = new NextRequest('http://localhost:3000/api/auth/login', {
         method: 'POST',
         body: JSON.stringify({
           email: maliciousEmail,
-          password: 'password'
+          password: 'password',
         }),
       });
 
       const response = await loginPost(request);
-      
+
       // Should reject with proper error, not expose database errors
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -1920,7 +1921,7 @@ describe('Authentication Security', () => {
         method: 'POST',
         body: JSON.stringify({
           email,
-          password: 'wrongpassword'
+          password: 'wrongpassword',
         }),
       });
 
@@ -1928,7 +1929,7 @@ describe('Authentication Security', () => {
     }
 
     const responses = await Promise.all(requests);
-    
+
     // Should have some rate limited responses
     const rateLimitedResponses = responses.filter(r => r.status === 429);
     expect(rateLimitedResponses.length).toBeGreaterThan(0);
@@ -1939,18 +1940,18 @@ describe('Authentication Security', () => {
       'invalid.jwt.token',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature',
       '', // Empty token
-      'Bearer fake-token'
+      'Bearer fake-token',
     ];
 
     for (const token of invalidTokens) {
       const request = new NextRequest('http://localhost:3000/api/consultation/create', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           question: 'Test question',
-          category: 'general'
+          category: 'general',
         }),
       });
 
@@ -1964,6 +1965,7 @@ describe('Authentication Security', () => {
 ### 11.2 Input Validation Security Testing
 
 **XSS and Injection Prevention**
+
 ```typescript
 // __tests__/security/input-validation.test.ts
 import { sanitizeQuestion, validateConsultationRequest } from '@/lib/validation/consultation';
@@ -1980,7 +1982,7 @@ describe('Input Validation Security', () => {
 
     xssInputs.forEach(input => {
       const sanitized = sanitizeQuestion(input);
-      
+
       // Should remove all script tags and JavaScript
       expect(sanitized).not.toContain('<script>');
       expect(sanitized).not.toContain('javascript:');
@@ -1993,27 +1995,28 @@ describe('Input Validation Security', () => {
     const maliciousRequests = [
       {
         question: '<script>alert("xss")</script>What should I do?',
-        category: 'general'
+        category: 'general',
       },
       {
         question: 'Valid question',
-        category: '../../etc/passwd'
+        category: '../../etc/passwd',
       },
       {
         question: 'Valid question',
         category: 'general',
-        maliciousField: '<script>alert("xss")</script>'
-      }
+        maliciousField: '<script>alert("xss")</script>',
+      },
     ];
 
     maliciousRequests.forEach(request => {
       const result = validateConsultationRequest(request);
-      
+
       if (result.success) {
         // If it passes validation, ensure it's been sanitized
         expect(result.data.question).not.toContain('<script>');
-        expect(['general', 'career', 'relationships', 'health', 'spiritual', 'decision'])
-          .toContain(result.data.category);
+        expect(['general', 'career', 'relationships', 'health', 'spiritual', 'decision']).toContain(
+          result.data.category
+        );
       } else {
         // Should fail validation for malicious input
         expect(result.errors.length).toBeGreaterThan(0);
@@ -2026,14 +2029,12 @@ describe('Input Validation Security', () => {
       '{"$ne": null}',
       '{"$gt": ""}',
       '{$where: "this.email === \'admin@example.com\'"}',
-      '"; DROP TABLE consultations; --'
+      '"; DROP TABLE consultations; --',
     ];
 
     for (const maliciousId of maliciousIds) {
       // Test with malicious user ID
-      await expect(
-        getUserConsultations(maliciousId)
-      ).rejects.toThrow();
+      await expect(getUserConsultations(maliciousId)).rejects.toThrow();
     }
   });
 });
@@ -2046,6 +2047,7 @@ describe('Input Validation Security', () => {
 ### 12.1 OpenAI API Testing
 
 **AI Service Integration Testing**
+
 ```typescript
 // __tests__/ai/openai-integration.test.ts
 import { generateAIInterpretation } from '@/lib/ai/interpretations';
@@ -2062,58 +2064,66 @@ describe('OpenAI Integration', () => {
 
   it('should handle successful AI responses', async () => {
     const mockResponse = {
-      choices: [{
-        message: {
-          content: 'This hexagram suggests contemplating the balance between action and patience...'
-        }
-      }],
-      usage: { total_tokens: 120 }
+      choices: [
+        {
+          message: {
+            content: 'This hexagram suggests contemplating the balance between action and patience...',
+          },
+        },
+      ],
+      usage: { total_tokens: 120 },
     };
 
     jest.mocked(OpenAI.prototype.chat.completions.create).mockResolvedValue(mockResponse as any);
 
-    const result = await generateAIInterpretation(
-      'Should I start a new business?',
-      HEXAGRAMS_DB[0],
-      'career'
-    );
+    const result = await generateAIInterpretation('Should I start a new business?', HEXAGRAMS_DB[0], 'career');
 
     expect(result.interpretation).toBe(mockResponse.choices[0].message.content);
     expect(result.tokensUsed).toBe(120);
   });
 
   it('should handle API rate limiting', async () => {
-    const rateLimitError = new OpenAI.APIError('Rate limit exceeded', {
-      status: 429,
-      headers: {},
-      error: {
-        type: 'rate_limit_exceeded',
-        message: 'Rate limit exceeded'
-      }
-    } as any, 'Rate limit exceeded', {});
+    const rateLimitError = new OpenAI.APIError(
+      'Rate limit exceeded',
+      {
+        status: 429,
+        headers: {},
+        error: {
+          type: 'rate_limit_exceeded',
+          message: 'Rate limit exceeded',
+        },
+      } as any,
+      'Rate limit exceeded',
+      {}
+    );
 
     jest.mocked(OpenAI.prototype.chat.completions.create).mockRejectedValue(rateLimitError);
 
-    await expect(
-      generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general')
-    ).rejects.toThrow(/temporarily unavailable/);
+    await expect(generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general')).rejects.toThrow(
+      /temporarily unavailable/
+    );
   });
 
   it('should handle API authentication errors', async () => {
-    const authError = new OpenAI.APIError('Invalid API key', {
-      status: 401,
-      headers: {},
-      error: {
-        type: 'invalid_api_key',
-        message: 'Invalid API key'
-      }
-    } as any, 'Invalid API key', {});
+    const authError = new OpenAI.APIError(
+      'Invalid API key',
+      {
+        status: 401,
+        headers: {},
+        error: {
+          type: 'invalid_api_key',
+          message: 'Invalid API key',
+        },
+      } as any,
+      'Invalid API key',
+      {}
+    );
 
     jest.mocked(OpenAI.prototype.chat.completions.create).mockRejectedValue(authError);
 
-    await expect(
-      generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general')
-    ).rejects.toThrow(/authentication error/);
+    await expect(generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general')).rejects.toThrow(
+      /authentication error/
+    );
   });
 
   it('should handle empty or invalid responses', async () => {
@@ -2126,12 +2136,12 @@ describe('OpenAI Integration', () => {
     for (const invalidResponse of invalidResponses) {
       jest.mocked(OpenAI.prototype.chat.completions.create).mockResolvedValue({
         ...invalidResponse,
-        usage: { total_tokens: 0 }
+        usage: { total_tokens: 0 },
       } as any);
 
-      await expect(
-        generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general')
-      ).rejects.toThrow(/no interpretation generated/i);
+      await expect(generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general')).rejects.toThrow(
+        /no interpretation generated/i
+      );
     }
   });
 
@@ -2139,7 +2149,7 @@ describe('OpenAI Integration', () => {
     const mockCreate = jest.mocked(OpenAI.prototype.chat.completions.create);
     mockCreate.mockResolvedValue({
       choices: [{ message: { content: 'Test response' } }],
-      usage: { total_tokens: 50 }
+      usage: { total_tokens: 50 },
     } as any);
 
     await generateAIInterpretation(
@@ -2151,7 +2161,7 @@ describe('OpenAI Integration', () => {
 
     const callArgs = mockCreate.mock.calls[0][0];
     const userMessage = callArgs.messages.find(m => m.role === 'user');
-    
+
     expect(userMessage?.content).toContain('Career guidance needed');
     expect(userMessage?.content).toContain('Peace');
     expect(userMessage?.content).toContain('career');
@@ -2162,7 +2172,7 @@ describe('OpenAI Integration', () => {
     const mockCreate = jest.mocked(OpenAI.prototype.chat.completions.create);
     mockCreate.mockResolvedValue({
       choices: [{ message: { content: 'Test response' } }],
-      usage: { total_tokens: 450 }
+      usage: { total_tokens: 450 },
     } as any);
 
     await generateAIInterpretation('Test question', HEXAGRAMS_DB[0], 'general');
@@ -2176,6 +2186,7 @@ describe('OpenAI Integration', () => {
 ### 12.2 AI Content Quality Testing
 
 **AI Response Quality Validation**
+
 ```typescript
 // __tests__/ai/content-quality.test.ts
 import { validateAIResponse, checkContentQuality } from '@/lib/ai/validation';
@@ -2194,7 +2205,7 @@ describe('AI Content Quality', () => {
     `;
 
     const result = validateAIResponse(validResponse);
-    
+
     expect(result.isValid).toBe(true);
     expect(result.wordCount).toBeGreaterThan(50);
     expect(result.wordCount).toBeLessThan(400);
@@ -2253,6 +2264,7 @@ describe('AI Content Quality', () => {
 ### 13.1 Supabase Database Testing
 
 **Database Schema Testing**
+
 ```typescript
 // __tests__/database/schema-validation.test.ts
 import { createTestSupabase, resetTestDatabase } from '@/test-utils/supabase-test-utils';
@@ -2274,24 +2286,20 @@ describe('Database Schema Validation', () => {
       id: 'user-123',
       display_name: 'Test User',
       preferences: { theme: 'light', notifications: true },
-      subscription_tier: 'free'
+      subscription_tier: 'free',
     };
 
-    const { error: validError } = await supabase
-      .from('user_profiles')
-      .insert(validProfile);
+    const { error: validError } = await supabase.from('user_profiles').insert(validProfile);
 
     expect(validError).toBeNull();
 
     // Invalid subscription tier should fail
     const invalidProfile = {
       id: 'user-456',
-      subscription_tier: 'invalid_tier'
+      subscription_tier: 'invalid_tier',
     };
 
-    const { error: invalidError } = await supabase
-      .from('user_profiles')
-      .insert(invalidProfile);
+    const { error: invalidError } = await supabase.from('user_profiles').insert(invalidProfile);
 
     expect(invalidError).toBeDefined();
     expect(invalidError?.message).toContain('invalid_tier');
@@ -2304,12 +2312,10 @@ describe('Database Schema Validation', () => {
       question: 'Test question',
       category: 'general',
       hexagram_data: { number: 1, name: 'Heaven' },
-      interpretations: { traditional: 'test', ai: 'test', practical: 'test' }
+      interpretations: { traditional: 'test', ai: 'test', practical: 'test' },
     };
 
-    const { error } = await supabase
-      .from('consultations')
-      .insert(orphanConsultation);
+    const { error } = await supabase.from('consultations').insert(orphanConsultation);
 
     expect(error).toBeDefined();
     expect(error?.message).toContain('foreign key');
@@ -2334,19 +2340,17 @@ describe('Database Schema Validation', () => {
           { position: 3, type: 'yin', changing: false },
           { position: 4, type: 'yang', changing: false },
           { position: 5, type: 'yang', changing: false },
-          { position: 6, type: 'yang', changing: false }
-        ]
+          { position: 6, type: 'yang', changing: false },
+        ],
       },
       interpretations: {
         traditional: 'Traditional meaning',
         ai: 'AI interpretation',
-        practical: 'Practical guidance'
-      }
+        practical: 'Practical guidance',
+      },
     };
 
-    const { error } = await supabase
-      .from('consultations')
-      .insert(validConsultation);
+    const { error } = await supabase.from('consultations').insert(validConsultation);
 
     expect(error).toBeNull();
   });
@@ -2354,11 +2358,11 @@ describe('Database Schema Validation', () => {
   it('should have proper indexes for performance', async () => {
     // Check that expected indexes exist
     const { data: indexes } = await supabase.rpc('get_table_indexes', {
-      table_name: 'consultations'
+      table_name: 'consultations',
     });
 
     const indexNames = indexes?.map((idx: any) => idx.indexname) || [];
-    
+
     expect(indexNames).toContain('idx_consultations_user_date');
     expect(indexNames).toContain('idx_consultations_category');
   });
@@ -2368,6 +2372,7 @@ describe('Database Schema Validation', () => {
 ### 13.2 Data Migration Testing
 
 **Database Migration Testing**
+
 ```typescript
 // __tests__/database/migrations.test.ts
 import { runMigrations, rollbackMigrations } from '@/test-utils/migration-utils';
@@ -2375,7 +2380,7 @@ import { runMigrations, rollbackMigrations } from '@/test-utils/migration-utils'
 describe('Database Migrations', () => {
   it('should run migrations successfully', async () => {
     const result = await runMigrations();
-    
+
     expect(result.success).toBe(true);
     expect(result.appliedMigrations.length).toBeGreaterThan(0);
   });
@@ -2383,11 +2388,11 @@ describe('Database Migrations', () => {
   it('should be reversible', async () => {
     // Apply migrations
     await runMigrations();
-    
+
     // Rollback should work
     const rollbackResult = await rollbackMigrations(1);
     expect(rollbackResult.success).toBe(true);
-    
+
     // Re-apply should work
     const reapplyResult = await runMigrations();
     expect(reapplyResult.success).toBe(true);
@@ -2396,10 +2401,10 @@ describe('Database Migrations', () => {
   it('should maintain data integrity during migrations', async () => {
     // Create test data
     const testData = await createTestConsultationData();
-    
+
     // Run migration
     await runMigrations();
-    
+
     // Verify data is still intact
     const afterMigration = await getConsultationData(testData.id);
     expect(afterMigration.question).toBe(testData.question);
@@ -2415,6 +2420,7 @@ describe('Database Migrations', () => {
 ### 14.1 Screenshot Testing
 
 **Visual Regression with Playwright**
+
 ```typescript
 // __tests__/visual/screenshot-regression.test.ts
 import { test, expect } from '@playwright/test';
@@ -2422,24 +2428,22 @@ import { test, expect } from '@playwright/test';
 test.describe('Visual Regression Tests', () => {
   test('should match consultation interface design', async ({ page }) => {
     await page.goto('/consultation');
-    
+
     // Wait for content to load
     await page.waitForSelector('[data-testid="consultation-form"]');
-    
+
     // Take screenshot and compare
     await expect(page).toHaveScreenshot('consultation-interface.png');
   });
 
   test('should match hexagram display across different hexagrams', async ({ page }) => {
     const hexagramNumbers = [1, 2, 11, 64]; // Test key hexagrams
-    
+
     for (const number of hexagramNumbers) {
       await page.goto(`/consultation/hexagram/${number}`);
       await page.waitForSelector('[data-testid="hexagram-display"]');
-      
-      await expect(page.getByTestId('hexagram-display')).toHaveScreenshot(
-        `hexagram-${number}.png`
-      );
+
+      await expect(page.getByTestId('hexagram-display')).toHaveScreenshot(`hexagram-${number}.png`);
     }
   });
 
@@ -2454,37 +2458,33 @@ test.describe('Visual Regression Tests', () => {
     for (const viewport of viewports) {
       await page.setViewportSize(viewport);
       await page.goto('/consultation');
-      
-      await expect(page).toHaveScreenshot(
-        `mobile-${viewport.width}x${viewport.height}.png`
-      );
+
+      await expect(page).toHaveScreenshot(`mobile-${viewport.width}x${viewport.height}.png`);
     }
   });
 
   test('should handle loading states consistently', async ({ page }) => {
     await page.goto('/consultation');
-    
+
     // Fill form
     await page.fill('[data-testid="question-input"]', 'Test question for visual testing');
-    
+
     // Click submit and immediately capture loading state
     const submitPromise = page.click('[data-testid="generate-consultation"]');
-    
+
     // Capture loading state
-    await expect(page.getByTestId('consultation-form')).toHaveScreenshot(
-      'consultation-loading.png'
-    );
-    
+    await expect(page.getByTestId('consultation-form')).toHaveScreenshot('consultation-loading.png');
+
     await submitPromise;
   });
 
   test('should maintain dark mode consistency', async ({ page }) => {
     // Enable dark mode
     await page.emulateMedia({ colorScheme: 'dark' });
-    
+
     await page.goto('/consultation');
     await expect(page).toHaveScreenshot('consultation-dark-mode.png');
-    
+
     await page.goto('/dashboard');
     await expect(page).toHaveScreenshot('dashboard-dark-mode.png');
   });
@@ -2498,6 +2498,7 @@ test.describe('Visual Regression Tests', () => {
 ### 15.1 Testing Stack Configuration
 
 **Jest Configuration**
+
 ```javascript
 // jest.config.js
 const nextJest = require('next/jest');
@@ -2514,12 +2515,7 @@ const customJestConfig = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@/test-utils/(.*)$': '<rootDir>/__tests__/utils/$1',
   },
-  collectCoverageFrom: [
-    'src/**/*.{js,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{js,ts,tsx}',
-    '!src/types/**/*',
-  ],
+  collectCoverageFrom: ['src/**/*.{js,ts,tsx}', '!src/**/*.d.ts', '!src/**/*.stories.{js,ts,tsx}', '!src/types/**/*'],
   coverageThreshold: {
     global: {
       branches: 75,
@@ -2547,6 +2543,7 @@ module.exports = createJestConfig(customJestConfig);
 ```
 
 **Jest Setup File**
+
 ```typescript
 // jest.setup.js
 import '@testing-library/jest-dom';
@@ -2611,6 +2608,7 @@ expect.extend({
 ### 15.2 Test Data Management
 
 **Test Data Factories**
+
 ```typescript
 // __tests__/utils/test-data-factory.ts
 import { faker } from '@faker-js/faker';
@@ -2619,7 +2617,7 @@ import { HEXAGRAMS_DB } from '@/lib/i-ching/hexagrams-data';
 
 export const createTestHexagram = (overrides?: Partial<Hexagram>): Hexagram => {
   const baseHexagram = faker.helpers.arrayElement(HEXAGRAMS_DB);
-  
+
   return {
     ...baseHexagram,
     lines: baseHexagram.lines.map((line, index) => ({
@@ -2672,23 +2670,26 @@ export const createTestUserProfile = (overrides?: Partial<UserProfile>): UserPro
 
 // Preset test scenarios
 export const createConsultationScenario = {
-  careerChange: () => createTestConsultation({
-    question: 'Should I leave my current job to start my own business?',
-    category: 'career',
-    hexagram: HEXAGRAMS_DB[23], // Splitting Apart - challenges and change
-  }),
-  
-  relationshipGuidance: () => createTestConsultation({
-    question: 'How can I resolve the conflict with my partner?',
-    category: 'relationships',
-    hexagram: HEXAGRAMS_DB[10], // Peace - harmony and balance
-  }),
-  
-  spiritualGrowth: () => createTestConsultation({
-    question: 'What spiritual practices should I focus on?',
-    category: 'spiritual',
-    hexagram: HEXAGRAMS_DB[51], // Contemplation - inner reflection
-  }),
+  careerChange: () =>
+    createTestConsultation({
+      question: 'Should I leave my current job to start my own business?',
+      category: 'career',
+      hexagram: HEXAGRAMS_DB[23], // Splitting Apart - challenges and change
+    }),
+
+  relationshipGuidance: () =>
+    createTestConsultation({
+      question: 'How can I resolve the conflict with my partner?',
+      category: 'relationships',
+      hexagram: HEXAGRAMS_DB[10], // Peace - harmony and balance
+    }),
+
+  spiritualGrowth: () =>
+    createTestConsultation({
+      question: 'What spiritual practices should I focus on?',
+      category: 'spiritual',
+      hexagram: HEXAGRAMS_DB[51], // Contemplation - inner reflection
+    }),
 };
 ```
 
@@ -2699,6 +2700,7 @@ export const createConsultationScenario = {
 ### 16.1 GitHub Actions Testing Workflow
 
 **Complete CI/CD Pipeline**
+
 ```yaml
 # .github/workflows/test.yml
 name: Testing Pipeline
@@ -2720,25 +2722,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run type checking
         run: npm run type-check
-      
+
       - name: Run linting
         run: npm run lint
-      
+
       - name: Run unit tests
         run: npm run test:unit -- --coverage
-      
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
@@ -2748,19 +2750,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run component tests
         run: npm run test:components
-      
+
       - name: Run accessibility tests
         run: npm run test:a11y
 
@@ -2776,22 +2778,22 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Setup test database
         run: npm run db:test:setup
-      
+
       - name: Run integration tests
         run: npm run test:integration
 
@@ -2799,25 +2801,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Install Playwright
         run: npx playwright install --with-deps
-      
+
       - name: Build application
         run: npm run build
-      
+
       - name: Run E2E tests
         run: npm run test:e2e
-      
+
       - name: Upload Playwright report
         uses: actions/upload-artifact@v3
         if: failure()
@@ -2829,10 +2831,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Run security audit
         run: npm audit --audit-level=high
-      
+
       - name: Run dependency check
         uses: securecodewarrior/github-action-add-sarif@v1
         with:
@@ -2842,22 +2844,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build application
         run: npm run build
-      
+
       - name: Run Lighthouse CI
         run: npm run test:lighthouse
-      
+
       - name: Run bundle analysis
         run: npm run analyze:bundle
 
@@ -2865,19 +2867,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run cultural accuracy tests
         run: npm run test:cultural
-      
+
       - name: Validate I Ching content
         run: npm run validate:i-ching-content
 ```
@@ -2885,6 +2887,7 @@ jobs:
 ### 16.2 Testing Environment Management
 
 **Environment-Specific Test Configuration**
+
 ```typescript
 // __tests__/config/test-environments.ts
 export const testEnvironments = {
@@ -2910,19 +2913,19 @@ export const testEnvironments = {
 
 export function setupTestEnvironment(type: keyof typeof testEnvironments) {
   const config = testEnvironments[type];
-  
+
   // Set environment variables
   process.env.TEST_ENVIRONMENT = type;
-  
+
   // Configure services based on environment
   if (config.supabase === 'mock') {
     jest.mock('@/lib/supabase/client');
   }
-  
+
   if (config.openai === 'mock') {
     jest.mock('openai');
   }
-  
+
   return config;
 }
 ```
@@ -2935,19 +2938,20 @@ export function setupTestEnvironment(type: keyof typeof testEnvironments) {
 
 **Coverage Requirements by Module**
 
-| Module | Lines | Functions | Branches | Statements |
-|--------|-------|-----------|----------|------------|
-| **I Ching Core** | 95% | 95% | 90% | 95% |
-| **AI Integration** | 90% | 90% | 85% | 90% |
-| **Authentication** | 85% | 90% | 80% | 85% |
-| **Database Layer** | 85% | 90% | 80% | 85% |
-| **UI Components** | 80% | 85% | 75% | 80% |
-| **API Routes** | 85% | 90% | 80% | 85% |
-| **Overall Target** | **80%** | **85%** | **75%** | **80%** |
+| Module             | Lines   | Functions | Branches | Statements |
+| ------------------ | ------- | --------- | -------- | ---------- |
+| **I Ching Core**   | 95%     | 95%       | 90%      | 95%        |
+| **AI Integration** | 90%     | 90%       | 85%      | 90%        |
+| **Authentication** | 85%     | 90%       | 80%      | 85%        |
+| **Database Layer** | 85%     | 90%       | 80%      | 85%        |
+| **UI Components**  | 80%     | 85%       | 75%      | 80%        |
+| **API Routes**     | 85%     | 90%       | 80%      | 85%        |
+| **Overall Target** | **80%** | **85%**   | **75%**  | **80%**    |
 
 ### 17.2 Quality Metrics Dashboard
 
 **Test Quality Tracking**
+
 ```typescript
 // scripts/test-metrics.ts
 interface TestMetrics {
@@ -3005,6 +3009,7 @@ This comprehensive testing strategy ensures that Sage maintains the highest stan
 5. **User-Centric Quality**: Real user workflows and scenarios
 
 **Key Success Factors:**
+
 - **Automated Quality Gates**: No code ships without passing all test suites
 - **Cultural Expert Integration**: Human validation of spiritual content
 - **Accessibility First**: Every component tested for inclusive design
@@ -3012,6 +3017,7 @@ This comprehensive testing strategy ensures that Sage maintains the highest stan
 - **Security Vigilance**: Regular security audits and vulnerability testing
 
 The testing standards support the solo entrepreneur approach by:
+
 - Leveraging automation to reduce manual testing overhead
 - Focusing on high-impact quality areas (cultural accuracy, accessibility)
 - Using managed services to simplify infrastructure testing

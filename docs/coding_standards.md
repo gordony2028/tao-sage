@@ -1,10 +1,11 @@
 # Sage Coding Standards
+
 ## Next.js + Supabase + OpenAI Stack Standards
 
 **Version:** 1.0  
 **Date:** July 30, 2025  
 **Stack:** Next.js 14, TypeScript, Supabase, OpenAI, Tailwind CSS  
-**Philosophy:** Cultural respect, accessibility-first, performance-conscious  
+**Philosophy:** Cultural respect, accessibility-first, performance-conscious
 
 ---
 
@@ -33,18 +34,21 @@
 ### 1.1 Core Development Principles
 
 **Wu Wei (無為) - Effortless Development**
+
 - Write code that is self-evident and requires minimal explanation
 - Leverage managed services over custom implementations
 - Choose simplicity over cleverness
 - Let TypeScript and tooling handle complexity
 
 **Cultural Authenticity**
+
 - All I Ching related content must be culturally accurate
 - Chinese characters and terms require expert validation
 - Respectful representation of ancient wisdom traditions
 - Code comments should reflect understanding, not assumptions
 
 **Accessibility First**
+
 - Every component must meet WCAG 2.1 AA standards
 - Screen reader compatibility is non-negotiable
 - Keyboard navigation must be intuitive
@@ -53,6 +57,7 @@
 ### 1.2 Technology Decision Framework
 
 Before adding any new dependency, ask:
+
 1. **Managed Service First**: Can Supabase/Vercel handle this?
 2. **Bundle Impact**: Does this add <100KB to the bundle?
 3. **Maintenance Burden**: Can one person maintain this?
@@ -65,6 +70,7 @@ Before adding any new dependency, ask:
 ### 2.1 Type Definitions
 
 **Core Domain Types**
+
 ```typescript
 // types/i-ching.ts - Core spiritual domain types
 export interface Hexagram {
@@ -103,16 +109,11 @@ export interface Consultation {
   readonly updatedAt: Date;
 }
 
-export type ConsultationCategory = 
-  | 'general' 
-  | 'career' 
-  | 'relationships' 
-  | 'health' 
-  | 'spiritual'
-  | 'decision';
+export type ConsultationCategory = 'general' | 'career' | 'relationships' | 'health' | 'spiritual' | 'decision';
 ```
 
 **Database Types (Supabase)**
+
 ```typescript
 // types/database.ts - Generated from Supabase
 export type Database = {
@@ -155,6 +156,7 @@ export type Database = {
 ### 2.2 Naming Conventions
 
 **Variables and Functions**
+
 ```typescript
 // ✅ Good - Descriptive and context-aware
 const hexagramInterpretation = await generateAIInterpretation(question, hexagram);
@@ -168,6 +170,7 @@ const thing = someFunction();
 ```
 
 **Constants**
+
 ```typescript
 // ✅ Good - Semantic and cultural
 const I_CHING_HEXAGRAM_COUNT = 64;
@@ -188,6 +191,7 @@ const CONSULTATION_LIMITS = {
 ### 2.3 Type Safety Rules
 
 **Strict TypeScript Configuration**
+
 ```json
 // tsconfig.json
 {
@@ -203,13 +207,14 @@ const CONSULTATION_LIMITS = {
 ```
 
 **Utility Types Usage**
+
 ```typescript
 // ✅ Good - Explicit type transformations
 type CreateConsultationData = Omit<Consultation, 'id' | 'createdAt' | 'updatedAt'>;
 type PartialUserProfile = Partial<Pick<UserProfile, 'display_name' | 'preferences'>>;
 
 // AI Response handling with proper error types
-type AIInterpretationResult = 
+type AIInterpretationResult =
   | { success: true; interpretation: string; tokens: number }
   | { success: false; error: 'rate_limit' | 'invalid_input' | 'service_unavailable' };
 ```
@@ -221,6 +226,7 @@ type AIInterpretationResult =
 ### 3.1 File Structure Standards
 
 **App Router Organization**
+
 ```
 src/
 ├── app/
@@ -256,6 +262,7 @@ src/
 ### 3.2 Page Component Standards
 
 **Page Components**
+
 ```typescript
 // app/consultation/page.tsx
 import { Metadata } from 'next';
@@ -280,7 +287,7 @@ export default function ConsultationPage() {
         <Suspense fallback={<ConsultationSkeleton />}>
           <ConsultationInterface />
         </Suspense>
-        
+
         <Suspense fallback={<HistorySkeleton />}>
           <ConsultationHistory />
         </Suspense>
@@ -303,6 +310,7 @@ function ConsultationSkeleton() {
 ### 3.3 Layout Standards
 
 **Root Layout**
+
 ```typescript
 // app/layout.tsx
 import { Inter } from 'next/font/google';
@@ -363,11 +371,12 @@ export default function RootLayout({
 ### 4.1 Component Architecture
 
 **Component Types**
+
 ```typescript
 // 1. Server Components (default in App Router)
 export default async function ConsultationHistory({ userId }: { userId: string }) {
   const consultations = await getConsultations(userId);
-  
+
   return (
     <section className="consultation-history">
       {consultations.map(consultation => (
@@ -384,13 +393,13 @@ import { useState } from 'react';
 export function CoinCastingInterface() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [lines, setLines] = useState<HexagramLine[]>([]);
-  
+
   const castCoins = async () => {
     setIsAnimating(true);
     // Animation and logic
     setIsAnimating(false);
   };
-  
+
   return (
     <div className="coin-casting">
       {/* Interactive elements */}
@@ -402,6 +411,7 @@ export function CoinCastingInterface() {
 ### 4.2 Component Patterns
 
 **Props Interface Design**
+
 ```typescript
 // ✅ Good - Explicit and extensible
 interface WisdomCardProps {
@@ -413,16 +423,16 @@ interface WisdomCardProps {
   readonly 'data-testid'?: string;
 }
 
-export function WisdomCard({ 
-  hexagram, 
-  interpretation, 
+export function WisdomCard({
+  hexagram,
+  interpretation,
   isLoading = false,
   onSave,
   className = '',
   'data-testid': testId,
 }: WisdomCardProps) {
   return (
-    <article 
+    <article
       className={`wisdom-card ${className}`}
       data-testid={testId}
       aria-label={`Hexagram ${hexagram.number}: ${hexagram.name}`}
@@ -434,27 +444,28 @@ export function WisdomCard({
 ```
 
 **Custom Hooks**
+
 ```typescript
 // hooks/use-consultation.ts
 export function useConsultation() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const generateConsultation = useCallback(async (question: string, category: ConsultationCategory) => {
     setIsGenerating(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/consultation/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question, category }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to generate consultation');
       }
-      
+
       const consultation: Consultation = await response.json();
       return consultation;
     } catch (err) {
@@ -465,7 +476,7 @@ export function useConsultation() {
       setIsGenerating(false);
     }
   }, []);
-  
+
   return {
     generateConsultation,
     isGenerating,
@@ -477,6 +488,7 @@ export function useConsultation() {
 ### 4.3 Event Handling Standards
 
 **User Interactions**
+
 ```typescript
 // ✅ Good - Explicit event types and error handling
 interface ConsultationFormProps {
@@ -487,17 +499,17 @@ export function ConsultationForm({ onSubmit }: ConsultationFormProps) {
   const [question, setQuestion] = useState('');
   const [category, setCategory] = useState<ConsultationCategory>('general');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     if (question.trim().length < 10) {
       toast.error('Please provide a more detailed question for better guidance.');
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit({ question: question.trim(), category });
       setQuestion('');
@@ -508,11 +520,11 @@ export function ConsultationForm({ onSubmit }: ConsultationFormProps) {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleQuestionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setQuestion(event.target.value);
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className="consultation-form">
       {/* Form elements */}
@@ -528,6 +540,7 @@ export function ConsultationForm({ onSubmit }: ConsultationFormProps) {
 ### 5.1 Client Configuration
 
 **Supabase Client Setup**
+
 ```typescript
 // lib/supabase/client.ts
 import { createClient } from '@supabase/supabase-js';
@@ -549,29 +562,24 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 
 // Server-side client (for API routes)
 export const createServerClient = () => {
-  return createClient<Database>(
-    supabaseUrl,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        persistSession: false,
-      },
-    }
-  );
+  return createClient<Database>(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: {
+      persistSession: false,
+    },
+  });
 };
 ```
 
 ### 5.2 Database Operations
 
 **CRUD Operations**
+
 ```typescript
 // lib/supabase/consultations.ts
 import { supabase } from './client';
 import type { Consultation, CreateConsultationData } from '@/types/i-ching';
 
-export async function createConsultation(
-  data: CreateConsultationData
-): Promise<Consultation> {
+export async function createConsultation(data: CreateConsultationData): Promise<Consultation> {
   const { data: consultation, error } = await supabase
     .from('consultations')
     .insert({
@@ -583,31 +591,28 @@ export async function createConsultation(
     })
     .select()
     .single();
-    
+
   if (error) {
     console.error('Failed to create consultation:', error);
     throw new Error('Failed to save consultation');
   }
-  
+
   return transformDatabaseConsultation(consultation);
 }
 
-export async function getUserConsultations(
-  userId: string,
-  limit = 20
-): Promise<Consultation[]> {
+export async function getUserConsultations(userId: string, limit = 20): Promise<Consultation[]> {
   const { data, error } = await supabase
     .from('consultations')
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
     .limit(limit);
-    
+
   if (error) {
     console.error('Failed to fetch consultations:', error);
     throw new Error('Failed to load consultations');
   }
-  
+
   return data.map(transformDatabaseConsultation);
 }
 
@@ -629,6 +634,7 @@ function transformDatabaseConsultation(row: any): Consultation {
 ### 5.3 Authentication Integration
 
 **Auth Hook**
+
 ```typescript
 // hooks/use-auth.ts
 'use client';
@@ -651,7 +657,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -659,7 +665,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
     });
-    
+
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -668,25 +674,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
       }
     );
-    
+
     return () => subscription.unsubscribe();
   }, []);
-  
+
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   };
-  
+
   const signUp = async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
   };
-  
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
-  
+
   return (
     <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
       {children}
@@ -710,6 +716,7 @@ export function useAuth() {
 ### 6.1 AI Client Configuration
 
 **OpenAI Setup**
+
 ```typescript
 // lib/ai/client.ts
 import { OpenAI } from 'openai';
@@ -735,6 +742,7 @@ export const AI_CONFIG = {
 ### 6.2 Prompt Engineering Standards
 
 **I Ching Interpretation Prompts**
+
 ```typescript
 // lib/ai/prompts.ts
 import type { Hexagram, ConsultationCategory } from '@/types/i-ching';
@@ -778,6 +786,7 @@ export function createDailyGuidancePrompt(
 ### 6.3 AI Response Handling
 
 **Streaming Responses**
+
 ```typescript
 // lib/ai/interpretations.ts
 import { openai, AI_CONFIG } from './client';
@@ -792,7 +801,7 @@ export async function generateAIInterpretation(
 ): Promise<{ interpretation: string; tokensUsed: number }> {
   try {
     const prompt = createInterpretationPrompt(question, hexagram, category, userContext);
-    
+
     const completion = await openai.chat.completions.create({
       model: AI_CONFIG.MODEL,
       messages: [
@@ -809,24 +818,24 @@ export async function generateAIInterpretation(
       temperature: AI_CONFIG.TEMPERATURE,
       timeout: AI_CONFIG.TIMEOUT_MS,
     });
-    
+
     const interpretation = completion.choices[0]?.message?.content;
     const tokensUsed = completion.usage?.total_tokens ?? 0;
-    
+
     if (!interpretation) {
       throw new Error('No interpretation generated');
     }
-    
+
     // Cultural sensitivity validation
     validateCulturalContent(interpretation);
-    
+
     return {
       interpretation: interpretation.trim(),
       tokensUsed,
     };
   } catch (error) {
     console.error('AI interpretation failed:', error);
-    
+
     if (error instanceof OpenAI.APIError) {
       if (error.status === 429) {
         throw new Error('Service temporarily unavailable. Please try again in a moment.');
@@ -835,7 +844,7 @@ export async function generateAIInterpretation(
         throw new Error('Authentication error. Please contact support.');
       }
     }
-    
+
     throw new Error('Failed to generate AI interpretation. Please try again.');
   }
 }
@@ -843,7 +852,7 @@ export async function generateAIInterpretation(
 function validateCulturalContent(content: string): void {
   // Basic validation for cultural sensitivity
   const problematicTerms = ['fortune', 'predict the future', 'guaranteed outcome'];
-  
+
   for (const term of problematicTerms) {
     if (content.toLowerCase().includes(term)) {
       console.warn(`Potentially problematic content detected: ${term}`);
@@ -860,6 +869,7 @@ function validateCulturalContent(content: string): void {
 ### 7.1 Tailwind CSS Conventions
 
 **Class Organization**
+
 ```typescript
 // ✅ Good - Organized by property type
 <div className={cn(
@@ -883,6 +893,7 @@ function validateCulturalContent(content: string): void {
 ```
 
 **Custom CSS Classes**
+
 ```css
 /* styles/components/wisdom-card.css */
 .wisdom-card {
@@ -906,6 +917,7 @@ function validateCulturalContent(content: string): void {
 ### 7.2 Design Token Usage
 
 **CSS Custom Properties**
+
 ```css
 /* Use design tokens from the design system */
 :root {
@@ -925,6 +937,7 @@ function validateCulturalContent(content: string): void {
 ### 7.3 Responsive Design Patterns
 
 **Mobile-First Approach**
+
 ```typescript
 // ✅ Good - Mobile-first with progressive enhancement
 <div className={cn(
@@ -953,6 +966,7 @@ function validateCulturalContent(content: string): void {
 ### 8.1 Route Structure
 
 **API Route Organization**
+
 ```typescript
 // app/api/consultation/create/route.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -965,38 +979,31 @@ export async function POST(request: NextRequest) {
   try {
     // Authentication check
     const supabase = createServerClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' }, 
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Parse and validate request
     const body = await request.json();
     const validationResult = validateConsultationRequest(body);
-    
+
     if (!validationResult.success) {
-      return NextResponse.json(
-        { error: 'Invalid request', details: validationResult.errors },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid request', details: validationResult.errors }, { status: 400 });
     }
-    
+
     const { question, category } = validationResult.data;
-    
+
     // Generate hexagram
     const hexagram = generateHexagram();
-    
+
     // Generate AI interpretation
-    const { interpretation, tokensUsed } = await generateAIInterpretation(
-      question,
-      hexagram,
-      category
-    );
-    
+    const { interpretation, tokensUsed } = await generateAIInterpretation(question, hexagram, category);
+
     // Save to database
     const consultation = await createConsultation({
       userId: user.id,
@@ -1009,34 +1016,24 @@ export async function POST(request: NextRequest) {
         practical: generatePracticalGuidance(hexagram, question),
       },
     });
-    
+
     // Log usage for billing
     await logAIUsage(user.id, tokensUsed);
-    
+
     return NextResponse.json(consultation);
-    
   } catch (error) {
     console.error('Consultation creation failed:', error);
-    
+
     // Return appropriate error response
     if (error instanceof ValidationError) {
-      return NextResponse.json(
-        { error: 'Invalid input', message: error.message },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid input', message: error.message }, { status: 400 });
     }
-    
+
     if (error instanceof RateLimitError) {
-      return NextResponse.json(
-        { error: 'Rate limit exceeded', message: 'Please try again later' },
-        { status: 429 }
-      );
+      return NextResponse.json({ error: 'Rate limit exceeded', message: 'Please try again later' }, { status: 429 });
     }
-    
-    return NextResponse.json(
-      { error: 'Internal server error', message: 'Something went wrong' },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: 'Internal server error', message: 'Something went wrong' }, { status: 500 });
   }
 }
 ```
@@ -1044,6 +1041,7 @@ export async function POST(request: NextRequest) {
 ### 8.2 Input Validation
 
 **Request Validation**
+
 ```typescript
 // lib/validation/consultation.ts
 import { z } from 'zod';
@@ -1053,16 +1051,13 @@ const consultationSchema = z.object({
     .string()
     .min(10, 'Question must be at least 10 characters')
     .max(500, 'Question must not exceed 500 characters')
-    .refine(
-      (q) => q.trim().split(/\s+/).length >= 3,
-      'Question must contain at least 3 words for meaningful guidance'
-    ),
+    .refine(q => q.trim().split(/\s+/).length >= 3, 'Question must contain at least 3 words for meaningful guidance'),
   category: z.enum(['general', 'career', 'relationships', 'health', 'spiritual', 'decision']),
 });
 
 export function validateConsultationRequest(data: unknown) {
   const result = consultationSchema.safeParse(data);
-  
+
   if (!result.success) {
     return {
       success: false,
@@ -1072,7 +1067,7 @@ export function validateConsultationRequest(data: unknown) {
       })),
     };
   }
-  
+
   return {
     success: true,
     data: result.data,
@@ -1083,6 +1078,7 @@ export function validateConsultationRequest(data: unknown) {
 ### 8.3 Error Handling
 
 **Standardized Error Responses**
+
 ```typescript
 // lib/api/errors.ts
 export class APIError extends Error {
@@ -1097,7 +1093,10 @@ export class APIError extends Error {
 }
 
 export class ValidationError extends APIError {
-  constructor(message: string, public errors: any[]) {
+  constructor(
+    message: string,
+    public errors: any[]
+  ) {
     super(message, 400, 'VALIDATION_ERROR');
   }
 }
@@ -1119,9 +1118,9 @@ export function handleAPIError(error: unknown): NextResponse {
       { status: error.statusCode }
     );
   }
-  
+
   console.error('Unhandled API error:', error);
-  
+
   return NextResponse.json(
     {
       error: 'INTERNAL_SERVER_ERROR',
@@ -1139,6 +1138,7 @@ export function handleAPIError(error: unknown): NextResponse {
 ### 9.1 Error Boundaries
 
 **React Error Boundary**
+
 ```typescript
 // components/error/ErrorBoundary.tsx
 'use client';
@@ -1160,21 +1160,21 @@ export class ErrorBoundary extends Component<Props, State> {
     super(props);
     this.state = { hasError: false };
   }
-  
+
   static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
+
     // Report to monitoring service
     if (typeof window !== 'undefined') {
       // Sentry or similar
       reportError(error, errorInfo);
     }
   }
-  
+
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
@@ -1194,7 +1194,7 @@ export class ErrorBoundary extends Component<Props, State> {
         </div>
       );
     }
-    
+
     return this.props.children;
   }
 }
@@ -1208,6 +1208,7 @@ function reportError(error: Error, errorInfo: ErrorInfo) {
 ### 9.2 Toast Notifications
 
 **User-Friendly Error Messages**
+
 ```typescript
 // lib/notifications/toast.ts
 import { toast } from 'sonner';
@@ -1223,27 +1224,27 @@ export const notifications = {
         },
       });
     },
-    
+
     auth: (error?: string) => {
       toast.error('Authentication failed', {
         description: error || 'Please check your credentials and try again.',
       });
     },
-    
+
     network: () => {
       toast.error('Connection issue', {
         description: 'Please check your internet connection.',
       });
     },
   },
-  
+
   success: {
     consultation: () => {
       toast.success('Consultation generated', {
         description: 'Your I Ching guidance is ready.',
       });
     },
-    
+
     saved: () => {
       toast.success('Saved successfully', {
         description: 'Your changes have been saved.',
@@ -1260,6 +1261,7 @@ export const notifications = {
 ### 10.1 Core Web Vitals Targets
 
 **Performance Metrics**
+
 - **Largest Contentful Paint (LCP):** < 2.5 seconds
 - **First Input Delay (FID):** < 100 milliseconds
 - **Cumulative Layout Shift (CLS):** < 0.1
@@ -1268,6 +1270,7 @@ export const notifications = {
 ### 10.2 Code Splitting
 
 **Dynamic Imports**
+
 ```typescript
 // ✅ Good - Lazy load heavy components
 import dynamic from 'next/dynamic';
@@ -1303,6 +1306,7 @@ export default function ConsultationPage() {
 ### 10.3 Image Optimization
 
 **Next.js Image Usage**
+
 ```typescript
 import Image from 'next/image';
 
@@ -1335,6 +1339,7 @@ import Image from 'next/image';
 ### 11.1 Environment Variables
 
 **Security Configuration**
+
 ```typescript
 // lib/config/env.ts
 import { z } from 'zod';
@@ -1353,6 +1358,7 @@ export const env = envSchema.parse(process.env);
 ### 11.2 Input Sanitization
 
 **Content Security**
+
 ```typescript
 // lib/security/sanitization.ts
 import DOMPurify from 'dompurify';
@@ -1362,7 +1368,7 @@ export function sanitizeHTML(dirty: string): string {
     // Server-side fallback
     return dirty.replace(/<[^>]*>/g, '');
   }
-  
+
   return DOMPurify.sanitize(dirty, {
     ALLOWED_TAGS: ['p', 'br', 'strong', 'em'],
     ALLOWED_ATTR: [],
@@ -1380,6 +1386,7 @@ export function sanitizeQuestion(question: string): string {
 ### 11.3 Rate Limiting
 
 **API Protection**
+
 ```typescript
 // lib/security/rate-limit.ts
 import { NextRequest } from 'next/server';
@@ -1391,23 +1398,23 @@ interface RateLimitOptions {
 
 export function createRateLimit({ interval, requests }: RateLimitOptions) {
   const cache = new Map<string, { count: number; resetTime: number }>();
-  
+
   return function rateLimit(request: NextRequest): boolean {
     const ip = request.ip ?? 'anonymous';
     const now = Date.now();
     const key = `${ip}:${interval}`;
-    
+
     const record = cache.get(key);
-    
+
     if (!record || now > record.resetTime) {
       cache.set(key, { count: 1, resetTime: now + interval });
       return true;
     }
-    
+
     if (record.count >= requests) {
       return false;
     }
-    
+
     record.count++;
     return true;
   };
@@ -1421,12 +1428,9 @@ const consultationRateLimit = createRateLimit({
 
 export async function POST(request: NextRequest) {
   if (!consultationRateLimit(request)) {
-    return NextResponse.json(
-      { error: 'Rate limit exceeded' },
-      { status: 429 }
-    );
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
   }
-  
+
   // Continue with request handling
 }
 ```
@@ -1438,15 +1442,16 @@ export async function POST(request: NextRequest) {
 ### 12.1 Content Guidelines
 
 **Respectful Representation**
+
 ```typescript
 // lib/i-ching/cultural-validation.ts
 export interface CulturalGuidelines {
   // Traditional Chinese characters must be accurate
   validateChineseCharacters(text: string): boolean;
-  
+
   // Interpretations must respect traditional meanings
   validateInterpretation(interpretation: string): boolean;
-  
+
   // Avoid fortune-telling language
   avoidDivinationClaims(content: string): boolean;
 }
@@ -1457,26 +1462,17 @@ export const culturalValidator: CulturalGuidelines = {
     const validCharacters = /^[\u4e00-\u9fff\s\(\)\-]+$/;
     return validCharacters.test(text);
   },
-  
+
   validateInterpretation(interpretation: string): boolean {
     // Check for problematic fortune-telling language
-    const problematicTerms = [
-      'will definitely',
-      'guaranteed to happen',
-      'your future will be',
-      'you will definitely',
-    ];
-    
-    return !problematicTerms.some(term => 
-      interpretation.toLowerCase().includes(term)
-    );
+    const problematicTerms = ['will definitely', 'guaranteed to happen', 'your future will be', 'you will definitely'];
+
+    return !problematicTerms.some(term => interpretation.toLowerCase().includes(term));
   },
-  
+
   avoidDivinationClaims(content: string): boolean {
     const divinationWords = ['predict', 'foretell', 'prophesy'];
-    return !divinationWords.some(word => 
-      content.toLowerCase().includes(word)
-    );
+    return !divinationWords.some(word => content.toLowerCase().includes(word));
   },
 };
 ```
@@ -1484,20 +1480,21 @@ export const culturalValidator: CulturalGuidelines = {
 ### 12.2 Attribution Standards
 
 **Cultural Attribution**
+
 ```typescript
 // components/cultural/Attribution.tsx
 export function CulturalAttribution() {
   return (
     <footer className="cultural-attribution mt-12 p-6 bg-morning-mist rounded-lg">
       <p className="text-sm text-soft-gray text-center">
-        The I Ching (易經) is an ancient Chinese divination text and among the oldest 
-        of the Chinese classics. We honor this 5,000-year-old tradition with respect 
+        The I Ching (易經) is an ancient Chinese divination text and among the oldest
+        of the Chinese classics. We honor this 5,000-year-old tradition with respect
         and authenticity, guided by traditional scholars and practitioners.
       </p>
-      
+
       <div className="mt-4 text-center">
-        <a 
-          href="/cultural-acknowledgments" 
+        <a
+          href="/cultural-acknowledgments"
           className="text-flowing-water hover:underline"
         >
           Cultural Acknowledgments & Sources
@@ -1515,6 +1512,7 @@ export function CulturalAttribution() {
 ### 13.1 Semantic HTML
 
 **Proper Structure**
+
 ```typescript
 // ✅ Good - Semantic structure
 export function ConsultationInterface() {
@@ -1524,7 +1522,7 @@ export function ConsultationInterface() {
         <h1>I Ching Consultation</h1>
         <p>Seek ancient wisdom for modern decisions</p>
       </header>
-      
+
       <section aria-labelledby="question-heading">
         <h2 id="question-heading">Your Question</h2>
         <form role="form" aria-label="Consultation form">
@@ -1534,7 +1532,7 @@ export function ConsultationInterface() {
               Ask a specific question for clearer wisdom
             </span>
           </label>
-          <textarea 
+          <textarea
             id="question-input"
             aria-describedby="question-help"
             required
@@ -1544,11 +1542,11 @@ export function ConsultationInterface() {
           </div>
         </form>
       </section>
-      
+
       <section aria-labelledby="hexagram-heading">
         <h2 id="hexagram-heading">Your Hexagram</h2>
-        <div 
-          role="img" 
+        <div
+          role="img"
           aria-label="Hexagram 11: Peace - Earth above Heaven"
           className="hexagram-display"
         >
@@ -1563,6 +1561,7 @@ export function ConsultationInterface() {
 ### 13.2 ARIA Implementation
 
 **Screen Reader Support**
+
 ```typescript
 // components/hexagram/HexagramDisplay.tsx
 interface HexagramDisplayProps {
@@ -1572,7 +1571,7 @@ interface HexagramDisplayProps {
 
 export function HexagramDisplay({ hexagram, isAnimating }: HexagramDisplayProps) {
   return (
-    <div 
+    <div
       className="hexagram-container"
       role="img"
       aria-label={`Hexagram ${hexagram.number}: ${hexagram.name}. ${hexagram.meaning}`}
@@ -1591,16 +1590,16 @@ export function HexagramDisplay({ hexagram, isAnimating }: HexagramDisplayProps)
           />
         ))}
       </div>
-      
-      <div 
-        id={`hexagram-${hexagram.number}-description`} 
+
+      <div
+        id={`hexagram-${hexagram.number}-description`}
         className="sr-only"
       >
-        This hexagram consists of {hexagram.lines.length} lines representing 
+        This hexagram consists of {hexagram.lines.length} lines representing
         {hexagram.upperTrigram.name} above {hexagram.lowerTrigram.name}.
         Traditional meaning: {hexagram.meaning}
       </div>
-      
+
       {isAnimating && (
         <div aria-live="polite" aria-atomic="true" className="sr-only">
           Generating your hexagram guidance...
@@ -1614,6 +1613,7 @@ export function HexagramDisplay({ hexagram, isAnimating }: HexagramDisplayProps)
 ### 13.3 Keyboard Navigation
 
 **Focus Management**
+
 ```typescript
 // hooks/use-focus-management.ts
 import { useRef, useEffect } from 'react';
@@ -1621,13 +1621,13 @@ import { useRef, useEffect } from 'react';
 export function useFocusManagement(isVisible: boolean) {
   const firstFocusableRef = useRef<HTMLElement>(null);
   const lastFocusableRef = useRef<HTMLElement>(null);
-  
+
   useEffect(() => {
     if (isVisible && firstFocusableRef.current) {
       firstFocusableRef.current.focus();
     }
   }, [isVisible]);
-  
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Tab') {
       if (event.shiftKey && document.activeElement === firstFocusableRef.current) {
@@ -1638,13 +1638,13 @@ export function useFocusManagement(isVisible: boolean) {
         firstFocusableRef.current?.focus();
       }
     }
-    
+
     if (event.key === 'Escape') {
       // Handle escape key
       onClose?.();
     }
   };
-  
+
   return {
     firstFocusableRef,
     lastFocusableRef,
@@ -1687,6 +1687,7 @@ src/
 ### 14.2 Import Organization
 
 **Import Order**
+
 ```typescript
 // 1. React and Next.js imports
 import React, { useState, useEffect } from 'react';
@@ -1716,6 +1717,7 @@ import type { Hexagram, Consultation } from '@/types/i-ching';
 ### 15.1 Commit Standards
 
 **Conventional Commits**
+
 ```bash
 # Format: type(scope): description
 
@@ -1740,6 +1742,7 @@ git commit -m "docs(contributing): add cultural sensitivity guidelines"
 ### 15.2 Branch Strategy
 
 **Git Flow**
+
 ```bash
 # Main branches
 main                    # Production ready code
@@ -1761,6 +1764,7 @@ docs/[documentation-update]
 ### 15.3 Code Review Checklist
 
 **Review Requirements**
+
 - [ ] **Cultural Sensitivity**: I Ching content is respectful and accurate
 - [ ] **Accessibility**: WCAG 2.1 AA compliance verified
 - [ ] **Performance**: No unnecessary re-renders or heavy computations
