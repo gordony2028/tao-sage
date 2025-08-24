@@ -380,6 +380,51 @@ export default function ProfilePage() {
           </Card>
         )}
 
+        {/* Data Export Section */}
+        <Card variant="default" className="mt-6">
+          <CardHeader>
+            <CardTitle>Data & Privacy</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <h4 className="mb-2 font-medium text-mountain-stone">
+                  Export Your Journey
+                </h4>
+                <p className="mb-4 text-sm text-soft-gray">
+                  Download your consultation history, insights, and analytics in
+                  multiple formats. Your data remains completely private and is
+                  exported directly to your device.
+                </p>
+                <Button
+                  onClick={() => (window.location.href = '/export')}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <span>📊</span>
+                  Export Data & Analytics
+                </Button>
+              </div>
+
+              <div className="border-t border-stone-gray/20 pt-4">
+                <h4 className="mb-2 font-medium text-mountain-stone">
+                  Privacy Controls
+                </h4>
+                <div className="space-y-2 text-sm text-soft-gray">
+                  <p>
+                    • All your spiritual insights and reflections are private
+                  </p>
+                  <p>• You can export or delete your data at any time</p>
+                  <p>• We never share your personal consultation content</p>
+                  <p>
+                    • Analytics are generated locally and stay on your device
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Analytics Dashboard */}
         <div className="mt-6">
           <UserAnalytics />
