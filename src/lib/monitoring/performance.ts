@@ -27,7 +27,10 @@ class PerformanceMonitor {
   private apiStartTimes = new Map<string, number>();
 
   constructor() {
-    this.initializeMonitoring();
+    // Only initialize monitoring in the browser environment
+    if (typeof window !== 'undefined') {
+      this.initializeMonitoring();
+    }
   }
 
   private initializeMonitoring() {
