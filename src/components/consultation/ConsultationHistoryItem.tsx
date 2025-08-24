@@ -9,6 +9,7 @@ import {
 } from '@/lib/supabase/consultations';
 import { formatDistanceToNow } from 'date-fns';
 import AIPersonalityIndicator from './AIPersonalityIndicator';
+import EnhancedNotesEditor from './EnhancedNotesEditor';
 
 interface ConsultationHistoryItemProps {
   consultation: Consultation;
@@ -25,15 +26,19 @@ export default function ConsultationHistoryItem({
   const [tags, setTags] = useState(consultation.tags.join(', '));
   const [saving, setSaving] = useState(false);
 
-  const handleSaveNotes = async () => {
+  const handleSaveNotes = async (
+    newNotes: string,
+    newTags: string[],
+    culturalInsights?: any[]
+  ) => {
     try {
       setSaving(true);
+      setNotes(newNotes);
+      setTags(newTags.join(', '));
+
       await updateConsultation(consultation.id, {
-        notes: notes.trim() || null,
-        tags: tags
-          .split(',')
-          .map(t => t.trim())
-          .filter(Boolean),
+        notes: newNotes.trim() || null,
+        tags: newTags,
       });
       onUpdate();
       setIsEditing(false);
@@ -253,60 +258,14 @@ export default function ConsultationHistoryItem({
               )}
             </div>
 
-            {/* Notes Section */}
-            <div className="border-t border-stone-gray/20 pt-4">
-              <div className="mb-3 flex items-center justify-between">
-                <h4 className="font-medium text-mountain-stone">Your Notes</h4>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsEditing(!isEditing)}
-                  disabled={saving}
-                >
-                  {isEditing ? 'Cancel' : 'Edit'}
-                </Button>
-              </div>
-
-              {isEditing ? (
-                <div className="space-y-3">
-                  <textarea
-                    value={notes}
-                    onChange={e => setNotes(e.target.value)}
-                    placeholder="Add your personal insights, reflections, or observations about this consultation..."
-                    className="min-h-[100px] w-full rounded-lg border border-stone-gray/30 p-3 text-sm focus:border-flowing-water focus:outline-none focus:ring-2 focus:ring-flowing-water/50"
-                  />
-                  <input
-                    type="text"
-                    value={tags}
-                    onChange={e => setTags(e.target.value)}
-                    placeholder="Tags (comma-separated): personal, work, relationships..."
-                    className="w-full rounded-lg border border-stone-gray/30 p-2 text-sm focus:border-flowing-water focus:outline-none focus:ring-2 focus:ring-flowing-water/50"
-                  />
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={handleSaveNotes}
-                      disabled={saving}
-                      size="sm"
-                    >
-                      {saving ? 'Saving...' : 'Save'}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="pl-0">
-                  {consultation.notes ? (
-                    <p className="whitespace-pre-wrap text-gentle-silver">
-                      {consultation.notes}
-                    </p>
-                  ) : (
-                    <p className="italic text-soft-gray">
-                      No notes yet. Click &quot;Edit&quot; to add your
-                      reflections.
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
+            {/* Enhanced Notes Section */}
+            <EnhancedNotesEditor
+              consultation={consultation}
+              onSave={handleSaveNotes}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+              saving={saving}
+            />
           </div>
         )}
       </CardContent>

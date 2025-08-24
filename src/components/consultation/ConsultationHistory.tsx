@@ -11,6 +11,7 @@ import { supabase } from '@/lib/supabase/client';
 import ConsultationHistoryItem from './ConsultationHistoryItem';
 import ConsultationHistoryFilters from './ConsultationHistoryFilters';
 import AIPersonalitySummary from './AIPersonalitySummary';
+import NoteTakingAnalytics from './NoteTakingAnalytics';
 
 interface ConsultationHistoryProps {
   userId: string;
@@ -122,6 +123,11 @@ export default function ConsultationHistory({
       {/* AI Personality Summary */}
       {consultations.length > 0 && (
         <AIPersonalitySummary consultations={consultations} />
+      )}
+
+      {/* Note-Taking Analytics */}
+      {consultations.length > 0 && (
+        <NoteTakingAnalytics consultations={consultations} />
       )}
 
       {/* Filters */}
