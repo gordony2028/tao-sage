@@ -81,6 +81,12 @@ export default function Header() {
             >
               Learn
             </Link>
+            <Link
+              href="/cultural-progress"
+              className="text-mountain-stone transition-colors hover:text-flowing-water"
+            >
+              Progress
+            </Link>
           </nav>
 
           {/* User Menu */}
@@ -146,6 +152,12 @@ export default function Header() {
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
             Learn
+          </Link>
+          <Link
+            href="/cultural-progress"
+            className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
+          >
+            Progress
           </Link>
         </nav>
       </div>
