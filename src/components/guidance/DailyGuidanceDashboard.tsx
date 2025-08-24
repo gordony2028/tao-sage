@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { supabase } from '@/lib/supabase/client';
+import { usePerformanceMonitoring } from '@/lib/monitoring/performance';
 import type { DailyGuidance } from '@/lib/iching/daily';
 import type { AIPersonality } from '@/lib/ai/personalities';
 import { AI_PERSONALITIES, selectAIPersonality } from '@/lib/ai/personalities';
@@ -30,6 +31,9 @@ export default function DailyGuidanceDashboard({
   const [reflectionText, setReflectionText] = useState('');
   const [reflectionComplete, setReflectionComplete] = useState(false);
 
+  const { trackAPIStart, trackAPIEnd, trackInteraction } =
+    usePerformanceMonitoring();
+
   useEffect(() => {
     fetchDailyGuidance();
   }, [userId, fetchDailyGuidance]);
@@ -51,15 +55,17 @@ export default function DailyGuidanceDashboard({
       setError(null);
 
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const response = await fetch(
-        `/api/guidance/daily?user_id=${userId}&timezone=${timezone}`
-      );
+      const endpoint = `/api/guidance/daily?user_id=${userId}&timezone=${timezone}`;
+
+      trackAPIStart(endpoint);
+      const response = await fetch(endpoint);
 
       if (!response.ok) {
         throw new Error('Failed to fetch daily guidance');
       }
 
       const data = await response.json();
+      trackAPIEnd(endpoint);
       setGuidance(data);
     } catch (err) {
       setError(
@@ -330,13 +336,19 @@ export default function DailyGuidanceDashboard({
 
           <div className="flex flex-wrap gap-3">
             <Button
-              onClick={() => setShowReflection(!showReflection)}
+              onClick={() => {
+                trackInteraction('toggle-reflection');
+                setShowReflection(!showReflection);
+              }}
               variant={reflectionComplete ? 'default' : 'outline'}
             >
               {reflectionComplete ? '✅ Reflected' : '📝 Reflect'}
             </Button>
             <Button
-              onClick={() => handleShareWisdom('general')}
+              onClick={() => {
+                trackInteraction('share-wisdom');
+                handleShareWisdom('general');
+              }}
               variant="outline"
               size="sm"
             >
@@ -355,14 +367,20 @@ export default function DailyGuidanceDashboard({
               />
               <div className="flex gap-2">
                 <Button
-                  onClick={handleReflectionSubmit}
+                  onClick={() => {
+                    trackInteraction('submit-reflection');
+                    handleReflectionSubmit();
+                  }}
                   disabled={!reflectionText.trim()}
                   size="sm"
                 >
                   Save Reflection
                 </Button>
                 <Button
-                  onClick={() => setShowReflection(false)}
+                  onClick={() => {
+                    trackInteraction('cancel-reflection');
+                    setShowReflection(false);
+                  }}
                   variant="outline"
                   size="sm"
                 >

@@ -1,5 +1,6 @@
 import Header from './Header';
 import Footer from './Footer';
+import PerformanceDashboard from '@/components/monitoring/PerformanceDashboard';
 // Temporarily disabled for debugging
 // import { useAnalytics } from '@/hooks/useAnalytics';
 
@@ -17,6 +18,7 @@ export default function Layout({ children, className = '' }: LayoutProps) {
       <Header />
       <main className={`flex-1 ${className}`}>{children}</main>
       <Footer />
+      <PerformanceDashboard />
     </div>
   );
 }

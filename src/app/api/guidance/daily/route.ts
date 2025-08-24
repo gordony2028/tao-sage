@@ -16,6 +16,8 @@ import { trackEvent } from '@/lib/analytics/events';
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  const startTime = performance.now();
+
   try {
     // Get user from query parameters or headers
     const userId = request.nextUrl.searchParams.get('user_id');
@@ -66,10 +68,21 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    const responseTime = performance.now() - startTime;
+
+    // Track performance metrics
+    console.log(
+      `Daily guidance API response time: ${responseTime.toFixed(2)}ms`
+    );
+
     return NextResponse.json({
       guidance: dailyGuidance,
       accessed_today: accessedToday,
       streak: currentStreak,
+      _performance: {
+        responseTime: Math.round(responseTime),
+        timestamp: new Date().toISOString(),
+      },
     });
   } catch (error) {
     console.error('Daily guidance error:', error);
@@ -84,6 +97,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const startTime = performance.now();
+
   try {
     const body = await request.json();
     const { user_id, action, data } = body;
@@ -123,7 +138,15 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true });
+    const responseTime = performance.now() - startTime;
+
+    return NextResponse.json({
+      success: true,
+      _performance: {
+        responseTime: Math.round(responseTime),
+        timestamp: new Date().toISOString(),
+      },
+    });
   } catch (error) {
     console.error('Daily guidance action error:', error);
     return NextResponse.json(
