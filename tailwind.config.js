@@ -30,6 +30,11 @@ module.exports = {
         'soft-gray': '#6b6b6b',
         'gentle-silver': '#a8b2b8',
         'stone-gray': '#8e8e8e',
+        'lotus-pink': '#f8b4c0',
+        'cherry-blossom': '#ffb7d6',
+        'jade-green': '#7ba05b',
+        'warm-amber': '#d4a574',
+        'sky-blue': '#87ceeb',
         yin: '#1a1a1a',
         yang: '#f9f9f9',
 

@@ -279,7 +279,13 @@ export default function DailyGuidanceDashboard({
         </div>
 
         {/* Trigram Breakdown */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div
+          className={`grid grid-cols-1 gap-4 ${
+            hexagram.changingLines.length > 0
+              ? 'md:grid-cols-3'
+              : 'md:grid-cols-2'
+          }`}
+        >
           {/* Upper Trigram */}
           <div className="text-center">
             <div className="mb-2 text-sm font-medium text-mountain-stone">
@@ -309,6 +315,31 @@ export default function DailyGuidanceDashboard({
               </div>
             </div>
           </div>
+
+          {/* Changing Lines Explanation - Only show when there are changing lines */}
+          {hexagram.changingLines.length > 0 && (
+            <div className="text-center">
+              <div className="mb-2 text-sm font-medium text-mountain-stone">
+                Changing Lines
+              </div>
+              <div className="rounded-lg bg-gentle-silver/10 p-3">
+                <div className="mb-2 text-lg font-bold text-flowing-water">
+                  變 Biàn
+                </div>
+                <div className="mb-2 text-xs text-soft-gray">
+                  Transformation • Dynamic Change
+                </div>
+                <div className="text-xs text-soft-gray">
+                  {hexagram.changingLines.length === 1
+                    ? `Line ${hexagram.changingLines[0]} is changing`
+                    : `Lines ${hexagram.changingLines.join(', ')} are changing`}
+                </div>
+                <div className="mt-2 text-xs font-medium text-soft-gray">
+                  Focus on areas of transition and emerging potential
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );

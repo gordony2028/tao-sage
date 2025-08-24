@@ -55,14 +55,8 @@ export async function POST(request: NextRequest) {
     };
 
     // In a real app, you would store this in a database
-    // For now, we'll log it and return success
-    console.log('Performance Analytics:', {
-      type: data.type || data.name,
-      value: data.value,
-      timestamp: data.timestamp,
-      userAgent: userAgent.substring(0, 100), // Truncate for privacy
-      metadata: data.metadata,
-    });
+    // For now, we'll silently process it and return success
+    // Logging disabled to prevent console spam
 
     // TODO: Store in database
     // await storePerformanceMetric(analyticsEntry);

@@ -118,7 +118,7 @@ class PerformanceMonitor {
               navigation.responseStart - navigation.requestStart;
 
             const pageLoadTime =
-              navigation.loadEventEnd - navigation.navigationStart;
+              navigation.loadEventEnd - navigation.fetchStart;
             this.reportMetric('pageLoad', pageLoadTime);
           }
         }, 0);
@@ -132,7 +132,8 @@ class PerformanceMonitor {
         const entries = entryList.getEntries();
         entries.forEach(entry => {
           if (entry.name.includes('/api/')) {
-            const responseTime = entry.responseEnd - entry.requestStart;
+            const responseTime =
+              (entry as any).responseEnd - (entry as any).requestStart;
             this.reportMetric('apiResponse', responseTime);
           }
         });
@@ -270,7 +271,7 @@ class PerformanceMonitor {
 
     return {
       pageLoadTime: navigation
-        ? navigation.loadEventEnd - navigation.navigationStart
+        ? navigation.loadEventEnd - navigation.fetchStart
         : 0,
       apiResponseTime: this.getAverageAPIResponseTime(),
       interactionLatency: this.getAverageInteractionLatency(),

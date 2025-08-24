@@ -4,7 +4,22 @@ import { createConsultation } from '@/lib/consultation/service';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { question, userId, metadata } = body;
+    const { question, userId, hexagram, metadata } = body;
+
+    // Debug logging to track hexagram data flow
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== CONSULTATION API DEBUG ===');
+      console.log(
+        'Received hexagram from UI:',
+        hexagram
+          ? {
+              number: hexagram.number,
+              name: hexagram.name,
+              changingLines: hexagram.changingLines,
+            }
+          : 'NO HEXAGRAM'
+      );
+    }
 
     // Validate required fields
     if (!question || typeof question !== 'string') {
@@ -27,10 +42,11 @@ export async function POST(request: NextRequest) {
       ? forwarded.split(',')[0]
       : request.headers.get('x-real-ip') || 'unknown';
 
-    // Create consultation with metadata
+    // Create consultation with metadata - optionally use provided hexagram
     const consultationInput = {
       question: question.trim(),
       userId,
+      ...(hexagram && { hexagram }), // Pass hexagram if provided by UI
       metadata: {
         method: metadata?.method || 'digital_coins',
         ...(ip !== 'unknown' && { ipAddress: ip }),

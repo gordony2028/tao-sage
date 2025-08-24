@@ -227,6 +227,20 @@ export async function generateConsultationInterpretation(
       complexity
     );
 
+    // Debug logging for hexagram verification
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== OPENAI CONSULTATION DEBUG ===');
+      console.log('Input Hexagram:', {
+        number: consultation.hexagram.number,
+        name: consultation.hexagram.name,
+        changingLines: consultation.hexagram.changingLines,
+      });
+      console.log(
+        'Prompt contains hexagram:',
+        prompt.includes(`Hexagram ${consultation.hexagram.number}`)
+      );
+    }
+
     // Track token usage for cost monitoring
     const estimatedTokens = estimateTokens(prompt);
 

@@ -4,7 +4,11 @@
  */
 
 import { NextRequest } from 'next/server';
-import { streamConsultationInterpretation } from '@/lib/openai/consultation';
+import {
+  streamConsultationInterpretation,
+  ConsultationInput,
+} from '@/lib/openai/consultation';
+import { Hexagram } from '@/types/iching';
 import { z } from 'zod';
 
 // Force Node.js runtime to avoid Edge Runtime compatibility issues with OpenAI SDK
@@ -39,7 +43,7 @@ export async function POST(request: NextRequest) {
       return new Response(
         JSON.stringify({
           error: 'Invalid request',
-          details: validationResult.error.errors,
+          details: 'Validation failed',
         }),
         {
           status: 400,
@@ -48,7 +52,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const consultation = validationResult.data;
+    const consultation = validationResult.data as ConsultationInput;
 
     // Get streaming response
     const stream = await streamConsultationInterpretation(consultation);

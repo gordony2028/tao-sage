@@ -1,5 +1,6 @@
 import { Inter } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
+import PerformanceMonitor from '@/components/common/PerformanceMonitor';
 
 import './globals.css';
 
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className} suppressHydrationWarning>
+        <PerformanceMonitor />
         {children}
       </body>
     </html>

@@ -25,6 +25,8 @@ export interface CreateConsultationInput {
   question: string;
   /** User ID for database storage */
   userId: string;
+  /** Optional pre-generated hexagram (if provided by UI) */
+  hexagram?: Hexagram;
   /** Optional metadata for tracking */
   metadata?: {
     ipAddress?: string;
@@ -63,7 +65,7 @@ export interface ConsultationResult {
 export async function createConsultation(
   input: CreateConsultationInput
 ): Promise<ConsultationResult> {
-  const { question, userId, metadata = {} } = input;
+  const { question, userId, hexagram: providedHexagram, metadata = {} } = input;
 
   // Validate input
   if (!question || question.trim().length === 0) {
@@ -74,19 +76,52 @@ export async function createConsultation(
   }
 
   try {
-    // Step 1: Generate hexagram using traditional coin-casting method
-    const generatedHexagram = generateHexagram();
-    const hexagramName = getHexagramName(generatedHexagram.number);
+    // Step 1: Use provided hexagram or generate new one
+    let hexagram: Hexagram;
 
-    // Create complete hexagram object
-    const hexagram: Hexagram = {
-      number: generatedHexagram.number,
-      name: hexagramName,
-      lines: generatedHexagram.lines,
-      changingLines: generatedHexagram.changingLines,
-    };
+    if (providedHexagram) {
+      // Use hexagram provided by UI (already cast)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('=== USING PROVIDED HEXAGRAM ===');
+        console.log('UI Hexagram:', {
+          number: providedHexagram.number,
+          name: providedHexagram.name,
+          changingLines: providedHexagram.changingLines,
+        });
+      }
+      hexagram = providedHexagram;
+    } else {
+      // Generate hexagram using traditional coin-casting method
+      const generatedHexagram = generateHexagram();
+      const hexagramName = getHexagramName(generatedHexagram.number);
+
+      hexagram = {
+        number: generatedHexagram.number,
+        name: hexagramName,
+        lines: generatedHexagram.lines,
+        changingLines: generatedHexagram.changingLines,
+      };
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('=== GENERATED NEW HEXAGRAM ===');
+        console.log('Generated:', {
+          number: hexagram.number,
+          name: hexagram.name,
+          changingLines: hexagram.changingLines,
+        });
+      }
+    }
 
     // Step 2: Get AI interpretation with cultural sensitivity
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== CONSULTATION SERVICE DEBUG ===');
+      console.log('Sending to OpenAI - Hexagram:', {
+        number: hexagram.number,
+        name: hexagram.name,
+        changingLines: hexagram.changingLines,
+      });
+    }
+
     const interpretation = await generateConsultationInterpretation({
       question,
       hexagram: {
@@ -96,6 +131,19 @@ export async function createConsultation(
         changingLines: hexagram.changingLines,
       },
     });
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== INTERPRETATION RECEIVED ===');
+      console.log(
+        'Interpretation for Hexagram:',
+        hexagram.number,
+        hexagram.name
+      );
+      console.log(
+        'First 100 chars:',
+        interpretation.interpretation?.substring(0, 100)
+      );
+    }
 
     // Step 3: Prepare consultation data for database
     const interpretationData: {

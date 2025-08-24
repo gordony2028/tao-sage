@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "ES2022"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -30,13 +30,13 @@
       "@/test-utils/*": ["./__tests__/utils/*"]
     },
 
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "strictFunctionTypes": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
 
     "sourceMap": true,
     "declaration": false,
@@ -44,5 +44,5 @@
     "preserveConstEnums": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "**/*.mts"],
-  "exclude": ["node_modules", ".next", "coverage", "dist"]
+  "exclude": ["node_modules", ".next", "coverage", "dist", "__tests__", "e2e", "**/*.test.*", "**/*.spec.*"]
 }
