@@ -20,13 +20,17 @@ export default function LearnOverviewPage() {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       setUser(user);
-      
+
       if (user) {
         // Fetch user progress
         try {
-          const response = await fetch(`/api/cultural/progress?user_id=${user.id}`);
+          const response = await fetch(
+            `/api/cultural/progress?user_id=${user.id}`
+          );
           if (response.ok) {
             const progressData = await response.json();
             setUserProgress({
@@ -46,6 +50,32 @@ export default function LearnOverviewPage() {
     getUser();
   }, []);
 
+  // Add effect to refresh progress when page becomes visible (returning from philosophy page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        // Refresh progress when user returns to the page
+        fetch(`/api/cultural/progress?user_id=${user.id}`)
+          .then(response => (response.ok ? response.json() : null))
+          .then(progressData => {
+            if (progressData) {
+              setUserProgress({
+                currentLevel: progressData.currentLevel,
+                conceptsMastered: progressData.statistics.conceptsMastered,
+                totalConsultations: progressData.statistics.consultations,
+                recommendations: progressData.recommendations,
+              });
+            }
+          })
+          .catch(error => console.error('Failed to refresh progress:', error));
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () =>
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user]);
+
   const learningPaths = [
     {
       id: 'basics',
@@ -55,7 +85,7 @@ export default function LearnOverviewPage() {
       href: '/learn/basics',
       difficulty: 'Beginner',
       concepts: ['yin-yang', 'change'],
-      estimatedTime: '30-45 minutes',
+      estimatedTime: '2-3 hours',
     },
     {
       id: 'hexagrams',
@@ -65,7 +95,7 @@ export default function LearnOverviewPage() {
       href: '/learn/hexagrams',
       difficulty: 'Intermediate',
       concepts: ['trigrams'],
-      estimatedTime: '2-3 hours',
+      estimatedTime: '45-60 days',
     },
     {
       id: 'philosophy',
@@ -75,7 +105,7 @@ export default function LearnOverviewPage() {
       href: '/learn/philosophy',
       difficulty: 'Advanced',
       concepts: ['wu-wei', 'timing', 'five-elements', 'dao'],
-      estimatedTime: '1-2 hours',
+      estimatedTime: '7 days - lifetime',
     },
     {
       id: 'faq',
@@ -84,20 +114,20 @@ export default function LearnOverviewPage() {
       icon: '❓',
       href: '/learn/faq',
       difficulty: 'All Levels',
-      concepts: [],
-      estimatedTime: '15-20 minutes',
+      concepts: ['common-questions', 'cultural-practice', 'getting-started'],
+      estimatedTime: '45-60 minutes',
     },
   ];
 
   const getProgressStatus = (pathConcepts: string[]) => {
     if (!userProgress) return 'not-started';
-    
+
     if (pathConcepts.length === 0) return 'available';
-    
-    const masteredCount = pathConcepts.filter(concept => 
+
+    const masteredCount = pathConcepts.filter(concept =>
       userProgress.conceptsMastered.includes(concept)
     ).length;
-    
+
     if (masteredCount === pathConcepts.length) return 'completed';
     if (masteredCount > 0) return 'in-progress';
     return 'available';
@@ -105,25 +135,33 @@ export default function LearnOverviewPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'text-green-600 bg-green-50 border-green-200';
-      case 'in-progress': return 'text-blue-600 bg-blue-50 border-blue-200';
-      case 'available': return 'text-flowing-water bg-flowing-water/10 border-flowing-water/20';
-      default: return 'text-soft-gray bg-gentle-silver/10 border-stone-gray/20';
+      case 'completed':
+        return 'text-green-600 bg-green-50 border-green-200';
+      case 'in-progress':
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'available':
+        return 'text-flowing-water bg-flowing-water/10 border-flowing-water/20';
+      default:
+        return 'text-soft-gray bg-gentle-silver/10 border-stone-gray/20';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'completed': return '✓ Completed';
-      case 'in-progress': return '🔄 In Progress';
-      case 'available': return '📖 Available';
-      default: return '🔒 Locked';
+      case 'completed':
+        return '✓ Completed';
+      case 'in-progress':
+        return '🔄 In Progress';
+      case 'available':
+        return '📖 Available';
+      default:
+        return '🔒 Locked';
     }
   };
 
   if (loading) {
     return (
-      <div className="text-center py-12">
+      <div className="py-12 text-center">
         <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-flowing-water"></div>
         <p className="text-soft-gray">Loading your learning journey...</p>
       </div>
@@ -137,26 +175,42 @@ export default function LearnOverviewPage() {
         <h1 className="mb-4 text-3xl font-bold text-ink-black">
           Welcome to I Ching Learning
         </h1>
-        <p className="text-lg text-soft-gray mb-6">
-          Discover the ancient wisdom of the I Ching through structured learning paths
-          designed to deepen your understanding and spiritual practice.
+        <p className="mb-6 text-lg text-soft-gray">
+          Discover the ancient wisdom of the I Ching through structured learning
+          paths designed to deepen your understanding and spiritual practice.
+          Your progress is automatically tracked and reflected in your cultural
+          mastery level.
         </p>
-        
+
         {user && userProgress && (
-          <Card variant="elevated" className="max-w-2xl mx-auto">
+          <Card variant="elevated" className="mx-auto max-w-2xl">
             <CardContent className="pt-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+              <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-4">
                 <div>
                   <div className="text-2xl font-bold text-flowing-water">
-                    {userProgress.currentLevel}
+                    {userProgress.currentLevel === 'Beginner' &&
+                    userProgress.totalConsultations === 0
+                      ? 'Novice'
+                      : userProgress.currentLevel}
                   </div>
-                  <div className="text-sm text-soft-gray">Current Level</div>
+                  <div className="text-sm text-soft-gray">
+                    Current Level
+                    {userProgress.currentLevel === 'Beginner' &&
+                      userProgress.totalConsultations < 5 && (
+                        <div className="mt-1 text-xs text-amber-600">
+                          {5 - userProgress.totalConsultations} more
+                          consultations to Student
+                        </div>
+                      )}
+                  </div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-flowing-water">
                     {userProgress.conceptsMastered.length}
                   </div>
-                  <div className="text-sm text-soft-gray">Concepts Mastered</div>
+                  <div className="text-sm text-soft-gray">
+                    Concepts Mastered
+                  </div>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-flowing-water">
@@ -182,29 +236,37 @@ export default function LearnOverviewPage() {
         <h2 className="mb-6 text-2xl font-bold text-ink-black">
           Choose Your Learning Path
         </h2>
-        
+
         <div className="grid gap-6 md:grid-cols-2">
-          {learningPaths.map((path) => {
+          {learningPaths.map(path => {
             const status = getProgressStatus(path.concepts);
             const statusColor = getStatusColor(status);
-            
+
             return (
-              <Card key={path.id} variant="default" className="hover:shadow-lg transition-shadow">
+              <Card
+                key={path.id}
+                variant="default"
+                className="transition-shadow hover:shadow-lg"
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{path.icon}</span>
                       <div>
                         <CardTitle className="text-lg">{path.title}</CardTitle>
-                        <p className="text-sm text-soft-gray">{path.description}</p>
+                        <p className="text-sm text-soft-gray">
+                          {path.description}
+                        </p>
                       </div>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full border ${statusColor}`}>
+                    <span
+                      className={`rounded-full border px-2 py-1 text-xs ${statusColor}`}
+                    >
                       {getStatusText(status)}
                     </span>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
@@ -215,15 +277,15 @@ export default function LearnOverviewPage() {
                       <span className="text-soft-gray">Est. Time:</span>
                       <span className="font-medium">{path.estimatedTime}</span>
                     </div>
-                    
+
                     {path.concepts.length > 0 && (
                       <div className="text-sm">
                         <span className="text-soft-gray">Concepts: </span>
                         <div className="mt-1 flex flex-wrap gap-1">
-                          {path.concepts.map((concept) => (
+                          {path.concepts.map(concept => (
                             <span
                               key={concept}
-                              className={`text-xs px-2 py-1 rounded-full ${
+                              className={`rounded-full px-2 py-1 text-xs ${
                                 userProgress?.conceptsMastered.includes(concept)
                                   ? 'bg-green-100 text-green-700'
                                   : 'bg-gentle-silver/20 text-soft-gray'
@@ -235,11 +297,13 @@ export default function LearnOverviewPage() {
                         </div>
                       </div>
                     )}
-                    
+
                     <div className="pt-2">
                       <Link href={path.href}>
-                        <Button 
-                          variant={status === 'completed' ? 'outline' : 'primary'}
+                        <Button
+                          variant={
+                            status === 'completed' ? 'outline' : 'primary'
+                          }
                           className="w-full"
                         >
                           {status === 'completed' ? 'Review' : 'Start Learning'}
@@ -284,14 +348,15 @@ export default function LearnOverviewPage() {
           <div className="flex items-start gap-3">
             <span className="text-xl">🙏</span>
             <div>
-              <h3 className="font-medium text-amber-800 mb-2">
+              <h3 className="mb-2 font-medium text-amber-800">
                 Cultural Respect & Authenticity
               </h3>
               <p className="text-sm text-amber-700">
-                The I Ching represents thousands of years of Chinese wisdom and cultural heritage.
-                Our educational content strives to honor this tradition with respect, accuracy,
-                and cultural sensitivity. We encourage approaching this ancient wisdom with 
-                reverence and an open heart.
+                The I Ching represents thousands of years of Chinese wisdom and
+                cultural heritage. Our educational content strives to honor this
+                tradition with respect, accuracy, and cultural sensitivity. We
+                encourage approaching this ancient wisdom with reverence and an
+                open heart.
               </p>
             </div>
           </div>

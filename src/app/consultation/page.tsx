@@ -115,7 +115,7 @@ export default function ConsultationPage() {
   if (userLoading) {
     return (
       <Layout>
-        <div className="from-paper-white flex min-h-screen items-center justify-center bg-gradient-to-br to-gentle-silver/10">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-paper-white to-gentle-silver/10">
           <div className="py-8 text-center">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-flowing-water"></div>
             <p className="text-soft-gray">Preparing your consultation...</p>
@@ -136,8 +136,8 @@ export default function ConsultationPage() {
         <div className="container mx-auto max-w-4xl">
           {/* Header */}
           <div className="mb-8 text-center">
-            <h1 className="mb-4 text-4xl font-bold text-ink-black">
-              I Ching Consultation
+            <h1 className="mb-4 flex items-center justify-center gap-3 text-4xl font-bold text-ink-black">
+              <span className="text-3xl">⚏</span>I Ching Consultation
             </h1>
             <p className="mb-6 text-lg text-gentle-silver">
               Ask your question and receive guidance through the ancient wisdom

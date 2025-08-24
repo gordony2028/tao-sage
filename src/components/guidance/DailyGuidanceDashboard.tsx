@@ -187,16 +187,80 @@ export default function DailyGuidanceDashboard({
   };
 
   const renderHexagramVisualization = (hexagram: any) => {
-    // Traditional Chinese characters for trigrams
+    // Traditional Chinese characters for trigrams with expanded information
     const trigramNames = {
-      '111': { name: '乾 Qián', element: 'Heaven', nature: 'Creative' },
-      '110': { name: '兌 Duì', element: 'Lake', nature: 'Joyful' },
-      '101': { name: '離 Lí', element: 'Fire', nature: 'Clinging' },
-      '100': { name: '震 Zhèn', element: 'Thunder', nature: 'Arousing' },
-      '011': { name: '巽 Xùn', element: 'Wind', nature: 'Gentle' },
-      '010': { name: '坎 Kǎn', element: 'Water', nature: 'Abysmal' },
-      '001': { name: '艮 Gèn', element: 'Mountain', nature: 'Keeping Still' },
-      '000': { name: '坤 Kūn', element: 'Earth', nature: 'Receptive' },
+      '111': {
+        name: '乾 Qián',
+        element: 'Heaven',
+        nature: 'Creative',
+        represents: 'Sky, father, leadership',
+        direction: 'Northwest',
+        season: 'Late autumn',
+        meaning: 'Pure yang energy, strength, and creative power',
+      },
+      '110': {
+        name: '兌 Duì',
+        element: 'Lake',
+        nature: 'Joyful',
+        represents: 'Marsh, youngest daughter, communication',
+        direction: 'West',
+        season: 'Autumn',
+        meaning: 'Joy, expression, and pleasurable exchange',
+      },
+      '101': {
+        name: '離 Lí',
+        element: 'Fire',
+        nature: 'Clinging',
+        represents: 'Flame, middle daughter, clarity',
+        direction: 'South',
+        season: 'Summer',
+        meaning: 'Light, beauty, and intelligent attachment',
+      },
+      '100': {
+        name: '震 Zhèn',
+        element: 'Thunder',
+        nature: 'Arousing',
+        represents: 'Storm, eldest son, movement',
+        direction: 'East',
+        season: 'Spring',
+        meaning: 'Sudden movement, awakening, and new beginnings',
+      },
+      '011': {
+        name: '巽 Xùn',
+        element: 'Wind',
+        nature: 'Gentle',
+        represents: 'Breeze, eldest daughter, influence',
+        direction: 'Southeast',
+        season: 'Late spring',
+        meaning: 'Gentle penetration, flexibility, and gradual influence',
+      },
+      '010': {
+        name: '坎 Kǎn',
+        element: 'Water',
+        nature: 'Abysmal',
+        represents: 'Deep water, middle son, danger',
+        direction: 'North',
+        season: 'Winter',
+        meaning: 'Depth, flow, and navigating through difficulties',
+      },
+      '001': {
+        name: '艮 Gèn',
+        element: 'Mountain',
+        nature: 'Keeping Still',
+        represents: 'Peak, youngest son, meditation',
+        direction: 'Northeast',
+        season: 'Late winter',
+        meaning: 'Stillness, boundaries, and inner contemplation',
+      },
+      '000': {
+        name: '坤 Kūn',
+        element: 'Earth',
+        nature: 'Receptive',
+        represents: 'Ground, mother, nurturing',
+        direction: 'Southwest',
+        season: 'Late summer',
+        meaning: 'Pure yin energy, receptivity, and nurturing support',
+      },
     };
 
     // Convert lines to trigrams
@@ -221,7 +285,16 @@ export default function DailyGuidanceDashboard({
           {hexagram.lines.map((line: number, index: number) => {
             const isChanging = hexagram.changingLines.includes(6 - index);
             return (
-              <div key={index} className="flex items-center gap-3">
+              <div
+                key={index}
+                className="flex w-full max-w-xs items-center justify-between"
+              >
+                {/* Line position number - left aligned */}
+                <span className="w-8 text-center text-xs font-medium text-soft-gray">
+                  {6 - index}
+                </span>
+
+                {/* Hexagram line - centered */}
                 <div className="flex w-20 items-center justify-center">
                   {line === 6 ? (
                     // Old Yin (broken, changing)
@@ -261,18 +334,18 @@ export default function DailyGuidanceDashboard({
                     ></div>
                   )}
                 </div>
-                {isChanging && (
-                  <div className="flex items-center gap-1">
-                    <div className="h-2 w-2 animate-pulse rounded-full bg-flowing-water"></div>
-                    <span className="text-xs font-medium text-flowing-water">
-                      Changing
-                    </span>
-                  </div>
-                )}
-                {/* Line position number */}
-                <span className="w-8 text-center text-xs text-soft-gray">
-                  {6 - index}
-                </span>
+
+                {/* Changing indicator - right aligned */}
+                <div className="flex w-24 justify-end">
+                  {isChanging && (
+                    <div className="flex items-center gap-1">
+                      <div className="h-2 w-2 animate-pulse rounded-full bg-flowing-water"></div>
+                      <span className="text-xs font-medium text-flowing-water">
+                        Changing
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -295,9 +368,30 @@ export default function DailyGuidanceDashboard({
               <div className="mb-2 text-lg font-bold text-ink-black">
                 {upperTrigramInfo?.name || upperTrigram}
               </div>
-              <div className="text-xs text-soft-gray">
+              <div className="mb-2 text-xs text-soft-gray">
                 {upperTrigramInfo?.element} • {upperTrigramInfo?.nature}
               </div>
+              {upperTrigramInfo && (
+                <div className="space-y-2">
+                  <div className="text-xs text-soft-gray">
+                    <strong>Symbolizes:</strong> {upperTrigramInfo.represents}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-xs text-soft-gray">
+                    <div>
+                      <strong>Direction:</strong> {upperTrigramInfo.direction}
+                    </div>
+                    <div>
+                      <strong>Season:</strong> {upperTrigramInfo.season}
+                    </div>
+                  </div>
+                  <div className="border-t pt-2 text-xs italic text-soft-gray">
+                    {upperTrigramInfo.meaning}
+                  </div>
+                  <div className="rounded bg-white/50 px-2 py-1 text-xs font-medium text-mountain-stone">
+                    Outer influence • Approach to situations
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -310,9 +404,30 @@ export default function DailyGuidanceDashboard({
               <div className="mb-2 text-lg font-bold text-ink-black">
                 {lowerTrigramInfo?.name || lowerTrigram}
               </div>
-              <div className="text-xs text-soft-gray">
+              <div className="mb-2 text-xs text-soft-gray">
                 {lowerTrigramInfo?.element} • {lowerTrigramInfo?.nature}
               </div>
+              {lowerTrigramInfo && (
+                <div className="space-y-2">
+                  <div className="text-xs text-soft-gray">
+                    <strong>Symbolizes:</strong> {lowerTrigramInfo.represents}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-xs text-soft-gray">
+                    <div>
+                      <strong>Direction:</strong> {lowerTrigramInfo.direction}
+                    </div>
+                    <div>
+                      <strong>Season:</strong> {lowerTrigramInfo.season}
+                    </div>
+                  </div>
+                  <div className="border-t pt-2 text-xs italic text-soft-gray">
+                    {lowerTrigramInfo.meaning}
+                  </div>
+                  <div className="rounded bg-white/50 px-2 py-1 text-xs font-medium text-mountain-stone">
+                    Inner foundation • Core energy source
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
