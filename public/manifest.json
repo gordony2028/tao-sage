@@ -1,0 +1,120 @@
+{
+  "name": "Sage - I Ching Life Guidance",
+  "short_name": "Sage",
+  "description": "AI-powered I Ching wisdom for modern life guidance. Ancient Chinese wisdom meets contemporary spiritual wellness.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f5f3",
+  "theme_color": "#8b7355",
+  "orientation": "portrait-primary",
+  "categories": ["lifestyle", "health", "wellness", "spirituality"],
+  "lang": "en",
+  "dir": "ltr",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Guidance",
+      "short_name": "Daily",
+      "description": "Get your daily hexagram guidance",
+      "url": "/guidance",
+      "icons": [{ "src": "/icons/shortcut-daily.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "New Consultation",
+      "short_name": "Consult",
+      "description": "Ask the I Ching a question",
+      "url": "/consultation",
+      "icons": [{ "src": "/icons/shortcut-consultation.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "History",
+      "short_name": "History",
+      "description": "View your spiritual journey",
+      "url": "/history",
+      "icons": [{ "src": "/icons/shortcut-history.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/homepage-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Homepage with daily guidance"
+    },
+    {
+      "src": "/screenshots/consultation-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "I Ching consultation interface"
+    },
+    {
+      "src": "/screenshots/homepage-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop homepage experience"
+    }
+  ],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+sage",
+      "url": "/consultation?share=%s"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
