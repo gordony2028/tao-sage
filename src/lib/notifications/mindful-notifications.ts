@@ -149,10 +149,13 @@ export class MindfulNotificationManager {
 
   private async loadPreferences(): Promise<void> {
     try {
-      const stored = localStorage.getItem('mindful_notification_preferences');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        this.preferences = { ...this.preferences, ...parsed };
+      // Only access localStorage in browser environment
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const stored = localStorage.getItem('mindful_notification_preferences');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          this.preferences = { ...this.preferences, ...parsed };
+        }
       }
     } catch (error) {
       console.warn('Failed to load notification preferences:', error);
@@ -161,10 +164,13 @@ export class MindfulNotificationManager {
 
   private async savePreferences(): Promise<void> {
     try {
-      localStorage.setItem(
-        'mindful_notification_preferences',
-        JSON.stringify(this.preferences)
-      );
+      // Only access localStorage in browser environment
+      if (typeof window !== 'undefined' && window.localStorage) {
+        localStorage.setItem(
+          'mindful_notification_preferences',
+          JSON.stringify(this.preferences)
+        );
+      }
     } catch (error) {
       console.warn('Failed to save notification preferences:', error);
     }
@@ -246,22 +252,25 @@ export class MindfulNotificationManager {
     notification: MindfulNotification
   ): Promise<void> {
     try {
-      const stored = localStorage.getItem('mindful_notifications');
-      const notifications: MindfulNotification[] = stored
-        ? JSON.parse(stored)
-        : [];
+      // Only access localStorage in browser environment
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const stored = localStorage.getItem('mindful_notifications');
+        const notifications: MindfulNotification[] = stored
+          ? JSON.parse(stored)
+          : [];
 
-      notifications.unshift(notification);
+        notifications.unshift(notification);
 
-      // Keep only last 50 notifications
-      if (notifications.length > 50) {
-        notifications.splice(50);
+        // Keep only last 50 notifications
+        if (notifications.length > 50) {
+          notifications.splice(50);
+        }
+
+        localStorage.setItem(
+          'mindful_notifications',
+          JSON.stringify(notifications)
+        );
       }
-
-      localStorage.setItem(
-        'mindful_notifications',
-        JSON.stringify(notifications)
-      );
     } catch (error) {
       console.warn('Failed to store notification:', error);
     }
@@ -269,8 +278,12 @@ export class MindfulNotificationManager {
 
   public async getNotificationHistory(): Promise<MindfulNotification[]> {
     try {
-      const stored = localStorage.getItem('mindful_notifications');
-      return stored ? JSON.parse(stored) : [];
+      // Only access localStorage in browser environment
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const stored = localStorage.getItem('mindful_notifications');
+        return stored ? JSON.parse(stored) : [];
+      }
+      return [];
     } catch (error) {
       console.warn('Failed to get notification history:', error);
       return [];
@@ -279,16 +292,19 @@ export class MindfulNotificationManager {
 
   public async markAsRead(notificationId: string): Promise<void> {
     try {
-      const stored = localStorage.getItem('mindful_notifications');
-      if (stored) {
-        const notifications: MindfulNotification[] = JSON.parse(stored);
-        const notification = notifications.find(n => n.id === notificationId);
-        if (notification) {
-          notification.isRead = true;
-          localStorage.setItem(
-            'mindful_notifications',
-            JSON.stringify(notifications)
-          );
+      // Only access localStorage in browser environment
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const stored = localStorage.getItem('mindful_notifications');
+        if (stored) {
+          const notifications: MindfulNotification[] = JSON.parse(stored);
+          const notification = notifications.find(n => n.id === notificationId);
+          if (notification) {
+            notification.isRead = true;
+            localStorage.setItem(
+              'mindful_notifications',
+              JSON.stringify(notifications)
+            );
+          }
         }
       }
     } catch (error) {

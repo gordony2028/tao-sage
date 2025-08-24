@@ -34,21 +34,6 @@ export default function DailyGuidanceDashboard({
   const { trackAPIStart, trackAPIEnd, trackInteraction } =
     usePerformanceMonitoring();
 
-  useEffect(() => {
-    fetchDailyGuidance();
-  }, [userId, fetchDailyGuidance]);
-
-  useEffect(() => {
-    if (guidance) {
-      // Select AI personality based on today's hexagram
-      const personality = selectAIPersonality(
-        guidance.guidance.hexagram,
-        guidance.guidance.focus
-      );
-      setSelectedPersonality(personality);
-    }
-  }, [guidance]);
-
   const fetchDailyGuidance = useCallback(async () => {
     try {
       setLoading(true);
@@ -75,6 +60,21 @@ export default function DailyGuidanceDashboard({
       setLoading(false);
     }
   }, [userId]);
+
+  useEffect(() => {
+    fetchDailyGuidance();
+  }, [userId, fetchDailyGuidance]);
+
+  useEffect(() => {
+    if (guidance) {
+      // Select AI personality based on today's hexagram
+      const personality = selectAIPersonality(
+        guidance.guidance.hexagram,
+        guidance.guidance.focus
+      );
+      setSelectedPersonality(personality);
+    }
+  }, [guidance]);
 
   const handleReflectionSubmit = async () => {
     if (!guidance || !reflectionText.trim()) return;
