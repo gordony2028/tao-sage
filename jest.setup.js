@@ -8,8 +8,49 @@ if (typeof TransformStream === 'undefined') {
   global.TransformStream = require('stream/web').TransformStream;
 }
 
-// Mock fetch for tests
+// Mock fetch and Request for tests
 global.fetch = jest.fn();
+global.Request = jest.fn().mockImplementation((url, options) => ({
+  url,
+  method: options?.method || 'GET',
+  headers: new Headers(options?.headers || {}),
+  json: jest.fn().mockResolvedValue({}),
+  text: jest.fn().mockResolvedValue(''),
+}));
+
+// Mock Headers
+global.Headers = class MockHeaders extends Map {
+  constructor(init) {
+    super();
+    if (init) {
+      if (init instanceof Headers || init instanceof Map) {
+        for (let [key, value] of init) {
+          this.set(key, value);
+        }
+      } else if (typeof init === 'object') {
+        for (let [key, value] of Object.entries(init)) {
+          this.set(key, value);
+        }
+      }
+    }
+  }
+
+  get(key) {
+    return super.get(key.toLowerCase());
+  }
+
+  set(key, value) {
+    return super.set(key.toLowerCase(), value);
+  }
+
+  has(key) {
+    return super.has(key.toLowerCase());
+  }
+
+  delete(key) {
+    return super.delete(key.toLowerCase());
+  }
+};
 
 // Use real environment variables from .env.local for testing
 process.env.NEXT_PUBLIC_SUPABASE_URL =
