@@ -30,9 +30,31 @@ export default function DailyGuidanceDashboard({
   const [showReflection, setShowReflection] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
   const [reflectionComplete, setReflectionComplete] = useState(false);
+  const [showMeditation, setShowMeditation] = useState(false);
+  const [meditationTime, setMeditationTime] = useState(300); // 5 minutes default
+  const [meditationActive, setMeditationActive] = useState(false);
+  const [meditationTimeLeft, setMeditationTimeLeft] = useState(0);
 
   const { trackAPIStart, trackAPIEnd, trackInteraction } =
     usePerformanceMonitoring();
+
+  // Meditation timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (meditationActive && meditationTimeLeft > 0) {
+      interval = setInterval(() => {
+        setMeditationTimeLeft(time => {
+          if (time <= 1) {
+            setMeditationActive(false);
+            // Optional: Play a gentle sound or notification
+            return 0;
+          }
+          return time - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [meditationActive, meditationTimeLeft]);
 
   const fetchDailyGuidance = useCallback(async () => {
     try {
@@ -59,7 +81,7 @@ export default function DailyGuidanceDashboard({
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userId, trackAPIStart, trackAPIEnd]);
 
   useEffect(() => {
     fetchDailyGuidance();
@@ -137,54 +159,148 @@ export default function DailyGuidanceDashboard({
     }
   };
 
+  const startMeditation = () => {
+    setMeditationTimeLeft(meditationTime);
+    setMeditationActive(true);
+    trackInteraction('start-meditation');
+  };
+
+  const stopMeditation = () => {
+    setMeditationActive(false);
+    setMeditationTimeLeft(0);
+    trackInteraction('stop-meditation');
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   const renderHexagramVisualization = (hexagram: any) => {
+    // Traditional Chinese characters for trigrams
+    const trigramNames = {
+      '111': { name: '乾 Qián', element: 'Heaven', nature: 'Creative' },
+      '110': { name: '兌 Duì', element: 'Lake', nature: 'Joyful' },
+      '101': { name: '離 Lí', element: 'Fire', nature: 'Clinging' },
+      '100': { name: '震 Zhèn', element: 'Thunder', nature: 'Arousing' },
+      '011': { name: '巽 Xùn', element: 'Wind', nature: 'Gentle' },
+      '010': { name: '坎 Kǎn', element: 'Water', nature: 'Abysmal' },
+      '001': { name: '艮 Gèn', element: 'Mountain', nature: 'Keeping Still' },
+      '000': { name: '坤 Kūn', element: 'Earth', nature: 'Receptive' },
+    };
+
+    // Convert lines to trigrams
+    const upperTrigram = hexagram.lines
+      .slice(0, 3)
+      .map((line: number) => (line === 7 || line === 9 ? '1' : '0'))
+      .join('');
+    const lowerTrigram = hexagram.lines
+      .slice(3, 6)
+      .map((line: number) => (line === 7 || line === 9 ? '1' : '0'))
+      .join('');
+
+    const upperTrigramInfo =
+      trigramNames[upperTrigram as keyof typeof trigramNames];
+    const lowerTrigramInfo =
+      trigramNames[lowerTrigram as keyof typeof trigramNames];
+
     return (
-      <div className="flex flex-col items-center space-y-1">
-        {hexagram.lines.map((line: number, index: number) => {
-          const isChanging = hexagram.changingLines.includes(6 - index);
-          return (
-            <div key={index} className="flex items-center gap-2">
-              <div className="flex w-16 items-center justify-center">
-                {line === 6 ? (
-                  // Old Yin (broken, changing)
-                  <div className="flex gap-1">
+      <div className="space-y-6">
+        {/* Main Hexagram */}
+        <div className="flex flex-col items-center space-y-2">
+          {hexagram.lines.map((line: number, index: number) => {
+            const isChanging = hexagram.changingLines.includes(6 - index);
+            return (
+              <div key={index} className="flex items-center gap-3">
+                <div className="flex w-20 items-center justify-center">
+                  {line === 6 ? (
+                    // Old Yin (broken, changing)
+                    <div className="flex gap-1">
+                      <div
+                        className={`h-2 w-8 rounded-sm transition-all duration-500 ${
+                          isChanging
+                            ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
+                            : 'bg-gentle-silver'
+                        }`}
+                      ></div>
+                      <div
+                        className={`h-2 w-8 rounded-sm transition-all duration-500 ${
+                          isChanging
+                            ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
+                            : 'bg-gentle-silver'
+                        }`}
+                      ></div>
+                    </div>
+                  ) : line === 7 ? (
+                    // Young Yang (solid)
+                    <div className="h-2 w-20 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
+                  ) : line === 8 ? (
+                    // Young Yin (broken)
+                    <div className="flex gap-1">
+                      <div className="h-2 w-8 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
+                      <div className="h-2 w-8 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
+                    </div>
+                  ) : (
+                    // Old Yang (solid, changing)
                     <div
-                      className={`h-1 w-6 ${
-                        isChanging ? 'bg-flowing-water' : 'bg-gentle-silver'
+                      className={`h-2 w-20 rounded-sm transition-all duration-500 ${
+                        isChanging
+                          ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
+                          : 'bg-gradient-to-r from-ink-black to-mountain-stone'
                       }`}
                     ></div>
-                    <div
-                      className={`h-1 w-6 ${
-                        isChanging ? 'bg-flowing-water' : 'bg-gentle-silver'
-                      }`}
-                    ></div>
+                  )}
+                </div>
+                {isChanging && (
+                  <div className="flex items-center gap-1">
+                    <div className="h-2 w-2 animate-pulse rounded-full bg-flowing-water"></div>
+                    <span className="text-xs font-medium text-flowing-water">
+                      Changing
+                    </span>
                   </div>
-                ) : line === 7 ? (
-                  // Young Yang (solid)
-                  <div className="h-1 w-14 bg-ink-black"></div>
-                ) : line === 8 ? (
-                  // Young Yin (broken)
-                  <div className="flex gap-1">
-                    <div className="h-1 w-6 bg-ink-black"></div>
-                    <div className="h-1 w-6 bg-ink-black"></div>
-                  </div>
-                ) : (
-                  // Old Yang (solid, changing)
-                  <div
-                    className={`h-1 w-14 ${
-                      isChanging ? 'bg-flowing-water' : 'bg-gentle-silver'
-                    }`}
-                  ></div>
                 )}
-              </div>
-              {isChanging && (
-                <span className="text-xs font-medium text-flowing-water">
-                  Changing
+                {/* Line position number */}
+                <span className="w-8 text-center text-xs text-soft-gray">
+                  {6 - index}
                 </span>
-              )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Trigram Breakdown */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* Upper Trigram */}
+          <div className="text-center">
+            <div className="mb-2 text-sm font-medium text-mountain-stone">
+              Upper Trigram
             </div>
-          );
-        })}
+            <div className="rounded-lg bg-gentle-silver/10 p-3">
+              <div className="mb-2 text-lg font-bold text-ink-black">
+                {upperTrigramInfo?.name || upperTrigram}
+              </div>
+              <div className="text-xs text-soft-gray">
+                {upperTrigramInfo?.element} • {upperTrigramInfo?.nature}
+              </div>
+            </div>
+          </div>
+
+          {/* Lower Trigram */}
+          <div className="text-center">
+            <div className="mb-2 text-sm font-medium text-mountain-stone">
+              Lower Trigram
+            </div>
+            <div className="rounded-lg bg-gentle-silver/10 p-3">
+              <div className="mb-2 text-lg font-bold text-ink-black">
+                {lowerTrigramInfo?.name || lowerTrigram}
+              </div>
+              <div className="text-xs text-soft-gray">
+                {lowerTrigramInfo?.element} • {lowerTrigramInfo?.nature}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -317,21 +433,140 @@ export default function DailyGuidanceDashboard({
         </CardContent>
       </Card>
 
-      {/* Wisdom & Reflection */}
+      {/* Ancient Wisdom Quote */}
+      <Card variant="default">
+        <CardContent className="pt-6">
+          <div className="mb-6 text-center">
+            <div className="mb-3 text-2xl">📜</div>
+            <h3 className="mb-4 text-lg font-medium text-mountain-stone">
+              Ancient Wisdom
+            </h3>
+            <blockquote className="relative text-base italic text-gentle-silver">
+              <span className="absolute -left-2 -top-2 text-3xl text-flowing-water opacity-50">
+                &ldquo;
+              </span>
+              {guidance.guidance.wisdom}
+              <span className="absolute -bottom-4 -right-2 text-3xl text-flowing-water opacity-50">
+                &rdquo;
+              </span>
+            </blockquote>
+            <p className="mt-4 text-xs text-soft-gray">
+              — Traditional I Ching Wisdom
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Today's Guidance Sections */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {/* Practical Application */}
+        <Card variant="default">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-xl">⚡</span>
+              Today&apos;s Application
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div>
+                <h4 className="mb-1 font-medium text-mountain-stone">
+                  Morning Intention
+                </h4>
+                <p className="text-sm text-soft-gray">
+                  Begin your day by embodying the essence of{' '}
+                  {guidance.guidance.hexagram.name}. Focus on{' '}
+                  {guidance.guidance.focus.toLowerCase()}.
+                </p>
+              </div>
+              <div>
+                <h4 className="mb-1 font-medium text-mountain-stone">
+                  Key Actions
+                </h4>
+                <ul className="space-y-1 text-sm text-soft-gray">
+                  <li>• Observe moments of change throughout your day</li>
+                  <li>• Practice mindful decision-making</li>
+                  <li>• Stay open to unexpected opportunities</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Seasonal Context */}
+        <Card variant="default">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <span className="text-xl">🌸</span>
+              Seasonal Energy
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div>
+                <h4 className="mb-1 font-medium text-mountain-stone">
+                  Current Phase
+                </h4>
+                <p className="text-sm text-soft-gray">
+                  {new Date().toLocaleDateString('en-US', { month: 'long' })}{' '}
+                  brings energy of
+                  {new Date().getMonth() < 3 || new Date().getMonth() > 10
+                    ? ' reflection and inner growth'
+                    : new Date().getMonth() < 6
+                      ? ' renewal and expansion'
+                      : new Date().getMonth() < 9
+                        ? ' abundance and activity'
+                        : ' harvest and preparation'}
+                </p>
+              </div>
+              <div>
+                <h4 className="mb-1 font-medium text-mountain-stone">
+                  Alignment
+                </h4>
+                <p className="text-sm text-soft-gray">
+                  Today&apos;s hexagram harmonizes with the natural rhythm of
+                  this season, encouraging balanced action and mindful
+                  awareness.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Deep Reflection Section */}
       <Card variant="default">
         <CardHeader>
-          <CardTitle>Today&apos;s Wisdom</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <span className="text-xl">🤔</span>
+            Reflection & Contemplation
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <blockquote className="mb-4 border-l-4 border-flowing-water pl-4 text-lg italic text-gentle-silver">
-            &quot;{guidance.guidance.wisdom}&quot;
-          </blockquote>
+          <div className="space-y-4">
+            <div>
+              <h4 className="mb-2 font-medium text-mountain-stone">
+                Today&apos;s Question
+              </h4>
+              <p className="mb-4 text-soft-gray">
+                {guidance.guidance.reflection}
+              </p>
+            </div>
 
-          <div className="mb-6">
-            <h3 className="mb-2 font-medium text-mountain-stone">
-              Reflection Question
-            </h3>
-            <p className="text-soft-gray">{guidance.guidance.reflection}</p>
+            <div className="rounded-lg bg-flowing-water/5 p-4">
+              <h4 className="mb-2 font-medium text-mountain-stone">
+                Additional Contemplations
+              </h4>
+              <ul className="space-y-2 text-sm text-soft-gray">
+                <li>
+                  • How can I embody the qualities of{' '}
+                  {guidance.guidance.hexagram.name} today?
+                </li>
+                <li>• What patterns of change am I noticing in my life?</li>
+                <li>• Where can I practice greater acceptance and flow?</li>
+                <li>• What wisdom is this moment trying to teach me?</li>
+              </ul>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -344,6 +579,18 @@ export default function DailyGuidanceDashboard({
             >
               {reflectionComplete ? '✅ Reflected' : '📝 Reflect'}
             </Button>
+
+            <Button
+              onClick={() => {
+                trackInteraction('toggle-meditation');
+                setShowMeditation(!showMeditation);
+              }}
+              variant="outline"
+              size="sm"
+            >
+              🧘 Meditate
+            </Button>
+
             <Button
               onClick={() => {
                 trackInteraction('share-wisdom');
@@ -355,6 +602,88 @@ export default function DailyGuidanceDashboard({
               🔗 Share Wisdom
             </Button>
           </div>
+
+          {/* Meditation Timer */}
+          {showMeditation && (
+            <div className="mt-6 space-y-4 border-t border-stone-gray/20 pt-6">
+              <div className="text-center">
+                <h4 className="mb-4 font-medium text-mountain-stone">
+                  🧘 Mindful Meditation with {guidance.guidance.hexagram.name}
+                </h4>
+
+                {!meditationActive ? (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-mountain-stone">
+                        Meditation Duration
+                      </label>
+                      <div className="flex justify-center gap-2">
+                        {[180, 300, 600, 900].map(duration => (
+                          <button
+                            key={duration}
+                            onClick={() => setMeditationTime(duration)}
+                            className={`rounded-md px-3 py-1 text-sm transition-colors ${
+                              meditationTime === duration
+                                ? 'bg-flowing-water text-white'
+                                : 'bg-gentle-silver/20 text-soft-gray hover:bg-gentle-silver/30'
+                            }`}
+                          >
+                            {duration / 60}min
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button onClick={startMeditation} className="w-full">
+                      Start Meditation ({formatTime(meditationTime)})
+                    </Button>
+
+                    <p className="text-xs text-soft-gray">
+                      Focus on the qualities of{' '}
+                      {guidance.guidance.hexagram.name}:
+                      {selectedPersonality?.description.toLowerCase()}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="relative mx-auto h-32 w-32">
+                      <div className="absolute inset-0 rounded-full border-4 border-gentle-silver/20"></div>
+                      <div
+                        className="absolute inset-0 animate-spin rounded-full border-4 border-flowing-water border-t-transparent"
+                        style={{
+                          animation: 'spin 2s linear infinite',
+                        }}
+                      ></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-flowing-water">
+                            {formatTime(meditationTimeLeft)}
+                          </div>
+                          <div className="text-xs text-soft-gray">
+                            remaining
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <p className="text-center text-sm text-soft-gray">
+                        Breathe deeply and reflect on today&apos;s wisdom...
+                      </p>
+                      <Button
+                        onClick={stopMeditation}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        End Meditation
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Reflection Input */}
           {showReflection && (
