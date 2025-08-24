@@ -58,16 +58,16 @@ export default function Header() {
           {/* Navigation */}
           <nav className="hidden items-center space-x-8 md:flex">
             <Link
-              href="/consultation"
-              className="text-mountain-stone transition-colors hover:text-flowing-water"
-            >
-              卜 Consultation
-            </Link>
-            <Link
               href="/guidance"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
               導 Daily Guidance
+            </Link>
+            <Link
+              href="/consultation"
+              className="text-mountain-stone transition-colors hover:text-flowing-water"
+            >
+              卜 Consultation
             </Link>
             <Link
               href="/history"
@@ -88,10 +88,10 @@ export default function Header() {
               進 Progress
             </Link>
             <Link
-              href="/notifications"
+              href="/pricing"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              知 Notifications
+              價 Pricing
             </Link>
           </nav>
 
@@ -136,16 +136,16 @@ export default function Header() {
         {/* Mobile Navigation */}
         <nav className="mt-4 flex space-x-6 overflow-x-auto md:hidden">
           <Link
-            href="/consultation"
-            className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
-          >
-            卜 Consultation
-          </Link>
-          <Link
             href="/guidance"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
             導 Daily Guidance
+          </Link>
+          <Link
+            href="/consultation"
+            className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
+          >
+            卜 Consultation
           </Link>
           <Link
             href="/history"
@@ -166,10 +166,10 @@ export default function Header() {
             進 Progress
           </Link>
           <Link
-            href="/notifications"
+            href="/pricing"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            知 Notifications
+            價 Pricing
           </Link>
         </nav>
       </div>

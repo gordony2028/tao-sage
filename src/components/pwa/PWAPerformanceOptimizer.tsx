@@ -2,7 +2,7 @@
 
 /**
  * PWA Performance Optimizer
- * 
+ *
  * Enhances performance specifically for PWA use cases:
  * - Critical resource preloading
  * - Service worker coordination
@@ -71,8 +71,9 @@ export default function PWAPerformanceOptimizer({
     if (typeof window === 'undefined') return;
 
     const connection = getConnectionInfo();
-    const isSlowConnection = connection.effectiveType === 'slow-2g' || 
-                           connection.effectiveType === '2g';
+    const isSlowConnection =
+      connection.effectiveType === 'slow-2g' ||
+      connection.effectiveType === '2g';
 
     if (isSlowConnection || aggressiveMode) {
       // Defer non-critical images
@@ -104,10 +105,12 @@ export default function PWAPerformanceOptimizer({
 
     // Remove non-critical CSS
     if (aggressiveMode) {
-      const nonCriticalCSS = document.querySelectorAll('link[rel="stylesheet"][data-critical="false"]');
+      const nonCriticalCSS = document.querySelectorAll(
+        'link[rel="stylesheet"][data-critical="false"]'
+      );
       nonCriticalCSS.forEach(link => {
         (link as HTMLLinkElement).media = 'print';
-        (link as HTMLLinkElement).onload = function() {
+        (link as HTMLLinkElement).onload = function () {
           (this as HTMLLinkElement).media = 'all';
         };
       });
@@ -226,7 +229,7 @@ export default function PWAPerformanceOptimizer({
     } catch (e) {
       console.warn('CLS monitoring not supported');
     }
-  }, [onMetricsUpdate]);
+  }, [onMetricsUpdate, optimizeForCLS, optimizeForFID, optimizeForLCP]);
 
   // Cache management and optimization
   const optimizeCaching = useCallback(async () => {
@@ -235,7 +238,7 @@ export default function PWAPerformanceOptimizer({
     try {
       const cacheNames = await caches.keys();
       const totalCacheSize = await getCacheSize(cacheNames);
-      
+
       // If cache is getting large (>100MB), clean up old entries
       if (totalCacheSize > 100 * 1024 * 1024) {
         await cleanupOldCaches();
@@ -260,11 +263,11 @@ export default function PWAPerformanceOptimizer({
   // Get total cache size
   const getCacheSize = async (cacheNames: string[]): Promise<number> => {
     let totalSize = 0;
-    
+
     for (const cacheName of cacheNames) {
       const cache = await caches.open(cacheName);
       const requests = await cache.keys();
-      
+
       for (const request of requests) {
         const response = await cache.match(request);
         if (response) {
@@ -273,18 +276,18 @@ export default function PWAPerformanceOptimizer({
         }
       }
     }
-    
+
     return totalSize;
   };
 
   // Clean up old caches
   const cleanupOldCaches = async () => {
     const cacheNames = await caches.keys();
-    const oldCaches = cacheNames.filter(name => name.includes('v0') || name.includes('old'));
-    
-    await Promise.all(
-      oldCaches.map(cacheName => caches.delete(cacheName))
+    const oldCaches = cacheNames.filter(
+      name => name.includes('v0') || name.includes('old')
     );
+
+    await Promise.all(oldCaches.map(cacheName => caches.delete(cacheName)));
   };
 
   // Battery-aware optimizations
@@ -294,7 +297,7 @@ export default function PWAPerformanceOptimizer({
         if (battery.charging === false && battery.level < 0.2) {
           // Low battery - apply aggressive optimizations
           document.documentElement.classList.add('low-battery');
-          
+
           // Reduce animation frame rate
           const style = document.createElement('style');
           style.textContent = `
@@ -316,22 +319,24 @@ export default function PWAPerformanceOptimizer({
     const initOptimizations = async () => {
       // Preload critical resources
       preloadCriticalResources();
-      
+
       // Start monitoring
       monitorCoreWebVitals();
-      
+
       // Optimize based on connection
       optimizeImageLoading();
-      
+
       // Optimize caching
       await optimizeCaching();
-      
+
       // Apply battery optimizations
       applyBatteryOptimizations();
 
       // Mark as installable if conditions are met
       metricsRef.current.installability = 'serviceWorker' in navigator;
-      metricsRef.current.offlineCapability = !isOffline || localStorage.getItem('sage-offline-consultations') !== null;
+      metricsRef.current.offlineCapability =
+        !isOffline ||
+        localStorage.getItem('sage-offline-consultations') !== null;
     };
 
     // Delay to avoid blocking initial render
@@ -364,10 +369,12 @@ export default function PWAPerformanceOptimizer({
 // Utility function to check if running in PWA mode
 export function isPWA(): boolean {
   if (typeof window === 'undefined') return false;
-  
-  return window.matchMedia('(display-mode: standalone)').matches ||
-         (window.navigator as any).standalone ||
-         document.referrer.includes('android-app://');
+
+  return (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone ||
+    document.referrer.includes('android-app://')
+  );
 }
 
 // Utility to get PWA performance score (0-100)

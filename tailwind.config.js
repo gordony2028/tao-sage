@@ -26,6 +26,7 @@ module.exports = {
         'earth-brown': '#8b7355',
         'morning-mist': '#e8f1f5',
         'cloud-white': '#fefefe',
+        'paper-white': '#fdfcf9',
         'ink-black': '#2c2c2c',
         'soft-gray': '#6b6b6b',
         'gentle-silver': '#a8b2b8',

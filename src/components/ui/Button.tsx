@@ -2,7 +2,13 @@ import { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+  variant?:
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'outline'
+    | 'ghost'
+    | 'destructive';
   size?: 'default' | 'sm' | 'lg';
   isLoading?: boolean;
 }
@@ -25,6 +31,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       default:
+        'bg-flowing-water text-cloud-white hover:bg-mountain-stone shadow-water-shadow',
+      primary:
         'bg-flowing-water text-cloud-white hover:bg-mountain-stone shadow-water-shadow',
       secondary:
         'bg-gentle-silver text-mountain-stone hover:bg-soft-gray hover:text-cloud-white',

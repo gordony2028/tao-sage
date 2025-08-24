@@ -112,7 +112,7 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
       'Daily guidance with simple explanations',
       'Introduction to fundamental I Ching concepts',
     ],
-    nextLevelPreview: 'Learn about yin-yang principles and trigram meanings',
+    nextLevelPreview: 'Learn about yin-yang principles and hexagram structures',
   },
 
   {
@@ -120,13 +120,13 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
     order: 2,
     name: '学生 (Xuéshēng) - The Student',
     description:
-      'Developing understanding of yin-yang principles, trigrams, and the philosophical foundations of the I Ching.',
+      'Developing understanding of yin-yang principles, hexagram structures, and the philosophical foundations of the I Ching.',
     requirements: {
       consultations: 5,
       hexagramsEncountered: 8,
       reflectionsCompleted: 3,
       daysActive: 7,
-      concepts: ['yin-yang', 'trigrams', 'change'],
+      concepts: ['yin-yang', 'change'],
     },
     achievements: [
       {
@@ -139,18 +139,18 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
         unlockConditions: { timeActive: 7 },
       },
       {
-        id: 'trigram_knowledge',
-        name: 'Eight Foundations',
-        description: 'Encounter all eight trigrams in consultations',
+        id: 'hexagram_diversity',
+        name: 'Eight Pathways',
+        description: 'Encounter 8 different hexagrams in consultations',
         icon: '☰',
         category: 'knowledge',
         points: 30,
-        unlockConditions: { hexagrams: [1, 2, 8, 23, 20, 16, 35, 45] }, // Representative of all trigrams
+        unlockConditions: { consultations: 8 },
       },
     ],
     benefits: [
       'Enhanced AI personality matching',
-      'Detailed trigram explanations',
+      'Detailed hexagram structure explanations',
       'Cultural context for hexagram meanings',
       'Access to meditation timer with I Ching themes',
     ],
@@ -164,11 +164,11 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
     description:
       'Actively applying I Ching wisdom in daily life, understanding changing lines and hexagram relationships.',
     requirements: {
-      consultations: 20,
-      hexagramsEncountered: 25,
-      reflectionsCompleted: 15,
-      daysActive: 30,
-      concepts: ['yin-yang', 'trigrams', 'change', 'wu-wei', 'timing'],
+      consultations: 15,
+      hexagramsEncountered: 20,
+      reflectionsCompleted: 10,
+      daysActive: 21,
+      concepts: ['yin-yang', 'change', 'wu-wei'],
     },
     achievements: [
       {
@@ -216,19 +216,11 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
     description:
       'Deep understanding of I Ching philosophy, seasonal wisdom, and cultural historical context.',
     requirements: {
-      consultations: 50,
-      hexagramsEncountered: 45,
-      reflectionsCompleted: 35,
-      daysActive: 90,
-      concepts: [
-        'yin-yang',
-        'trigrams',
-        'change',
-        'wu-wei',
-        'timing',
-        'five-elements',
-        'seasonal-wisdom',
-      ],
+      consultations: 35,
+      hexagramsEncountered: 35,
+      reflectionsCompleted: 25,
+      daysActive: 60,
+      concepts: ['yin-yang', 'change', 'wu-wei', 'timing', 'five-elements'],
     },
     achievements: [
       {
@@ -278,13 +270,12 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
     description:
       'Intuitive mastery of I Ching wisdom, capable of guiding others and seeing deeper patterns in life.',
     requirements: {
-      consultations: 100,
-      hexagramsEncountered: 60,
-      reflectionsCompleted: 75,
-      daysActive: 180,
+      consultations: 75,
+      hexagramsEncountered: 50,
+      reflectionsCompleted: 50,
+      daysActive: 120,
       concepts: [
         'yin-yang',
-        'trigrams',
         'change',
         'wu-wei',
         'timing',
@@ -336,6 +327,7 @@ export const CULTURAL_LEVELS: CulturalProgressionLevel[] = [
 
 /**
  * Core Cultural Concepts for Learning Path
+ * These match exactly with the concepts available in /learn/philosophy
  */
 export const CULTURAL_CONCEPTS = {
   'yin-yang': {
@@ -348,17 +340,6 @@ export const CULTURAL_CONCEPTS = {
       'Understanding the balance of opposing forces',
       'How yin and yang manifest in daily life',
       'The dynamic nature of complementary opposites',
-    ],
-  },
-  trigrams: {
-    name: 'Eight Trigrams 八卦',
-    description: 'The eight fundamental symbols representing natural forces',
-    difficulty: 2,
-    prerequisites: ['yin-yang'],
-    learningMaterials: [
-      'Heaven ☰, Earth ☷, Thunder ☳, Water ☵',
-      'Mountain ☶, Fire ☲, Wind ☴, Lake ☱',
-      'Natural correspondences and meanings',
     ],
   },
   change: {
@@ -374,70 +355,70 @@ export const CULTURAL_CONCEPTS = {
     ],
   },
   'wu-wei': {
-    name: 'Wu Wei 无为',
+    name: 'Wu Wei 無為 - The Art of Non-Action',
     description: 'Effortless action in harmony with natural flow',
-    difficulty: 3,
-    prerequisites: ['yin-yang', 'change'],
+    difficulty: 2,
+    prerequisites: ['yin-yang'],
     learningMaterials: [
-      'Acting without forcing',
-      'Finding the natural way forward',
-      'Timing and spontaneous action',
+      'The Water Principle - flowing around obstacles',
+      'Natural Timing - working with rhythms',
+      'Modern applications in leadership and relationships',
     ],
   },
   timing: {
-    name: 'Proper Timing 时机',
+    name: 'Divine Timing and Natural Cycles',
     description: 'Understanding the right moment for action or stillness',
     difficulty: 3,
-    prerequisites: ['change', 'wu-wei'],
+    prerequisites: ['wu-wei'],
     learningMaterials: [
-      'Recognizing opportune moments',
-      'Patience and strategic waiting',
-      'Natural cycles and rhythms',
+      'The Cycle of Change - Four Seasons',
+      'Recognizing Right Timing',
+      'Personal timing patterns and awareness',
     ],
   },
   'five-elements': {
-    name: 'Five Elements 五行',
+    name: 'The Five Elements System 五行',
     description:
       'Wood, Fire, Earth, Metal, Water - the five fundamental energies',
-    difficulty: 4,
-    prerequisites: ['trigrams', 'change'],
+    difficulty: 3,
+    prerequisites: ['timing'],
     learningMaterials: [
-      'Elemental cycles and relationships',
-      'Seasonal correspondences',
-      'Personal elemental constitution',
+      'Five Elements: Wood 🌳, Fire 🔥, Earth 🏔️, Metal ⚔️, Water 💧',
+      'Generative and Destructive Cycles',
+      'Practical applications in life balance',
     ],
   },
   'seasonal-wisdom': {
-    name: 'Seasonal Wisdom 四时',
-    description: 'Understanding the natural wisdom of seasonal cycles',
+    name: 'Seasonal Wisdom and Natural Harmony',
+    description: 'Living in harmony with natural cycles',
     difficulty: 4,
-    prerequisites: ['five-elements', 'timing'],
+    prerequisites: ['five-elements'],
     learningMaterials: [
-      'Spring growth, Summer abundance',
-      'Autumn harvest, Winter reflection',
-      'Aligning personal cycles with nature',
+      'The Great Rhythm of natural processes',
+      'Aligning with seasonal energies',
+      'Understanding natural patterns',
     ],
   },
   emptiness: {
-    name: 'Emptiness 空',
+    name: 'Emptiness and the Fullness of Space',
     description: 'The fertile void from which all possibilities emerge',
-    difficulty: 5,
-    prerequisites: ['wu-wei', 'seasonal-wisdom'],
+    difficulty: 4,
+    prerequisites: ['seasonal-wisdom'],
     learningMaterials: [
-      'The power of receptive emptiness',
-      'Creating space for new possibilities',
-      'Beyond attachment and aversion',
+      'The pregnant void of creative potential',
+      'Space between spokes makes the wheel useful',
+      'Embracing the unknown and uncertainty',
     ],
   },
   dao: {
-    name: 'The Dao 道',
+    name: 'The Dao 道 - The Way of All Things',
     description: 'The ineffable Way that underlies all existence',
     difficulty: 5,
-    prerequisites: ['emptiness', 'timing'],
+    prerequisites: ['emptiness'],
     learningMaterials: [
-      'The unnameable source',
-      'Living in harmony with the Way',
-      'Unity of all opposites',
+      'The Way that cannot be named',
+      'Living in accordance with the Dao',
+      'Unity underlying apparent diversity',
     ],
   },
 };

@@ -30,18 +30,18 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gentle-silver">
               <li>
                 <Link
-                  href="/consultation"
-                  className="transition-colors hover:text-cloud-white"
-                >
-                  I Ching Consultation
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/guidance"
                   className="transition-colors hover:text-cloud-white"
                 >
                   Daily Guidance
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/consultation"
+                  className="transition-colors hover:text-cloud-white"
+                >
+                  I Ching Consultation
                 </Link>
               </li>
               <li>
@@ -54,10 +54,10 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/patterns"
+                  href="/cultural-progress"
                   className="transition-colors hover:text-cloud-white"
                 >
-                  Pattern Recognition
+                  Cultural Progress
                 </Link>
               </li>
             </ul>
@@ -69,18 +69,18 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-gentle-silver">
               <li>
                 <Link
-                  href="/learn/hexagrams"
-                  className="transition-colors hover:text-cloud-white"
-                >
-                  64 Hexagrams
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/learn/basics"
                   className="transition-colors hover:text-cloud-white"
                 >
                   I Ching Basics
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/learn/hexagrams"
+                  className="transition-colors hover:text-cloud-white"
+                >
+                  64 Hexagrams
                 </Link>
               </li>
               <li>

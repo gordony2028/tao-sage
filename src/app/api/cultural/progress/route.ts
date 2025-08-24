@@ -110,42 +110,80 @@ export async function GET(request: NextRequest) {
     }
     longestStreak = Math.max(longestStreak, currentStreak);
 
-    // Determine mastered concepts based on user level and activities
+    // Get concept study completions
+    const { data: conceptStudyData, error: conceptStudyError } =
+      await supabaseAdmin
+        .from('user_events')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('event_type', 'concept_studied')
+        .order('created_at', { ascending: true });
+
+    if (conceptStudyError) {
+      console.error('Error fetching concept study data:', conceptStudyError);
+    }
+
+    // Determine mastered concepts based on explicit study completion and activities
     const conceptsMastered: string[] = [];
 
+    // Add concepts from explicit study completion
+    if (conceptStudyData) {
+      conceptStudyData.forEach(event => {
+        if (event.event_data?.concept_id) {
+          conceptsMastered.push(event.event_data.concept_id);
+        }
+      });
+    }
+
+    // Also add implicit concepts based on usage patterns (fallback for existing users)
     // Basic concepts for all users who have done consultations
     if (consultations.length > 0) {
-      conceptsMastered.push('yin-yang', 'change');
+      if (!conceptsMastered.includes('yin-yang'))
+        conceptsMastered.push('yin-yang');
+      if (!conceptsMastered.includes('change')) conceptsMastered.push('change');
     }
 
-    // Intermediate concepts
-    if (uniqueHexagrams.size >= 8) {
-      conceptsMastered.push('trigrams');
-    }
+    // Intermediate concepts - removed trigrams as it's not in philosophy content
 
-    if (consultations.length >= 10) {
+    if (consultations.length >= 10 && !conceptsMastered.includes('wu-wei')) {
       conceptsMastered.push('wu-wei');
     }
 
-    if (consultations.length >= 15) {
+    if (consultations.length >= 15 && !conceptsMastered.includes('timing')) {
       conceptsMastered.push('timing');
     }
 
     // Advanced concepts
-    if (consultations.length >= 30 && uniqueHexagrams.size >= 25) {
+    if (
+      consultations.length >= 30 &&
+      uniqueHexagrams.size >= 25 &&
+      !conceptsMastered.includes('five-elements')
+    ) {
       conceptsMastered.push('five-elements');
     }
 
-    if (consultations.length >= 50 && activeDays >= 90) {
+    if (
+      consultations.length >= 50 &&
+      activeDays >= 90 &&
+      !conceptsMastered.includes('seasonal-wisdom')
+    ) {
       conceptsMastered.push('seasonal-wisdom');
     }
 
     // Master concepts
-    if (consultations.length >= 75 && activeDays >= 150) {
+    if (
+      consultations.length >= 75 &&
+      activeDays >= 150 &&
+      !conceptsMastered.includes('emptiness')
+    ) {
       conceptsMastered.push('emptiness');
     }
 
-    if (consultations.length >= 100 && activeDays >= 180) {
+    if (
+      consultations.length >= 100 &&
+      activeDays >= 180 &&
+      !conceptsMastered.includes('dao')
+    ) {
       conceptsMastered.push('dao');
     }
 
@@ -162,7 +200,7 @@ export async function GET(request: NextRequest) {
         daysActive: activeDays,
         longestStreak,
         conceptsMastered,
-        achievements: [], // TODO: Implement achievement tracking
+        achievements: [], // Will be calculated below
       },
       recentActivity: {
         lastConsultation:
@@ -189,6 +227,80 @@ export async function GET(request: NextRequest) {
       uniqueHexagrams.size * 3 +
       longestStreak * 2 +
       conceptsMastered.length * 15;
+
+    // Calculate earned achievements based on user progress
+    const earnedAchievements: string[] = [];
+    const { CULTURAL_LEVELS: levels } = await import(
+      '@/lib/cultural/progression'
+    );
+    const allAchievements = levels.flatMap(level => level.achievements);
+
+    for (const achievement of allAchievements) {
+      const conditions = achievement.unlockConditions;
+      let achievementUnlocked = true;
+
+      // Check consultation requirement
+      if (
+        conditions.consultations &&
+        userProgress.statistics.consultations < conditions.consultations
+      ) {
+        achievementUnlocked = false;
+      }
+
+      // Check streak requirement
+      if (
+        conditions.streak &&
+        userProgress.statistics.longestStreak < conditions.streak
+      ) {
+        achievementUnlocked = false;
+      }
+
+      // Check time active requirement
+      if (
+        conditions.timeActive &&
+        userProgress.statistics.daysActive < conditions.timeActive
+      ) {
+        achievementUnlocked = false;
+      }
+
+      // Check level requirement
+      if (conditions.level) {
+        const currentLevelOrder =
+          levels.find(l => l.level === userProgress.currentLevel)?.order || 1;
+        const requiredLevelOrder =
+          levels.find(l => l.level === conditions.level)?.order || 1;
+        if (currentLevelOrder < requiredLevelOrder) {
+          achievementUnlocked = false;
+        }
+      }
+
+      // Check hexagram requirements
+      if (
+        conditions.hexagrams &&
+        !conditions.hexagrams.some(h =>
+          userProgress.statistics.uniqueHexagrams.includes(h)
+        )
+      ) {
+        achievementUnlocked = false;
+      }
+
+      // Check concept requirements
+      if (
+        conditions.concepts &&
+        !conditions.concepts.every(c =>
+          userProgress.statistics.conceptsMastered.includes(c)
+        )
+      ) {
+        achievementUnlocked = false;
+      }
+
+      if (achievementUnlocked) {
+        earnedAchievements.push(achievement.id);
+      }
+    }
+
+    // Update achievements in user progress
+    userProgress.statistics.achievements = earnedAchievements;
 
     // Get available achievements and recommendations
     const availableAchievements = getAvailableAchievements(userProgress);

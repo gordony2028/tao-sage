@@ -211,86 +211,153 @@ export default function CulturalProgressDashboard({
     </div>
   );
 
-  const renderAchievementsTab = () => (
-    <div className="space-y-6">
-      {/* Recent Achievements */}
-      <div>
-        <h3 className="mb-3 font-medium text-mountain-stone">
-          🏆 Your Achievements ({userProgress.statistics.achievements.length})
-        </h3>
-        {userProgress.statistics.achievements.length === 0 ? (
-          <div className="rounded-lg bg-gentle-silver/10 p-6 text-center">
-            <div className="mb-2 text-2xl">🎯</div>
-            <p className="text-sm text-soft-gray">
-              Complete your first consultation to earn achievements
-            </p>
-          </div>
-        ) : (
-          <div className="grid gap-3 md:grid-cols-2">
-            {userProgress.statistics.achievements.map(achievementId => {
-              const achievement = CULTURAL_LEVELS.flatMap(
-                level => level.achievements
-              ).find(a => a.id === achievementId);
+  const renderAchievementsTab = () => {
+    // Get all achievements across all levels
+    const allAchievements = CULTURAL_LEVELS.flatMap(
+      level => level.achievements
+    );
+    const earnedAchievementIds = userProgress.statistics.achievements;
 
-              return achievement ? (
-                <div
-                  key={achievement.id}
-                  className="rounded-lg border border-green-200 bg-green-50 p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl">{achievement.icon}</span>
-                    <div>
-                      <div className="font-medium text-green-800">
-                        {achievement.name}
-                      </div>
-                      <div className="text-sm text-green-600">
-                        {achievement.description}
-                      </div>
-                      <div className="text-xs text-green-500">
-                        +{achievement.points} points
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : null;
-            })}
-          </div>
-        )}
-      </div>
+    // Categorize achievements
+    const categorizedAchievements = allAchievements.map(achievement => {
+      const isEarned = earnedAchievementIds.includes(achievement.id);
+      const isAvailable = availableAchievements.some(
+        a => a.id === achievement.id
+      );
 
-      {/* Available Achievements */}
-      {availableAchievements.length > 0 && (
+      return {
+        ...achievement,
+        status: isEarned ? 'earned' : isAvailable ? 'available' : 'locked',
+      };
+    });
+
+    // Group by level for better organization
+    const achievementsByLevel = CULTURAL_LEVELS.map(level => ({
+      levelName: level.name,
+      levelOrder: level.order,
+      achievements: categorizedAchievements.filter(achievement =>
+        level.achievements.some(
+          levelAchievement => levelAchievement.id === achievement.id
+        )
+      ),
+    }));
+
+    return (
+      <div className="space-y-6">
         <div>
-          <h3 className="mb-3 font-medium text-mountain-stone">
-            🎯 Available Achievements
+          <h3 className="mb-4 font-medium text-mountain-stone">
+            🏆 Achievement Badges ({earnedAchievementIds.length}/
+            {allAchievements.length} earned)
           </h3>
-          <div className="grid gap-3 md:grid-cols-2">
-            {availableAchievements.slice(0, 4).map(achievement => (
-              <div
-                key={achievement.id}
-                className="rounded-lg border border-stone-gray/20 bg-white p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl opacity-50">{achievement.icon}</span>
-                  <div>
-                    <div className="font-medium text-mountain-stone">
-                      {achievement.name}
+
+          <div className="space-y-6">
+            {achievementsByLevel.map(levelGroup => (
+              <div key={levelGroup.levelOrder}>
+                <h4 className="mb-3 flex items-center gap-2 text-sm font-medium text-soft-gray">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-flowing-water/20 text-xs font-bold text-flowing-water">
+                    {levelGroup.levelOrder}
+                  </span>
+                  {levelGroup.levelName}
+                </h4>
+
+                <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                  {levelGroup.achievements.map(achievement => (
+                    <div
+                      key={achievement.id}
+                      className={`rounded-lg border p-3 transition-all duration-200 ${
+                        achievement.status === 'earned'
+                          ? 'border-green-200 bg-green-50 shadow-sm'
+                          : achievement.status === 'available'
+                            ? 'border-blue-200 bg-blue-50'
+                            : 'border-stone-gray/20 bg-stone-gray/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <span
+                            className={`text-xl ${
+                              achievement.status === 'earned'
+                                ? ''
+                                : achievement.status === 'available'
+                                  ? 'opacity-75'
+                                  : 'opacity-30'
+                            }`}
+                          >
+                            {achievement.icon}
+                          </span>
+                          {achievement.status === 'earned' && (
+                            <div className="absolute -right-1 -top-1 flex h-3 w-3 items-center justify-center rounded-full bg-green-500">
+                              <span className="text-xs text-white">✓</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div
+                            className={`text-sm font-medium ${
+                              achievement.status === 'earned'
+                                ? 'text-green-800'
+                                : achievement.status === 'available'
+                                  ? 'text-blue-800'
+                                  : 'text-stone-gray'
+                            }`}
+                          >
+                            {achievement.name}
+                          </div>
+                          <div
+                            className={`text-xs ${
+                              achievement.status === 'earned'
+                                ? 'text-green-600'
+                                : achievement.status === 'available'
+                                  ? 'text-blue-600'
+                                  : 'text-stone-gray'
+                            }`}
+                          >
+                            {achievement.description}
+                          </div>
+                          <div
+                            className={`text-xs font-medium ${
+                              achievement.status === 'earned'
+                                ? 'text-green-500'
+                                : achievement.status === 'available'
+                                  ? 'text-blue-500'
+                                  : 'text-stone-gray'
+                            }`}
+                          >
+                            +{achievement.points} points
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-sm text-soft-gray">
-                      {achievement.description}
-                    </div>
-                    <div className="text-xs text-flowing-water">
-                      +{achievement.points} points
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Legend */}
+          <div className="mt-6 rounded-lg bg-gentle-silver/10 p-4">
+            <h4 className="mb-2 text-sm font-medium text-mountain-stone">
+              Legend:
+            </h4>
+            <div className="flex flex-wrap gap-4 text-xs">
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded border border-green-200 bg-green-50"></div>
+                <span className="text-green-700">Earned</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded border border-blue-200 bg-blue-50"></div>
+                <span className="text-blue-700">Available</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="h-3 w-3 rounded border border-stone-gray/20 bg-stone-gray/5"></div>
+                <span className="text-stone-gray">Locked</span>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   const renderConceptsTab = () => {
     const masteredConcepts = userProgress.statistics.conceptsMastered;

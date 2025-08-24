@@ -163,99 +163,85 @@ Testing → Beta Program → Public Launch
 
 ## 4. Weekly Milestone Breakdown
 
-### 4.1 Week 1: Foundation Setup
+### 4.1 Week 1-2: Foundation & I Ching Engine ✅ **COMPLETE**
 
-**Goal**: Complete development environment and core infrastructure
+**🎉 ALREADY IMPLEMENTED**: Infrastructure and core I Ching engine are fully built!
 
-#### **Monday-Tuesday: Database & Auth**
+#### **✅ Database & Authentication - Complete**
 
-- [ ] Create Supabase project
-- [ ] Set up database schema (consultations, user_profiles, user_events)
-- [ ] Configure Row Level Security (RLS) policies
-- [ ] Test authentication flow
+- ✅ Supabase project with production-ready schema
+- ✅ Complete database schema (consultations, user_profiles, user_events)
+- ✅ Row Level Security (RLS) policies configured
+- ✅ Authentication flow working (signin/signup)
 
-#### **Wednesday-Thursday: Next.js App**
+#### **✅ Next.js Application - Complete**
 
-- [ ] Create Next.js 14 project with App Router
-- [ ] Set up Tailwind CSS with design system
-- [ ] Implement basic navigation and layout
-- [ ] Configure Supabase client
+- ✅ Next.js 14 project with App Router running on localhost:3001
+- ✅ Tailwind CSS with complete Taoist design system
+- ✅ Full navigation and responsive layout
+- ✅ Supabase client configured with RLS
 
-#### **Friday: Integration Testing**
+#### **✅ I Ching Engine - Complete**
 
-- [ ] Test database connections
-- [ ] Verify authentication flow
-- [ ] Set up development environment
-- [ ] Deploy to Vercel staging
+- ✅ Complete coin casting algorithm (`src/lib/iching/hexagram.ts`)
+- ✅ All 64 hexagrams database with traditional names (`src/data/hexagrams.ts`)
+- ✅ Changing lines calculation and interpretation
+- ✅ Hexagram line visualization components
 
-**Week 1 Success Criteria:**
-✅ User can sign up and sign in  
-✅ Database stores user data  
-✅ App deploys successfully  
-✅ Basic navigation works
+#### **✅ Complete UI Implementation - Complete**
 
-### 4.2 Week 2: Core I Ching Engine
+- ✅ Consultation flow with question input (`src/app/consultation/page.tsx`)
+- ✅ Coin casting animation and hexagram display
+- ✅ Consultation results page and history
+- ✅ Daily guidance feature and user profiles
 
-**Goal**: Implement authentic I Ching consultation system
+#### **✅ OpenAI Integration - Complete**
 
-#### **Monday-Tuesday: Hexagram Engine**
+- ✅ AI consultation service working (`src/lib/openai/consultation.ts`)
+- ✅ Cultural sensitivity validation pipeline
+- ✅ Cost optimization and error handling
 
-- [ ] Implement coin casting algorithm
-- [ ] Create hexagram calculation logic
-- [ ] Build all 64 hexagrams database
-- [ ] Add changing lines calculation
+**Week 1-2 Success Criteria: ALL ACHIEVED ✅**
+✅ User can sign up, sign in, and use full app  
+✅ Database stores consultation data  
+✅ App deployed and running successfully  
+✅ Complete I Ching consultation flow works
+✅ AI interpretations generating successfully
+✅ Cultural authenticity implemented
 
-#### **Wednesday-Thursday: Traditional Interpretations**
+### 4.3 Week 3: Freemium Implementation ⚡ **CURRENT FOCUS**
 
-- [ ] Add traditional hexagram meanings
-- [ ] Implement interpretation display
-- [ ] Create hexagram line visualization
-- [ ] Cultural consultant review session
+**🎉 AI INTEGRATION ALREADY COMPLETE**: OpenAI working with cost optimization!
 
-#### **Friday: UI Implementation**
+**NEW GOAL**: Implement usage tracking and subscription tiers for revenue
 
-- [ ] Build coin casting animation
-- [ ] Create hexagram display component
-- [ ] Implement question input form
-- [ ] Basic consultation flow
+#### **Monday-Tuesday: Usage Tracking System**
 
-**Week 2 Success Criteria:**
-✅ User can cast coins and get hexagram  
-✅ Traditional interpretations display correctly  
-✅ Cultural authenticity validated  
-✅ Consultation saves to database
+- [ ] **CRITICAL**: Create usage tracking system (`src/lib/subscription/usage-tracking.ts`)
+- [ ] Add weekly consultation limits (3/week for free users)
+- [ ] Implement subscription tier checking throughout app
+- [ ] Create usage reset functionality (weekly)
 
-### 4.3 Week 3: Smart AI Integration with Cost Optimization
+#### **Wednesday-Thursday: Traditional Interpretations Fallback**
 
-**Goal**: Integrate OpenAI with streaming, caching, and smart cost management
+- [ ] **CRITICAL**: Add traditional interpretations to hexagram database
+- [ ] Implement tier-based consultation logic:
+  - Free tier: Traditional interpretations only (no OpenAI)
+  - Sage+ tier: AI-enhanced interpretations (existing OpenAI)
+- [ ] Create fallback system when AI unavailable
 
-#### **Monday-Tuesday: Smart OpenAI Integration**
+#### **Friday: Usage Display & Upgrade Prompts**
 
-- [ ] Set up OpenAI API client with Vercel AI SDK
-- [ ] Implement smart prompt templates (40-60% token reduction)
-- [ ] Add model selection strategy (GPT-3.5 vs GPT-4 based on complexity)
-- [ ] Design intelligent response caching system
-
-#### **Wednesday-Thursday: Streaming & Optimization**
-
-- [ ] Implement Server-Sent Events for streaming responses
-- [ ] Add cache-first strategy (80% cost reduction for common patterns)
-- [ ] Create fallback system with traditional interpretations
-- [ ] Build cultural sensitivity validation pipeline
-
-#### **Friday: Cost Control & Performance**
-
-- [ ] Implement cost monitoring and alerts
-- [ ] Optimize streaming performance for 2-3x faster perceived response
-- [ ] Test quality across model selection scenarios
-- [ ] Validate cost targets: <$0.05 per consultation average
+- [ ] Add usage tracking display to UI (consultations remaining)
+- [ ] Implement upgrade prompts when free users hit limits
+- [ ] Create "upgrade needed" modal for limit enforcement
+- [ ] Test complete freemium user journey
 
 **Week 3 Success Criteria:**
-✅ AI streams personalized interpretations with optimized performance  
-✅ Smart caching reduces costs by 80% for repeat patterns  
-✅ Fallback system ensures 100% uptime  
-✅ Cost per consultation averages <$0.05 (60-80% reduction achieved)  
-✅ Response quality maintained across all optimization strategies
+✅ Free users limited to 3 consultations/week with traditional interpretations
+✅ Sage+ users get unlimited consultations with AI interpretations  
+✅ Usage tracking displays correctly in UI
+✅ Upgrade prompts encourage conversion to paid tier
 
 ### 4.4 Week 4: Alpha Testing
 
@@ -388,15 +374,15 @@ Testing → Beta Program → Public Launch
 
 #### **Week 12: Premium Features**
 
-- [ ] Implement subscription system
-- [ ] Add premium interpretations
-- [ ] Test pricing strategy
-- [ ] Measure conversion rates
+- [ ] Implement subscription system with Stripe
+- [ ] Add Sage+ tier with unlimited consultations and enhanced AI
+- [ ] Launch email notification system for daily guidance
+- [ ] Test freemium pricing strategy (Free vs Sage+ $7.99/month)
 
 **Week 11-12 Success Criteria:**
 ✅ Product-market fit signals clear  
 ✅ Users willing to pay for premium  
-✅ 5%+ conversion to premium  
+✅ 5%+ conversion to Sage+  
 ✅ Sustainable unit economics
 
 ---
@@ -645,16 +631,34 @@ Total External:         $2,000
 
 #### **Premium Features Development**
 
-- Advanced AI personalization
-- Calendar integration
-- Export and sharing features
+**Phase 1: Core Sage+ Features (Month 4-5)**
+
+- Unlimited consultations (remove weekly limits)
+- Enhanced AI interpretations with personal context
+- Extended consultation history (1 year vs 30 days)
+- Email integration for daily guidance delivery
+- Calendar integration for proactive guidance
+
+**Phase 2: MVP Pattern Recognition (Month 6)**
+
+- Basic hexagram frequency analysis
+- Question theme categorization
+- Consultation timing patterns
+- Simple life journey insights
+
+**Phase 3: Advanced Features (Month 7+)**
+
+- Advanced pattern recognition with semantic analysis
+- Predictive insights based on consultation history
+- Custom consultation templates
+- Export and backup tools
 - Priority customer support
 
 #### **Revenue Targets**
 
-- Month 4: $500 MRR (100 users × $5/month)
-- Month 5: $1,000 MRR (200 users × $5/month)
-- Month 6: $2,000 MRR (400 users × $5/month)
+- Month 4: $400 MRR (50 users × $7.99/month)
+- Month 5: $800 MRR (100 users × $7.99/month)
+- Month 6: $1,600 MRR (200 users × $7.99/month)
 
 ### 9.2 Month 7-12: Scale & Optimize
 

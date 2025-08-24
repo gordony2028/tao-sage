@@ -17,10 +17,8 @@ export default function FAQPage() {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleExpanded = (id: string) => {
-    setExpandedItems(prev => 
-      prev.includes(id) 
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
+    setExpandedItems(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
   };
 
@@ -37,7 +35,7 @@ We strive to maintain cultural authenticity by:
 • Partnering with scholars to ensure respectful representation
 • Clearly distinguishing between traditional wisdom and modern AI insights`,
       category: 'cultural',
-      tags: ['authenticity', 'tradition', 'history']
+      tags: ['authenticity', 'tradition', 'history'],
     },
     {
       id: 'how-accurate-ai',
@@ -57,7 +55,7 @@ We strive to maintain cultural authenticity by:
 
 **Best Practice:** Use AI insights as a starting point for deeper contemplation and combine them with traditional hexagram meanings and your own intuition.`,
       category: 'technical',
-      tags: ['AI', 'accuracy', 'interpretation', 'guidance']
+      tags: ['AI', 'accuracy', 'interpretation', 'guidance'],
     },
     {
       id: 'cultural-appropriation',
@@ -82,7 +80,7 @@ We strive to maintain cultural authenticity by:
 • Use the wisdom for personal growth, not entertainment
 • Consider learning more about Chinese philosophy and history`,
       category: 'cultural',
-      tags: ['cultural sensitivity', 'appropriation', 'respect']
+      tags: ['cultural sensitivity', 'appropriation', 'respect'],
     },
     {
       id: 'questions-to-ask',
@@ -109,7 +107,7 @@ We strive to maintain cultural authenticity by:
 • Come with genuine openness to insight
 • Frame questions positively when possible`,
       category: 'usage',
-      tags: ['consultation', 'questions', 'guidance']
+      tags: ['consultation', 'questions', 'guidance'],
     },
     {
       id: 'how-often-consult',
@@ -136,7 +134,7 @@ We strive to maintain cultural authenticity by:
 
 Remember: The I Ching is meant to develop your inner wisdom, not replace your own judgment.`,
       category: 'usage',
-      tags: ['frequency', 'practice', 'wisdom']
+      tags: ['frequency', 'practice', 'wisdom'],
     },
     {
       id: 'hexagram-meanings',
@@ -163,11 +161,12 @@ Remember: The I Ching is meant to develop your inner wisdom, not replace your ow
 
 **Traditional Perspective:** Even lifelong I Ching scholars continue discovering new layers of meaning. The value is in ongoing contemplation and application, not perfect memorization.`,
       category: 'basics',
-      tags: ['learning', 'hexagrams', 'study', 'memory']
+      tags: ['learning', 'hexagrams', 'study', 'memory'],
     },
     {
       id: 'daily-vs-consultation',
-      question: 'What\'s the difference between daily guidance and full consultation?',
+      question:
+        "What's the difference between daily guidance and full consultation?",
       answer: `We offer two types of I Ching experiences designed for different purposes and levels of depth.
 
 **Daily Guidance:**
@@ -191,11 +190,11 @@ Remember: The I Ching is meant to develop your inner wisdom, not replace your ow
 
 Both approaches are valuable and can complement each other in your I Ching practice.`,
       category: 'usage',
-      tags: ['daily guidance', 'consultation', 'practice']
+      tags: ['daily guidance', 'consultation', 'practice'],
     },
     {
       id: 'technical-issues',
-      question: 'I\'m having technical issues with the app. What should I do?',
+      question: "I'm having technical issues with the app. What should I do?",
       answer: `We strive to provide a smooth experience for your I Ching practice. Here are common solutions:
 
 **Common Issues & Solutions:**
@@ -233,7 +232,7 @@ If these solutions don't resolve your issue, please contact our support team wit
 • Your device and browser information
 • Screenshots if helpful`,
       category: 'technical',
-      tags: ['troubleshooting', 'support', 'technical']
+      tags: ['troubleshooting', 'support', 'technical'],
     },
     {
       id: 'privacy-data',
@@ -270,11 +269,12 @@ If these solutions don't resolve your issue, please contact our support team wit
 
 See our Privacy Policy for complete details on data handling and your rights.`,
       category: 'technical',
-      tags: ['privacy', 'data protection', 'security']
+      tags: ['privacy', 'data protection', 'security'],
     },
     {
       id: 'different-interpretations',
-      question: 'Why do different I Ching sources give different interpretations?',
+      question:
+        'Why do different I Ching sources give different interpretations?',
       answer: `I Ching interpretations can vary between sources due to the rich, layered nature of this ancient text and different scholarly approaches.
 
 **Reasons for Variation:**
@@ -308,8 +308,8 @@ See our Privacy Policy for complete details on data handling and your rights.`,
 
 The beauty of the I Ching lies partly in its ability to speak differently to different people while maintaining its essential wisdom.`,
       category: 'basics',
-      tags: ['interpretation', 'sources', 'translations', 'variations']
-    }
+      tags: ['interpretation', 'sources', 'translations', 'variations'],
+    },
   ];
 
   const categories = [
@@ -321,54 +321,59 @@ The beauty of the I Ching lies partly in its ability to speak differently to dif
   ];
 
   const filteredFAQs = faqData.filter(faq => {
-    const matchesCategory = selectedCategory === 'all' || faq.category === selectedCategory;
-    const matchesSearch = searchTerm === '' || 
+    const matchesCategory =
+      selectedCategory === 'all' || faq.category === selectedCategory;
+    const matchesSearch =
+      searchTerm === '' ||
       faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      faq.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+      faq.tags.some(tag =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+
     return matchesCategory && matchesSearch;
   });
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="mb-8 text-center">
         <h1 className="mb-4 text-3xl font-bold text-ink-black">
           Frequently Asked Questions
         </h1>
-        <p className="text-lg text-soft-gray mb-6">
-          Common questions about I Ching practice, cultural sensitivity, and using our application
+        <p className="mb-6 text-lg text-soft-gray">
+          Common questions about I Ching practice, cultural sensitivity, and
+          using our application
         </p>
       </div>
 
       {/* Search and Filters */}
       <Card variant="default" className="mb-8">
         <CardContent className="pt-6">
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
             {/* Search */}
             <div>
-              <label className="block text-sm font-medium text-mountain-stone mb-2">
+              <label className="mb-2 block text-sm font-medium text-mountain-stone">
                 Search Questions
               </label>
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 placeholder="Search by keyword..."
-                className="w-full px-3 py-2 border border-stone-gray/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-flowing-water"
+                className="w-full rounded-lg border border-stone-gray/30 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-flowing-water"
               />
             </div>
 
             {/* Category Filter */}
             <div>
-              <label className="block text-sm font-medium text-mountain-stone mb-2">
+              <label className="mb-2 block text-sm font-medium text-mountain-stone">
                 Category
               </label>
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-stone-gray/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-flowing-water"
+                onChange={e => setSelectedCategory(e.target.value)}
+                className="w-full rounded-lg border border-stone-gray/30 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-flowing-water"
               >
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>
@@ -380,12 +385,12 @@ The beauty of the I Ching lies partly in its ability to speak differently to dif
           </div>
 
           {/* Category Buttons */}
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="mt-4 flex flex-wrap gap-2">
             {categories.map(category => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
                   selectedCategory === category.id
                     ? 'bg-flowing-water text-white'
                     : 'bg-gentle-silver/20 text-mountain-stone hover:bg-gentle-silver/30'
@@ -400,67 +405,90 @@ The beauty of the I Ching lies partly in its ability to speak differently to dif
       </Card>
 
       {/* Results Count */}
-      <div className="text-sm text-soft-gray mb-4">
+      <div className="mb-4 text-sm text-soft-gray">
         Showing {filteredFAQs.length} questions
       </div>
 
       {/* FAQ Items */}
       <div className="space-y-4">
-        {filteredFAQs.map((faq) => {
+        {filteredFAQs.map(faq => {
           const isExpanded = expandedItems.includes(faq.id);
-          
+
           return (
             <Card key={faq.id} variant="default" className="overflow-hidden">
-              <CardHeader 
-                className="cursor-pointer hover:bg-gentle-silver/10 transition-colors"
+              <CardHeader
+                className="cursor-pointer transition-colors hover:bg-gentle-silver/10"
                 onClick={() => toggleExpanded(faq.id)}
               >
                 <div className="flex items-start justify-between">
-                  <CardTitle className="text-lg leading-tight pr-4">
+                  <CardTitle className="pr-4 text-lg leading-tight">
                     {faq.question}
                   </CardTitle>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs px-2 py-1 bg-flowing-water/10 text-flowing-water rounded-full whitespace-nowrap">
+                    <span className="whitespace-nowrap rounded-full bg-flowing-water/10 px-2 py-1 text-xs text-flowing-water">
                       {categories.find(c => c.id === faq.category)?.name}
                     </span>
-                    <span className={`transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                    <span
+                      className={`transform transition-transform ${
+                        isExpanded ? 'rotate-180' : ''
+                      }`}
+                    >
                       ▼
                     </span>
                   </div>
                 </div>
               </CardHeader>
-              
+
               {isExpanded && (
                 <CardContent className="pt-0">
                   <div className="prose prose-sm max-w-none">
                     {faq.answer.split('\n\n').map((paragraph, index) => {
                       // Handle bold text
-                      if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
+                      if (
+                        paragraph.startsWith('**') &&
+                        paragraph.endsWith('**')
+                      ) {
                         return (
-                          <h4 key={index} className="font-medium text-mountain-stone mb-2 mt-4">
+                          <h4
+                            key={index}
+                            className="mb-2 mt-4 font-medium text-mountain-stone"
+                          >
                             {paragraph.slice(2, -2)}
                           </h4>
                         );
                       }
-                      
+
                       // Handle bullet points
                       if (paragraph.includes('• ')) {
-                        const items = paragraph.split('\n').filter(line => line.trim().startsWith('• '));
+                        const items = paragraph
+                          .split('\n')
+                          .filter(line => line.trim().startsWith('• '));
                         return (
-                          <ul key={index} className="list-disc list-inside text-soft-gray space-y-1 mb-4">
+                          <ul
+                            key={index}
+                            className="mb-4 list-inside list-disc space-y-1 text-soft-gray"
+                          >
                             {items.map((item, itemIndex) => (
                               <li key={itemIndex}>{item.replace('• ', '')}</li>
                             ))}
                           </ul>
                         );
                       }
-                      
+
                       // Regular paragraph
                       return (
-                        <p key={index} className="text-soft-gray leading-relaxed mb-4">
-                          {paragraph.split('**').map((part, partIndex) => 
+                        <p
+                          key={index}
+                          className="mb-4 leading-relaxed text-soft-gray"
+                        >
+                          {paragraph.split('**').map((part, partIndex) =>
                             partIndex % 2 === 1 ? (
-                              <strong key={partIndex} className="text-mountain-stone">{part}</strong>
+                              <strong
+                                key={partIndex}
+                                className="text-mountain-stone"
+                              >
+                                {part}
+                              </strong>
                             ) : (
                               part
                             )
@@ -469,15 +497,15 @@ The beauty of the I Ching lies partly in its ability to speak differently to dif
                       );
                     })}
                   </div>
-                  
+
                   {/* Tags */}
                   {faq.tags.length > 0 && (
-                    <div className="pt-4 border-t border-stone-gray/20">
+                    <div className="border-t border-stone-gray/20 pt-4">
                       <div className="flex flex-wrap gap-2">
-                        {faq.tags.map((tag) => (
+                        {faq.tags.map(tag => (
                           <span
                             key={tag}
-                            className="text-xs px-2 py-1 bg-gentle-silver/20 text-soft-gray rounded-full"
+                            className="rounded-full bg-gentle-silver/20 px-2 py-1 text-xs text-soft-gray"
                           >
                             #{tag}
                           </span>
@@ -494,16 +522,16 @@ The beauty of the I Ching lies partly in its ability to speak differently to dif
 
       {/* No Results */}
       {filteredFAQs.length === 0 && (
-        <Card variant="default" className="text-center py-12">
+        <Card variant="default" className="py-12 text-center">
           <CardContent>
-            <div className="text-4xl mb-4">🔍</div>
-            <h3 className="text-xl font-medium text-mountain-stone mb-2">
+            <div className="mb-4 text-4xl">🔍</div>
+            <h3 className="mb-2 text-xl font-medium text-mountain-stone">
               No questions found
             </h3>
-            <p className="text-soft-gray mb-4">
+            <p className="mb-4 text-soft-gray">
               Try adjusting your search terms or category filter.
             </p>
-            <button 
+            <button
               onClick={() => {
                 setSearchTerm('');
                 setSelectedCategory('all');
@@ -522,19 +550,23 @@ The beauty of the I Ching lies partly in its ability to speak differently to dif
           <div className="flex items-start gap-3">
             <span className="text-xl">💬</span>
             <div>
-              <h3 className="font-medium text-blue-800 mb-2">
+              <h3 className="mb-2 font-medium text-blue-800">
                 Still have questions?
               </h3>
-              <p className="text-sm text-blue-700 mb-3">
-                If you can't find the answer you're looking for, we're here to help. 
-                Our team includes I Ching practitioners and cultural consultants.
+              <p className="mb-3 text-sm text-blue-700">
+                If you can&apos;t find the answer you&apos;re looking for,
+                we&apos;re here to help. Our team includes I Ching practitioners
+                and cultural consultants.
               </p>
               <div className="flex gap-3 text-sm">
                 <a href="/contact" className="text-blue-700 hover:underline">
                   Contact Support
                 </a>
                 <span className="text-blue-600">•</span>
-                <a href="/cultural-respect" className="text-blue-700 hover:underline">
+                <a
+                  href="/cultural-respect"
+                  className="text-blue-700 hover:underline"
+                >
                   Cultural Guidelines
                 </a>
               </div>

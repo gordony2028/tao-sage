@@ -53,37 +53,63 @@ export default function HexagramDetailPage() {
 
   const hexagramNumber = parseInt(params.number as string);
   const baseHexagram = getHexagram(hexagramNumber);
-  
+
   // Adapt our simple database to match the expected interface
-  const hexagram = baseHexagram ? {
-    ...baseHexagram,
-    upperTrigram: { 
-      name: baseHexagram.upperTrigram, 
-      chinese: baseHexagram.upperTrigram, 
-      meaning: 'Traditional trigram', 
-      lines: baseHexagram.lines.slice(3) as ('yin' | 'yang')[]
-    },
-    lowerTrigram: { 
-      name: baseHexagram.lowerTrigram, 
-      chinese: baseHexagram.lowerTrigram, 
-      meaning: 'Traditional trigram', 
-      lines: baseHexagram.lines.slice(0, 3) as ('yin' | 'yang')[]
-    },
-    judgment: `The ${baseHexagram.name} brings guidance through ${baseHexagram.keywords.slice(0, 2).join(' and ')}.`,
-    image: `This hexagram represents ${baseHexagram.keywords[0]} and teaches us about ${baseHexagram.keywords.slice(1, 3).join(' and ')}.`,
-    interpretation: {
-      general: `${baseHexagram.name} represents ${baseHexagram.keywords.join(', ')}. This hexagram is categorized under ${baseHexagram.category} and is considered ${baseHexagram.difficulty} level for study.`,
-      career: `In career matters, ${baseHexagram.name} suggests focusing on ${baseHexagram.keywords[0]} and ${baseHexagram.keywords[1] || 'personal growth'}.`,
-      relationships: `For relationships, this hexagram emphasizes ${baseHexagram.keywords[1] || 'understanding'} and ${baseHexagram.keywords[2] || 'harmony'}.`,
-      personal: `For personal development, ${baseHexagram.name} encourages ${baseHexagram.keywords.slice(-2).join(' and ')}.`
-    },
-    historical: `Hexagram ${baseHexagram.number} (${baseHexagram.chinese}) is one of the 64 traditional hexagrams of the I Ching, representing the interplay between ${baseHexagram.upperTrigram} and ${baseHexagram.lowerTrigram}.`,
-    relatedHexagrams: [1, 2, 3].filter(n => n !== baseHexagram.number) // Simple related hexagrams
-  } : null;
+  const hexagram = baseHexagram
+    ? {
+        ...baseHexagram,
+        upperTrigram: {
+          name: baseHexagram.upperTrigram,
+          chinese: baseHexagram.upperTrigram,
+          meaning: 'Traditional trigram',
+          lines: baseHexagram.lines.slice(3) as ('yin' | 'yang')[],
+        },
+        lowerTrigram: {
+          name: baseHexagram.lowerTrigram,
+          chinese: baseHexagram.lowerTrigram,
+          meaning: 'Traditional trigram',
+          lines: baseHexagram.lines.slice(0, 3) as ('yin' | 'yang')[],
+        },
+        judgment: `The ${
+          baseHexagram.name
+        } brings guidance through ${baseHexagram.keywords
+          .slice(0, 2)
+          .join(' and ')}.`,
+        image: `This hexagram represents ${
+          baseHexagram.keywords[0]
+        } and teaches us about ${baseHexagram.keywords
+          .slice(1, 3)
+          .join(' and ')}.`,
+        interpretation: {
+          general: `${
+            baseHexagram.name
+          } represents ${baseHexagram.keywords.join(
+            ', '
+          )}. This hexagram is categorized under ${
+            baseHexagram.category
+          } and is considered ${baseHexagram.difficulty} level for study.`,
+          career: `In career matters, ${
+            baseHexagram.name
+          } suggests focusing on ${baseHexagram.keywords[0]} and ${
+            baseHexagram.keywords[1] || 'personal growth'
+          }.`,
+          relationships: `For relationships, this hexagram emphasizes ${
+            baseHexagram.keywords[1] || 'understanding'
+          } and ${baseHexagram.keywords[2] || 'harmony'}.`,
+          personal: `For personal development, ${
+            baseHexagram.name
+          } encourages ${baseHexagram.keywords.slice(-2).join(' and ')}.`,
+        },
+        historical: `Hexagram ${baseHexagram.number} (${baseHexagram.chinese}) is one of the 64 traditional hexagrams of the I Ching, representing the interplay between ${baseHexagram.upperTrigram} and ${baseHexagram.lowerTrigram}.`,
+        relatedHexagrams: [1, 2, 3].filter(n => n !== baseHexagram.number), // Simple related hexagrams
+      }
+    : null;
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       setUser(user);
       setLoading(false);
     };
@@ -95,46 +121,57 @@ export default function HexagramDetailPage() {
     setStudyStartTime(new Date());
   }, []);
 
-  const renderHexagramLines = (lines: ('yin' | 'yang')[], showLabels = false) => {
+  const renderHexagramLines = (
+    lines: ('yin' | 'yang')[],
+    showLabels = false
+  ) => {
     return (
       <div className="flex flex-col items-center space-y-2">
-        {lines.slice().reverse().map((line, index) => (
-          <div key={index} className="flex items-center gap-3">
-            {showLabels && (
-              <span className="text-xs text-soft-gray w-12 text-right">
-                Line {6 - index}
-              </span>
-            )}
-            <div className="w-12 h-1.5">
-              {line === 'yang' ? (
-                // Yang line: solid line
-                <div className="w-full h-full bg-mountain-stone rounded-sm"></div>
-              ) : (
-                // Yin line: broken line with clear gap
-                <div className="flex justify-between items-center h-full">
-                  <div className="w-5 h-full bg-mountain-stone rounded-sm"></div>
-                  <div className="w-5 h-full bg-mountain-stone rounded-sm"></div>
-                </div>
+        {lines
+          .slice()
+          .reverse()
+          .map((line, index) => (
+            <div key={index} className="flex items-center gap-3">
+              {showLabels && (
+                <span className="w-12 text-right text-xs text-soft-gray">
+                  Line {6 - index}
+                </span>
+              )}
+              <div className="h-1.5 w-12">
+                {line === 'yang' ? (
+                  // Yang line: solid line
+                  <div className="h-full w-full rounded-sm bg-mountain-stone"></div>
+                ) : (
+                  // Yin line: broken line with clear gap
+                  <div className="flex h-full items-center justify-between">
+                    <div className="h-full w-5 rounded-sm bg-mountain-stone"></div>
+                    <div className="h-full w-5 rounded-sm bg-mountain-stone"></div>
+                  </div>
+                )}
+              </div>
+              {showLabels && (
+                <span className="w-16 text-xs text-soft-gray">
+                  {line === 'yang' ? 'Yang ⚊' : 'Yin ⚋'}
+                </span>
               )}
             </div>
-            {showLabels && (
-              <span className="text-xs text-soft-gray w-16">
-                {line === 'yang' ? 'Yang ⚊' : 'Yin ⚋'}
-              </span>
-            )}
-          </div>
-        ))}
+          ))}
       </div>
     );
   };
 
-  const renderTrigram = (trigram: { name: string; chinese: string; meaning: string; lines: ('yin' | 'yang')[] }) => {
+  const renderTrigram = (trigram: {
+    name: string;
+    chinese: string;
+    meaning: string;
+    lines: ('yin' | 'yang')[];
+  }) => {
     return (
       <div className="text-center">
-        <div className="mb-2">
-          {renderHexagramLines(trigram.lines)}
+        <div className="mb-2">{renderHexagramLines(trigram.lines)}</div>
+        <div className="text-sm font-medium text-mountain-stone">
+          {trigram.name}
         </div>
-        <div className="text-sm font-medium text-mountain-stone">{trigram.name}</div>
         <div className="text-lg text-soft-gray">{trigram.chinese}</div>
         <div className="text-xs text-soft-gray">{trigram.meaning}</div>
       </div>
@@ -144,7 +181,9 @@ export default function HexagramDetailPage() {
   const completeHexagramStudy = async () => {
     if (!user || !studyStartTime) return;
 
-    const duration = Math.round((new Date().getTime() - studyStartTime.getTime()) / (1000 * 60));
+    const duration = Math.round(
+      (new Date().getTime() - studyStartTime.getTime()) / (1000 * 60)
+    );
 
     try {
       // Track hexagram study completion
@@ -168,13 +207,14 @@ export default function HexagramDetailPage() {
 
   if (!hexagram) {
     return (
-      <div className="max-w-4xl mx-auto text-center py-12">
-        <div className="text-4xl mb-4">❓</div>
-        <h1 className="text-2xl font-bold text-mountain-stone mb-4">
+      <div className="mx-auto max-w-4xl py-12 text-center">
+        <div className="mb-4 text-4xl">❓</div>
+        <h1 className="mb-4 text-2xl font-bold text-mountain-stone">
           Hexagram {hexagramNumber} Not Found
         </h1>
-        <p className="text-soft-gray mb-6">
-          The hexagram you're looking for is not yet available in our educational database.
+        <p className="mb-6 text-soft-gray">
+          The hexagram you&apos;re looking for is not yet available in our
+          educational database.
         </p>
         <div className="flex justify-center gap-4">
           <Link href="/learn/hexagrams">
@@ -190,7 +230,7 @@ export default function HexagramDetailPage() {
 
   if (loading) {
     return (
-      <div className="text-center py-12">
+      <div className="py-12 text-center">
         <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-flowing-water"></div>
         <p className="text-soft-gray">Loading hexagram details...</p>
       </div>
@@ -198,46 +238,56 @@ export default function HexagramDetailPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="mx-auto max-w-5xl">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-soft-gray mb-4">
-          <Link href="/learn" className="hover:text-flowing-water">Learn</Link>
+        <div className="mb-4 flex items-center gap-2 text-sm text-soft-gray">
+          <Link href="/learn" className="hover:text-flowing-water">
+            Learn
+          </Link>
           <span>›</span>
-          <Link href="/learn/hexagrams" className="hover:text-flowing-water">64 Hexagrams</Link>
+          <Link href="/learn/hexagrams" className="hover:text-flowing-water">
+            64 Hexagrams
+          </Link>
           <span>›</span>
           <span>Hexagram {hexagram.number}</span>
         </div>
-        
+
         <div className="text-center">
-          <div className="flex justify-center mb-6">
+          <div className="mb-6 flex justify-center">
             {renderHexagramLines(hexagram.lines, true)}
           </div>
-          
-          <h1 className="text-3xl font-bold text-ink-black mb-2">
+
+          <h1 className="mb-2 text-3xl font-bold text-ink-black">
             {hexagram.name}
           </h1>
-          <div className="text-2xl text-soft-gray mb-2">{hexagram.chinese}</div>
-          <div className="text-sm text-soft-gray mb-4">Hexagram {hexagram.number} • {hexagram.pinyin}</div>
-          
-          <div className="flex justify-center gap-4 mb-6">
-            <span className="text-xs px-3 py-1 bg-gentle-silver/20 text-mountain-stone rounded-full">
+          <div className="mb-2 text-2xl text-soft-gray">{hexagram.chinese}</div>
+          <div className="mb-4 text-sm text-soft-gray">
+            Hexagram {hexagram.number} • {hexagram.pinyin}
+          </div>
+
+          <div className="mb-6 flex justify-center gap-4">
+            <span className="rounded-full bg-gentle-silver/20 px-3 py-1 text-xs text-mountain-stone">
               {hexagram.category}
             </span>
-            <span className={`text-xs px-3 py-1 rounded-full ${
-              hexagram.difficulty === 'beginner' ? 'bg-green-100 text-green-700' :
-              hexagram.difficulty === 'intermediate' ? 'bg-yellow-100 text-yellow-700' :
-              'bg-red-100 text-red-700'
-            }`}>
+            <span
+              className={`rounded-full px-3 py-1 text-xs ${
+                hexagram.difficulty === 'beginner'
+                  ? 'bg-green-100 text-green-700'
+                  : hexagram.difficulty === 'intermediate'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-red-100 text-red-700'
+              }`}
+            >
               {hexagram.difficulty}
             </span>
           </div>
 
           <div className="flex flex-wrap justify-center gap-2">
-            {hexagram.keywords.map((keyword) => (
+            {hexagram.keywords.map(keyword => (
               <span
                 key={keyword}
-                className="text-sm px-3 py-1 bg-flowing-water/10 text-flowing-water rounded-full"
+                className="rounded-full bg-flowing-water/10 px-3 py-1 text-sm text-flowing-water"
               >
                 {keyword}
               </span>
@@ -255,32 +305,33 @@ export default function HexagramDetailPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid gap-8 md:grid-cols-2">
             <div>
-              <h3 className="text-lg font-medium text-mountain-stone mb-4 text-center">
+              <h3 className="mb-4 text-center text-lg font-medium text-mountain-stone">
                 Upper Trigram (Heaven)
               </h3>
               {renderTrigram(hexagram.upperTrigram)}
             </div>
             <div>
-              <h3 className="text-lg font-medium text-mountain-stone mb-4 text-center">
+              <h3 className="mb-4 text-center text-lg font-medium text-mountain-stone">
                 Lower Trigram (Earth)
               </h3>
               {renderTrigram(hexagram.lowerTrigram)}
             </div>
           </div>
-          
-          <div className="mt-6 pt-6 border-t border-stone-gray/20 text-center">
+
+          <div className="mt-6 border-t border-stone-gray/20 pt-6 text-center">
             <p className="text-sm text-soft-gray">
-              The interaction between these trigrams creates the unique energy and meaning of this hexagram.
-              Understanding trigram combinations deepens your I Ching knowledge.
+              The interaction between these trigrams creates the unique energy
+              and meaning of this hexagram. Understanding trigram combinations
+              deepens your I Ching knowledge.
             </p>
           </div>
         </CardContent>
       </Card>
 
       {/* Classical Texts */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      <div className="mb-8 grid gap-6 md:grid-cols-2">
         <Card variant="default">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -289,8 +340,8 @@ export default function HexagramDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <blockquote className="text-mountain-stone italic text-lg leading-relaxed border-l-4 border-flowing-water pl-4">
-              "{hexagram.judgment}"
+            <blockquote className="border-l-4 border-flowing-water pl-4 text-lg italic leading-relaxed text-mountain-stone">
+              &ldquo;{hexagram.judgment}&rdquo;
             </blockquote>
           </CardContent>
         </Card>
@@ -303,8 +354,8 @@ export default function HexagramDetailPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <blockquote className="text-mountain-stone italic text-lg leading-relaxed border-l-4 border-flowing-water pl-4">
-              "{hexagram.image}"
+            <blockquote className="border-l-4 border-flowing-water pl-4 text-lg italic leading-relaxed text-mountain-stone">
+              &ldquo;{hexagram.image}&rdquo;
             </blockquote>
           </CardContent>
         </Card>
@@ -319,35 +370,35 @@ export default function HexagramDetailPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <h3 className="font-medium text-mountain-stone mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 font-medium text-mountain-stone">
                 <span className="text-sm">🎯</span> General Guidance
               </h3>
-              <p className="text-sm text-soft-gray leading-relaxed mb-4">
+              <p className="mb-4 text-sm leading-relaxed text-soft-gray">
                 {hexagram.interpretation.general}
               </p>
 
-              <h3 className="font-medium text-mountain-stone mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 font-medium text-mountain-stone">
                 <span className="text-sm">💼</span> Career & Work
               </h3>
-              <p className="text-sm text-soft-gray leading-relaxed">
+              <p className="text-sm leading-relaxed text-soft-gray">
                 {hexagram.interpretation.career}
               </p>
             </div>
 
             <div>
-              <h3 className="font-medium text-mountain-stone mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 font-medium text-mountain-stone">
                 <span className="text-sm">❤️</span> Relationships
               </h3>
-              <p className="text-sm text-soft-gray leading-relaxed mb-4">
+              <p className="mb-4 text-sm leading-relaxed text-soft-gray">
                 {hexagram.interpretation.relationships}
               </p>
 
-              <h3 className="font-medium text-mountain-stone mb-3 flex items-center gap-2">
+              <h3 className="mb-3 flex items-center gap-2 font-medium text-mountain-stone">
                 <span className="text-sm">🌱</span> Personal Growth
               </h3>
-              <p className="text-sm text-soft-gray leading-relaxed">
+              <p className="text-sm leading-relaxed text-soft-gray">
                 {hexagram.interpretation.personal}
               </p>
             </div>
@@ -364,7 +415,7 @@ export default function HexagramDetailPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-soft-gray leading-relaxed">
+          <p className="leading-relaxed text-soft-gray">
             {hexagram.historical}
           </p>
         </CardContent>
@@ -381,7 +432,7 @@ export default function HexagramDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="flex gap-4">
-              {hexagram.relatedHexagrams.map((num) => (
+              {hexagram.relatedHexagrams.map(num => (
                 <Link key={num} href={`/learn/hexagrams/${num}`}>
                   <Button variant="outline" size="sm">
                     Hexagram {num}
@@ -403,20 +454,20 @@ export default function HexagramDetailPage() {
               </Button>
             )}
             <Link href="/consultation">
-              <Button variant="outline">
-                Consult with this Hexagram
-              </Button>
+              <Button variant="outline">Consult with this Hexagram</Button>
             </Link>
             <Link href="/learn/hexagrams">
-              <Button variant="outline">
-                Browse All Hexagrams
-              </Button>
+              <Button variant="outline">Browse All Hexagrams</Button>
             </Link>
             {user && (
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => setIsBookmarked(!isBookmarked)}
-                className={isBookmarked ? 'bg-yellow-50 text-yellow-700 border-yellow-200' : ''}
+                className={
+                  isBookmarked
+                    ? 'border-yellow-200 bg-yellow-50 text-yellow-700'
+                    : ''
+                }
               >
                 {isBookmarked ? '⭐ Bookmarked' : '☆ Bookmark'}
               </Button>
@@ -432,12 +483,12 @@ export default function HexagramDetailPage() {
             <div className="flex items-start gap-3">
               <span className="text-xl">📈</span>
               <div>
-                <h3 className="font-medium text-blue-800 mb-2">
+                <h3 className="mb-2 font-medium text-blue-800">
                   Study Session Active
                 </h3>
                 <p className="text-sm text-blue-700">
-                  Started at {studyStartTime.toLocaleTimeString()}. 
-                  Studying individual hexagrams contributes to your trigram mastery and 
+                  Started at {studyStartTime.toLocaleTimeString()}. Studying
+                  individual hexagrams contributes to your trigram mastery and
                   overall I Ching knowledge progression.
                 </p>
               </div>
