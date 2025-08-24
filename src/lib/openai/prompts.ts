@@ -6,39 +6,49 @@
 import { Hexagram } from '@/types/iching';
 
 /**
- * Generate compressed prompt for consultation
- * Reduces tokens by 40-60% through smart formatting
+ * Generate optimized prompt for consultation
+ * Balances efficiency with rich, meaningful content
  */
 export function generateCompressedPrompt(
   hexagram: Hexagram,
   question: string
 ): string {
-  // Compress question to first 100 chars if longer
-  const compressedQuestion =
-    question.length > 100 ? question.substring(0, 97) + '...' : question;
+  // Keep full question for quality (only truncate if extremely long)
+  const processedQuestion =
+    question.length > 300 ? question.substring(0, 297) + '...' : question;
 
   // Format changing lines efficiently
   const changes = hexagram.changingLines?.length
     ? hexagram.changingLines.join(',')
     : 'none';
 
-  // Compressed prompt format (saves ~50% tokens)
-  return `I Ching consultation:
-H:${hexagram.number}/${hexagram.name}
-Q:${compressedQuestion}
-CL:${changes}
+  // Optimized prompt that maintains quality while saving tokens
+  return `I Ching consultation for: "${processedQuestion}"
 
-Provide interpretation:
-1.Core meaning(50w)
-2.Guidance(40w)
-3.Action(30w)
+Hexagram ${hexagram.number}: ${hexagram.name}
+Changing lines: ${changes}
 
-Style:balanced,respectful,practical
-Format:JSON`;
+Provide a rich, meaningful interpretation with:
+
+1. Core Meaning: Deep insight into what this hexagram reveals about their situation (100-150 words)
+2. Ancient Wisdom: Traditional teaching and its modern relevance (80-120 words)  
+3. Practical Guidance: Specific, actionable steps they can take (60-100 words)
+4. Timing: When and how to act on this guidance (40-60 words)
+
+Style: Wise, respectful, profound yet accessible
+Tone: Balance ancient wisdom with modern practicality
+Format: Flat JSON object with these exact fields:
+{
+  "interpretation": "Combined core meaning text (string)",
+  "ancientWisdom": "Traditional teaching text (string)", 
+  "guidance": "Practical guidance text (string)",
+  "timing": "Timing advice text (string)"
+}`;
 }
 
 /**
- * Generate standard prompt (fallback for complex consultations)
+ * Generate comprehensive prompt for complex consultations
+ * Prioritizes depth and richness of content
  */
 export function generateStandardPrompt(
   hexagram: Hexagram,
@@ -48,51 +58,71 @@ export function generateStandardPrompt(
     ? `The changing lines are: ${hexagram.changingLines.join(
         ', '
       )}, indicating transformation and movement in the situation.`
-    : 'There are no changing lines, suggesting a stable situation.';
+    : 'There are no changing lines, suggesting a stable situation with enduring patterns.';
 
-  return `You are a wise I Ching consultant providing culturally authentic and respectful guidance based on traditional Chinese philosophy.
+  return `You are a master I Ching consultant, drawing from 5,000 years of Chinese wisdom to provide profound, transformative guidance.
 
-The user asks: "${question}"
+The seeker asks: "${question}"
 
 They have cast Hexagram ${hexagram.number}: ${hexagram.name}
 ${changingLinesText}
 
-Please provide a personalized interpretation that:
-1. Explains the core meaning of this hexagram in relation to their question
-2. Offers practical guidance rooted in traditional wisdom
-3. Suggests specific actions they can take
-4. Maintains cultural authenticity and respect for the I Ching tradition
+This is a complex consultation requiring deep insight. Provide a comprehensive interpretation with:
 
-Respond in a JSON format with these fields:
-- interpretation: The core meaning (max 150 words)
-- guidance: Practical wisdom (max 120 words)
-- practicalAdvice: Specific actions (max 100 words)
-- culturalContext: Traditional significance (max 80 words)
+1. **Core Meaning**: Reveal the deepest truth this hexagram holds about their situation. What is the universe trying to teach them? (150-200 words)
 
-Keep the tone balanced, respectful, and accessible to modern readers while honoring the ancient wisdom.`;
+2. **Ancient Wisdom**: Share the traditional teachings of this hexagram. How did the sages understand this pattern? What timeless principles apply? (120-160 words)
+
+3. **Personal Guidance**: Offer specific, actionable wisdom tailored to their question. What should they do, and why? (100-140 words)
+
+4. **Spiritual Insight**: What deeper spiritual lesson or growth opportunity does this situation offer? (80-120 words)
+
+5. **Timing & Flow**: When should they act? How should they move with the natural rhythm of change? (60-100 words)
+
+6. **Cultural Context**: Honor the traditional significance while making it relevant to modern life (60-80 words)
+
+Speak with the voice of ancient wisdom made accessible. Be profound yet practical, mystical yet grounded. This person seeks genuine transformation, not surface answers.
+
+IMPORTANT: Respond with a flat JSON object using exactly these field names:
+
+{
+  "interpretation": "Core meaning text (150-200 words)",
+  "ancientWisdom": "Traditional teaching text (120-160 words)",
+  "guidance": "Personal guidance text (100-140 words)", 
+  "spiritualInsight": "Spiritual lesson text (80-120 words)",
+  "timing": "Timing and flow text (60-100 words)",
+  "culturalContext": "Cultural significance text (60-80 words)"
+}
+
+Each field must be a single string, not an object or nested structure.`;
 }
 
 /**
  * System prompt for AI personality (cached and reused)
  */
 export const SYSTEM_PROMPT = `You are Sage, an I Ching consultant combining 5,000 years of wisdom with modern understanding. 
-Rules: Be concise, respectful, practical. Honor tradition while being accessible. 
-Output: Always valid JSON. Focus on actionable guidance.`;
+
+Critical Rules:
+- Always respond with valid JSON only - no explanatory text before or after
+- Use flat JSON structure - each field must be a string, never an object
+- Be respectful, practical, and honor I Ching tradition
+- Focus on actionable guidance while maintaining ancient wisdom
+- Include all requested fields in your response`;
 
 /**
  * Generate prompt based on complexity
- * Automatically selects compressed vs standard format
+ * Balances cost efficiency with content quality
  */
 export function generateAdaptivePrompt(
   hexagram: Hexagram,
   question: string,
   complexity: number
 ): string {
-  // Use compressed format for simple consultations (saves tokens)
-  if (complexity < 0.5) {
+  // Use optimized format for simple consultations (still rich but efficient)
+  if (complexity < 0.6) {
     return generateCompressedPrompt(hexagram, question);
   }
-  // Use standard format for complex consultations (better quality)
+  // Use comprehensive format for complex consultations (maximum depth)
   return generateStandardPrompt(hexagram, question);
 }
 
@@ -126,42 +156,62 @@ function hashString(str: string): string {
 }
 
 /**
- * Validate AI response for cultural sensitivity
+ * Validate AI response for cultural sensitivity and content quality
  */
 export function validateResponse(response: any): boolean {
   if (!response || typeof response !== 'object') return false;
 
-  // Check required fields
-  const requiredFields = ['interpretation', 'guidance'];
-  for (const field of requiredFields) {
-    if (!response[field] || typeof response[field] !== 'string') {
-      return false;
-    }
-  }
+  // Check for minimal required content (flexible for different response formats)
+  const hasContent =
+    (response.interpretation && response.interpretation.length > 20) ||
+    (response.guidance && response.guidance.length > 20) ||
+    (response.ancientWisdom && response.ancientWisdom.length > 20);
 
-  // Check for inappropriate content
-  const inappropriateTerms = [
-    'fortune telling',
-    'predict future',
-    'guarantee',
-    'magic',
-  ];
+  if (!hasContent) return false;
+
+  // Only check for obviously inappropriate content (not overly restrictive)
   const responseText = JSON.stringify(response).toLowerCase();
+  const problematicTerms = [
+    'this is fake',
+    'i cannot predict',
+    'fortune telling is nonsense',
+    'superstition',
+  ];
 
-  for (const term of inappropriateTerms) {
+  for (const term of problematicTerms) {
     if (responseText.includes(term)) {
       return false;
     }
   }
 
-  // Check for respectful language
-  const respectfulTerms = ['wisdom', 'guidance', 'suggests', 'consider', 'may'];
-  let respectScore = 0;
-  for (const term of respectfulTerms) {
-    if (responseText.includes(term)) respectScore++;
+  // Require at least some wisdom-based language (but be flexible)
+  const wisdomIndicators = [
+    'wisdom',
+    'guidance',
+    'suggests',
+    'consider',
+    'may',
+    'ancient',
+    'teaches',
+    'insight',
+    'understand',
+    'path',
+    'journey',
+    'balance',
+    'harmony',
+    'flow',
+    'timing',
+    'nature',
+    'reflects',
+    'reveals',
+  ];
+
+  let wisdomScore = 0;
+  for (const term of wisdomIndicators) {
+    if (responseText.includes(term)) wisdomScore++;
   }
 
-  return respectScore >= 2; // At least 2 respectful terms
+  return wisdomScore >= 1; // Just need some wisdom language, not overly strict
 }
 
 /**

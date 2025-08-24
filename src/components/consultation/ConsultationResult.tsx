@@ -68,6 +68,21 @@ export default function ConsultationResult({
                 </p>
               </div>
 
+              {/* Ancient Wisdom */}
+              {interpretation.ancientWisdom && (
+                <div>
+                  <h3 className="mb-3 flex items-center text-lg font-medium text-ink-black">
+                    <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-mountain-stone text-sm font-bold text-white">
+                      智
+                    </span>
+                    Ancient Wisdom
+                  </h3>
+                  <p className="pl-11 leading-relaxed text-gentle-silver">
+                    {interpretation.ancientWisdom}
+                  </p>
+                </div>
+              )}
+
               {/* Guidance */}
               {interpretation.guidance && (
                 <div>
@@ -94,6 +109,36 @@ export default function ConsultationResult({
                   </h3>
                   <p className="pl-11 leading-relaxed text-gentle-silver">
                     {interpretation.practicalAdvice}
+                  </p>
+                </div>
+              )}
+
+              {/* Spiritual Insight */}
+              {interpretation.spiritualInsight && (
+                <div>
+                  <h3 className="mb-3 flex items-center text-lg font-medium text-ink-black">
+                    <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-flowing-water text-sm font-bold text-white">
+                      靈
+                    </span>
+                    Spiritual Insight
+                  </h3>
+                  <p className="pl-11 leading-relaxed text-gentle-silver">
+                    {interpretation.spiritualInsight}
+                  </p>
+                </div>
+              )}
+
+              {/* Timing */}
+              {interpretation.timing && (
+                <div>
+                  <h3 className="mb-3 flex items-center text-lg font-medium text-ink-black">
+                    <span className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-earth-brown text-sm font-bold text-white">
+                      時
+                    </span>
+                    Timing & Flow
+                  </h3>
+                  <p className="pl-11 leading-relaxed text-gentle-silver">
+                    {interpretation.timing}
                   </p>
                 </div>
               )}

@@ -70,14 +70,21 @@ export interface ConsultationContext {
 
 /**
  * AI-generated interpretation structure
+ * Enhanced for rich, meaningful content
  */
 export interface AIInterpretation {
-  /** Main interpretation text */
+  /** Core meaning and insight into the situation */
   interpretation: string;
-  /** Practical guidance for the situation */
+  /** Ancient wisdom and traditional teachings */
+  ancientWisdom?: string;
+  /** Practical guidance for current situation */
   guidance?: string;
-  /** Actionable advice */
+  /** Specific actionable advice */
   practicalAdvice?: string;
+  /** Deeper spiritual insights and growth opportunities */
+  spiritualInsight?: string;
+  /** Timing and flow guidance */
+  timing?: string;
   /** Cultural and historical context */
   culturalContext?: string;
 }

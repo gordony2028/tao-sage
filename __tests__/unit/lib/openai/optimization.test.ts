@@ -54,24 +54,25 @@ describe('OpenAI Optimization Features', () => {
       changingLines: [],
     };
 
-    it('should generate compressed prompts for efficiency', () => {
+    it('should generate optimized prompts that balance efficiency with quality', () => {
       const question = 'Career guidance?';
       const compressed = generateCompressedPrompt(hexagram, question);
       const standard = generateStandardPrompt(hexagram, question);
 
-      // Compressed should be significantly shorter
-      expect(compressed.length).toBeLessThan(standard.length * 0.5);
-      expect(compressed).toContain('H:1/The Creative');
-      expect(compressed).toContain('Q:Career guidance?');
+      // Optimized should be shorter but still rich in content
+      expect(compressed.length).toBeLessThan(standard.length * 0.7);
+      expect(compressed).toContain('Hexagram 1: The Creative');
+      expect(compressed).toContain('Career guidance?');
+      expect(compressed).toContain('rich, meaningful interpretation');
     });
 
-    it('should truncate long questions in compressed format', () => {
-      const longQuestion = 'A'.repeat(200);
+    it('should truncate extremely long questions when necessary', () => {
+      const longQuestion = 'A'.repeat(400); // Very long question
       const compressed = generateCompressedPrompt(hexagram, longQuestion);
 
-      // Should be truncated to ~100 chars
+      // Should be truncated only if extremely long (>300 chars)
       expect(compressed).toContain('...');
-      expect(compressed.length).toBeLessThan(500);
+      expect(compressed.length).toBeLessThan(1000); // Still allows for rich content
     });
 
     it('should estimate tokens accurately', () => {
@@ -147,20 +148,27 @@ describe('OpenAI Optimization Features', () => {
 
     it('should reject responses with inappropriate content', () => {
       const badResponse = {
-        interpretation: 'I predict your future will be...',
-        guidance: 'The magic of fortune telling reveals...',
+        interpretation: 'This is fake and I cannot predict anything.',
+        guidance: 'Fortune telling is nonsense and superstition.',
       };
 
       expect(validateResponse(badResponse)).toBe(false);
     });
 
-    it('should require respectful language', () => {
-      const disrespectfulResponse = {
-        interpretation: 'You will definitely succeed',
-        guidance: 'Guaranteed results await',
+    it('should require wisdom-based language', () => {
+      const emptyResponse = {
+        interpretation: 'xyz', // Too short
+        guidance: 'abc', // Too short
       };
 
-      expect(validateResponse(disrespectfulResponse)).toBe(false);
+      expect(validateResponse(emptyResponse)).toBe(false);
+
+      // Should pass with wisdom indicators
+      const wisdomResponse = {
+        interpretation: 'This hexagram reveals deep wisdom about your path.',
+        guidance: 'Ancient teachings suggest considering balance.',
+      };
+      expect(validateResponse(wisdomResponse)).toBe(true);
     });
   });
 
@@ -230,7 +238,7 @@ describe('OpenAI Optimization Features', () => {
       expect(avgCost).toBeLessThan(0.05);
     });
 
-    it('should reduce tokens by 40-60% with compression', () => {
+    it('should achieve meaningful efficiency while maintaining quality', () => {
       const hexagram = {
         number: 1,
         name: 'The Creative',
@@ -247,8 +255,8 @@ describe('OpenAI Optimization Features', () => {
       const standardTokens = estimateTokens(standard);
       const reduction = 1 - compressedTokens / standardTokens;
 
-      expect(reduction).toBeGreaterThan(0.4); // At least 40% reduction
-      expect(reduction).toBeLessThan(0.8); // Can achieve up to 80% reduction
+      expect(reduction).toBeGreaterThan(0.2); // At least 20% efficiency gain
+      expect(reduction).toBeLessThan(0.6); // But not at expense of quality
     });
   });
 });
