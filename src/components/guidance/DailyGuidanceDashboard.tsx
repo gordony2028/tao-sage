@@ -585,6 +585,7 @@ export default function DailyGuidanceDashboard({
                 setShowReflection(!showReflection);
               }}
               variant={reflectionComplete ? 'default' : 'outline'}
+              size="sm"
             >
               {reflectionComplete ? '✅ Reflected' : '📝 Reflect'}
             </Button>
