@@ -8,6 +8,7 @@ import {
   updateConsultation,
 } from '@/lib/supabase/consultations';
 import { formatDistanceToNow } from 'date-fns';
+import AIPersonalityIndicator from './AIPersonalityIndicator';
 
 interface ConsultationHistoryItemProps {
   consultation: Consultation;
@@ -63,7 +64,7 @@ export default function ConsultationHistoryItem({
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-flowing-water font-bold text-white">
                 {consultation.hexagram_number}
               </div>
-              <div>
+              <div className="flex-1">
                 <h3 className="font-medium text-ink-black">
                   Hexagram {consultation.hexagram_number}:{' '}
                   {consultation.hexagram_name}
@@ -71,6 +72,18 @@ export default function ConsultationHistoryItem({
                 <p className="text-sm text-soft-gray" title={dateInfo.absolute}>
                   {dateInfo.relative}
                 </p>
+              </div>
+              {/* AI Personality Indicator */}
+              <div className="flex items-center gap-2">
+                <AIPersonalityIndicator
+                  interpretation={consultation.interpretation}
+                  showDetails={true}
+                  size="md"
+                />
+                <div className="text-xs text-soft-gray">
+                  <span className="block">AI Style</span>
+                  <span className="font-medium">Click to analyze</span>
+                </div>
               </div>
             </div>
 

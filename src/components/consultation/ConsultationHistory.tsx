@@ -10,6 +10,7 @@ import {
 import { supabase } from '@/lib/supabase/client';
 import ConsultationHistoryItem from './ConsultationHistoryItem';
 import ConsultationHistoryFilters from './ConsultationHistoryFilters';
+import AIPersonalitySummary from './AIPersonalitySummary';
 
 interface ConsultationHistoryProps {
   userId: string;
@@ -117,6 +118,11 @@ export default function ConsultationHistory({
           </p>
         </CardContent>
       </Card>
+
+      {/* AI Personality Summary */}
+      {consultations.length > 0 && (
+        <AIPersonalitySummary consultations={consultations} />
+      )}
 
       {/* Filters */}
       <ConsultationHistoryFilters
