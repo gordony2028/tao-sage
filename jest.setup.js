@@ -1,5 +1,16 @@
 import '@testing-library/jest-dom';
 
+// Set Node environment for OpenAI
+global.process = process;
+
+// Polyfill for TransformStream (needed for Vercel AI SDK)
+if (typeof TransformStream === 'undefined') {
+  global.TransformStream = require('stream/web').TransformStream;
+}
+
+// Mock fetch for tests
+global.fetch = jest.fn();
+
 // Use real environment variables from .env.local for testing
 process.env.NEXT_PUBLIC_SUPABASE_URL =
   'https://vwjwpbgmtfunjyribmrm.supabase.co';
