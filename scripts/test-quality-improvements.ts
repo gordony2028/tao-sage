@@ -10,6 +10,7 @@ import {
   estimateTokens,
   validateResponse,
 } from '../src/lib/openai/prompts';
+import type { LineValue } from '../src/types/iching';
 
 async function testQualityImprovements() {
   console.log('🎯 Testing Quality-Focused AI Integration\n');
@@ -18,12 +19,12 @@ async function testQualityImprovements() {
     number: 1,
     name: 'The Creative',
     lines: [9, 9, 9, 9, 9, 9] as [
-      number,
-      number,
-      number,
-      number,
-      number,
-      number,
+      LineValue,
+      LineValue,
+      LineValue,
+      LineValue,
+      LineValue,
+      LineValue,
     ],
     changingLines: [2, 5],
   };

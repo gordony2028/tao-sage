@@ -24,19 +24,14 @@ import {
   SYSTEM_PROMPT,
 } from './prompts';
 // Using traditional OpenAI client for rich content generation
-import type { AIInterpretation } from '@/types/iching';
+import type { AIInterpretation, Hexagram, LineValue } from '@/types/iching';
 
 /**
  * Consultation input for AI interpretation
  */
 export interface ConsultationInput {
   question: string;
-  hexagram: {
-    number: number;
-    name: string;
-    lines: number[];
-    changingLines: number[];
-  };
+  hexagram: Hexagram;
 }
 
 /**
@@ -77,9 +72,13 @@ class ResponseCache {
     // In production, track hits and misses
     return 0.8; // Placeholder
   }
+
+  clear(): void {
+    this.cache.clear();
+  }
 }
 
-const responseCache = new ResponseCache();
+export const responseCache = new ResponseCache();
 
 /**
  * Validates consultation input before processing
@@ -359,27 +358,54 @@ export async function streamConsultationInterpretation(
     complexity
   );
 
-  // Stream the response
-  const result = await streamText({
-    model: openaiStream(model),
-    system: SYSTEM_PROMPT,
-    prompt,
+  // Create a streaming response using OpenAI's streaming API
+  const stream = await openai.chat.completions.create({
+    model,
+    messages: [
+      {
+        role: 'system',
+        content: SYSTEM_PROMPT,
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ],
     temperature: 0.7,
-    maxTokens: 500,
+    max_tokens: 500,
+    stream: true,
+    response_format: { type: 'json_object' },
   });
 
   // Track costs
   const estimatedTokens = estimateTokens(prompt) + 500;
   costTracker.addCost(estimatedTokens, model);
 
-  return result.toTextStreamResponse();
+  // Return a ReadableStream that processes the OpenAI stream
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        let fullContent = '';
+        for await (const chunk of stream) {
+          const content = chunk.choices[0]?.delta?.content || '';
+          if (content) {
+            fullContent += content;
+            controller.enqueue(new TextEncoder().encode(content));
+          }
+        }
+        controller.close();
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+  });
 }
 
 /**
  * Fallback interpretation when AI is unavailable
  * Ensures 100% uptime with traditional meanings
  */
-function getFallbackInterpretation(hexagram: any): AIInterpretation {
+function getFallbackInterpretation(hexagram: Hexagram): AIInterpretation {
   // In production, load from a database of traditional interpretations
   const fallbackInterpretations: Record<number, string> = {
     1: 'The Creative represents pure yang energy, symbolizing strength, leadership, and new beginnings. This is a time for bold action and creative initiative.',

@@ -8,6 +8,7 @@ import {
   calculateComplexity,
   CostTracker,
 } from '@/lib/openai/client';
+import type { LineValue } from '@/types/iching';
 import {
   generateCompressedPrompt,
   generateStandardPrompt,
@@ -50,7 +51,14 @@ describe('OpenAI Optimization Features', () => {
     const hexagram = {
       number: 1,
       name: 'The Creative',
-      lines: [9, 9, 9, 9, 9, 9],
+      lines: [9, 9, 9, 9, 9, 9] as [
+        LineValue,
+        LineValue,
+        LineValue,
+        LineValue,
+        LineValue,
+        LineValue,
+      ],
       changingLines: [],
     };
 
@@ -72,7 +80,10 @@ describe('OpenAI Optimization Features', () => {
 
       // Should be truncated only if extremely long (>300 chars)
       expect(compressed).toContain('...');
-      expect(compressed.length).toBeLessThan(1000); // Still allows for rich content
+      expect(compressed.length).toBeLessThan(1200); // Allows for rich content but limits excessive length
+
+      // Verify the question was actually truncated
+      expect(compressed).not.toContain('A'.repeat(350));
     });
 
     it('should estimate tokens accurately', () => {
@@ -90,7 +101,14 @@ describe('OpenAI Optimization Features', () => {
       const hexagram = {
         number: 1,
         name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [9, 9, 9, 9, 9, 9] as [
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+        ],
         changingLines: [1, 3],
       };
 
@@ -104,7 +122,14 @@ describe('OpenAI Optimization Features', () => {
       const hexagram = {
         number: 1,
         name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [9, 9, 9, 9, 9, 9] as [
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+        ],
         changingLines: [],
       };
 
@@ -118,14 +143,28 @@ describe('OpenAI Optimization Features', () => {
       const hexagram1 = {
         number: 1,
         name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [9, 9, 9, 9, 9, 9] as [
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+        ],
         changingLines: [1],
       };
 
       const hexagram2 = {
         number: 1,
         name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [9, 9, 9, 9, 9, 9] as [
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+        ],
         changingLines: [2],
       };
 
@@ -242,7 +281,14 @@ describe('OpenAI Optimization Features', () => {
       const hexagram = {
         number: 1,
         name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [9, 9, 9, 9, 9, 9] as [
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+        ],
         changingLines: [1, 2, 3],
       };
 

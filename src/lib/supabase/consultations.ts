@@ -9,8 +9,11 @@ export interface ConsultationData {
   changing_lines?: number[];
   interpretation: {
     interpretation: string;
+    ancientWisdom?: string;
     guidance?: string;
     practicalAdvice?: string;
+    spiritualInsight?: string;
+    timing?: string;
     culturalContext?: string;
   };
   consultation_method?: string;
@@ -31,8 +34,11 @@ export interface Consultation {
   changing_lines: number[];
   interpretation: {
     interpretation: string;
+    ancientWisdom?: string;
     guidance?: string;
     practicalAdvice?: string;
+    spiritualInsight?: string;
+    timing?: string;
     culturalContext?: string;
   };
   consultation_method: string;
@@ -65,24 +71,50 @@ export async function saveConsultation(
 }
 
 /**
- * Get consultations for a specific user
+ * Get consultations for a specific user with pagination and filtering
  */
 export async function getUserConsultations(
   userId: string,
-  limit: number = 20
-): Promise<Consultation[]> {
-  const { data, error } = await supabaseAdmin
+  options: {
+    limit?: number;
+    offset?: number;
+    status?: 'active' | 'archived';
+    hexagramNumber?: number;
+    search?: string;
+  } = {}
+): Promise<{ data: Consultation[]; count: number }> {
+  const {
+    limit = 20,
+    offset = 0,
+    status = 'active',
+    hexagramNumber,
+    search,
+  } = options;
+
+  let query = supabaseAdmin
     .from('consultations')
-    .select('*')
+    .select('*', { count: 'exact' })
     .eq('user_id', userId)
-    .order('created_at', { ascending: false })
-    .limit(limit);
+    .eq('status', status)
+    .order('created_at', { ascending: false });
+
+  if (hexagramNumber) {
+    query = query.eq('hexagram_number', hexagramNumber);
+  }
+
+  if (search) {
+    query = query.ilike('question', `%${search}%`);
+  }
+
+  query = query.range(offset, offset + limit - 1);
+
+  const { data, error, count } = await query;
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data || [];
+  return { data: data || [], count: count || 0 };
 }
 
 /**

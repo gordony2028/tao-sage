@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase/client';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -20,6 +22,29 @@ export default function ConsultationPage() {
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [userLoading, setUserLoading] = useState(true);
+  const router = useRouter();
+
+  // Check for authenticated user on mount
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        router.push('/auth');
+        return;
+      }
+
+      setUser(user);
+      setUserLoading(false);
+    };
+
+    getUser();
+  }, [router]);
 
   const handleQuestionSubmit = (questionText: string) => {
     setQuestion(questionText);
@@ -39,7 +64,7 @@ export default function ConsultationPage() {
         },
         body: JSON.stringify({
           question,
-          userId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479', // Demo UUID - TODO: Replace with actual user ID from auth
+          userId: user?.id,
           hexagram: {
             number: generatedHexagram.number,
             name: generatedHexagram.name,
@@ -85,6 +110,25 @@ export default function ConsultationPage() {
     setHexagram(null);
     setInterpretation(null);
   };
+
+  // Show loading state while checking authentication
+  if (userLoading) {
+    return (
+      <Layout>
+        <div className="from-paper-white flex min-h-screen items-center justify-center bg-gradient-to-br to-gentle-silver/10">
+          <div className="py-8 text-center">
+            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-flowing-water"></div>
+            <p className="text-soft-gray">Preparing your consultation...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Don't render if no user (they will be redirected)
+  if (!user) {
+    return null;
+  }
 
   return (
     <Layout>

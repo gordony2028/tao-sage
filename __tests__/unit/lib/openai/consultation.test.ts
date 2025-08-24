@@ -2,6 +2,7 @@ import {
   generateConsultationInterpretation,
   formatHexagramPrompt,
 } from '@/lib/openai/consultation';
+import type { LineValue } from '@/types/iching';
 
 // Mock OpenAI client
 jest.mock('@/lib/openai/client', () => ({
@@ -12,11 +13,31 @@ jest.mock('@/lib/openai/client', () => ({
       },
     },
   },
+  calculateComplexity: jest.fn(
+    (question: string, changingLines: number[]) => 0.5
+  ),
+  selectModel: jest.fn(() => 'gpt-3.5-turbo'),
+  costTracker: {
+    addCost: jest.fn(),
+    getAverageCost: jest.fn(() => 0.001),
+  },
+}));
+
+// Mock prompts module
+jest.mock('@/lib/openai/prompts', () => ({
+  generateAdaptivePrompt: jest.fn(() => 'test prompt'),
+  getCacheKey: jest.fn(() => 'test-cache-key'),
+  validateResponse: jest.fn(() => true),
+  estimateTokens: jest.fn(() => 100),
+  SYSTEM_PROMPT: 'test system prompt',
 }));
 
 describe('OpenAI Consultation Integration', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Clear the response cache to avoid test interference
+    const { responseCache } = require('@/lib/openai/consultation');
+    responseCache.clear();
   });
 
   describe('generateConsultationInterpretation', () => {
@@ -46,7 +67,14 @@ describe('OpenAI Consultation Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };
@@ -60,7 +88,7 @@ describe('OpenAI Consultation Integration', () => {
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle OpenAI API errors gracefully', async () => {
+    it('should handle OpenAI API errors gracefully with fallback', async () => {
       const mockOpenAI = require('@/lib/openai/client').openai;
       mockOpenAI.chat.completions.create.mockRejectedValue(
         new Error('API Error')
@@ -71,14 +99,26 @@ describe('OpenAI Consultation Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };
 
-      await expect(
-        generateConsultationInterpretation(consultation)
-      ).rejects.toThrow('API Error');
+      const result = await generateConsultationInterpretation(consultation);
+
+      // Should return fallback interpretation instead of throwing
+      expect(result).toHaveProperty('interpretation');
+      expect(result.interpretation).toContain(
+        'The Creative represents pure yang energy'
+      );
+      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledTimes(1);
     });
 
     it('should validate consultation input', async () => {
@@ -87,7 +127,7 @@ describe('OpenAI Consultation Integration', () => {
         hexagram: {
           number: 0, // Invalid hexagram number
           name: '',
-          lines: [1, 2, 3], // Invalid lines
+          lines: [1, 2, 3] as any, // Invalid lines
           changingLines: [],
         },
       };
@@ -105,7 +145,14 @@ describe('OpenAI Consultation Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };
@@ -125,7 +172,14 @@ describe('OpenAI Consultation Integration', () => {
         hexagram: {
           number: 3,
           name: 'Difficulty at the Beginning',
-          lines: [6, 7, 8, 9, 7, 8],
+          lines: [6, 7, 8, 9, 7, 8] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [1, 4],
         },
       };
@@ -142,7 +196,14 @@ describe('OpenAI Consultation Integration', () => {
         hexagram: {
           number: 2,
           name: 'The Receptive',
-          lines: [8, 8, 8, 8, 8, 8],
+          lines: [8, 8, 8, 8, 8, 8] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };

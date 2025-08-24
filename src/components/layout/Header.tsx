@@ -89,9 +89,12 @@ export default function Header() {
               <div className="h-8 w-8 animate-pulse rounded-full bg-gentle-silver/30"></div>
             ) : user ? (
               <div className="flex items-center space-x-3">
-                <span className="text-sm text-mountain-stone">
-                  {user.email}
-                </span>
+                <Link
+                  href="/profile"
+                  className="text-sm text-mountain-stone transition-colors hover:text-flowing-water"
+                >
+                  Profile
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="px-4 py-2 text-sm text-mountain-stone transition-colors hover:text-flowing-water"

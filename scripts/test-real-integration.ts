@@ -11,6 +11,7 @@ import {
   costTracker,
 } from '../src/lib/openai/client';
 import { getCacheKey, validateResponse } from '../src/lib/openai/prompts';
+import type { LineValue } from '../src/types/iching';
 
 async function testRealIntegration() {
   console.log('🚀 Testing real AI integration with cost optimization...\n');
@@ -26,7 +27,14 @@ async function testRealIntegration() {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       },
@@ -39,7 +47,14 @@ async function testRealIntegration() {
         hexagram: {
           number: 50,
           name: 'The Caldron',
-          lines: [9, 8, 7, 6, 8, 9],
+          lines: [9, 8, 7, 6, 8, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [1, 3, 4, 6],
         },
       },
@@ -51,7 +66,14 @@ async function testRealIntegration() {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       },
@@ -101,7 +123,9 @@ async function testRealIntegration() {
       console.log(`💰 Average cost so far: $${avgCost.toFixed(4)}`);
       console.log(`💰 Total cost so far: $${totalCost.toFixed(4)}`);
     } catch (error) {
-      console.error(`❌ Error: ${error.message}`);
+      console.error(
+        `❌ Error: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
 
     // Small delay to respect rate limits

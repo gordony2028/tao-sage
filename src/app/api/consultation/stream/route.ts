@@ -7,13 +7,23 @@ import { NextRequest } from 'next/server';
 import { streamConsultationInterpretation } from '@/lib/openai/consultation';
 import { z } from 'zod';
 
+// Force Node.js runtime to avoid Edge Runtime compatibility issues with OpenAI SDK
+export const runtime = 'nodejs';
+
 // Request validation schema
 const ConsultationRequestSchema = z.object({
   question: z.string().min(1).max(500),
   hexagram: z.object({
     number: z.number().min(1).max(64),
     name: z.string().min(1),
-    lines: z.array(z.number()).length(6),
+    lines: z.tuple([
+      z.union([z.literal(6), z.literal(7), z.literal(8), z.literal(9)]),
+      z.union([z.literal(6), z.literal(7), z.literal(8), z.literal(9)]),
+      z.union([z.literal(6), z.literal(7), z.literal(8), z.literal(9)]),
+      z.union([z.literal(6), z.literal(7), z.literal(8), z.literal(9)]),
+      z.union([z.literal(6), z.literal(7), z.literal(8), z.literal(9)]),
+      z.union([z.literal(6), z.literal(7), z.literal(8), z.literal(9)]),
+    ]),
     changingLines: z.array(z.number()),
   }),
 });
@@ -66,6 +76,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// Enable streaming for this route
-export const runtime = 'edge';

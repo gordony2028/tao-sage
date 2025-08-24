@@ -21,31 +21,54 @@ jest.mock('@/lib/supabase/client', () => {
                     id: 'test-id-' + Date.now(),
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString(),
+                    status: data.status || 'active', // Add default status
                   };
                   mockData.push(newItem);
                   return Promise.resolve({ data: newItem, error: null });
                 }),
               })),
             })),
-            select: jest.fn(() => ({
-              eq: jest.fn((field: string, value: any) => ({
-                order: jest.fn(() => ({
-                  limit: jest.fn(() => {
-                    const filtered = mockData.filter(
-                      item => item[field] === value
-                    );
-                    return Promise.resolve({ data: filtered, error: null });
-                  }),
-                })),
+            select: jest.fn(() => {
+              const createChainableQuery = (
+                filters: Record<string, any> = {}
+              ): any => ({
+                eq: jest.fn((field: string, value: any) => {
+                  const newFilters = { ...filters, [field]: value };
+                  return createChainableQuery(newFilters);
+                }),
+                ilike: jest.fn((field: string, value: any) => {
+                  const newFilters = { ...filters, [`${field}_ilike`]: value };
+                  return createChainableQuery(newFilters);
+                }),
+                order: jest.fn(() => createChainableQuery(filters)),
+                range: jest.fn(() => createChainableQuery(filters)),
                 single: jest.fn(() => {
-                  const item = mockData.find(d => d[field] === value);
+                  const item = mockData.find(d =>
+                    Object.entries(filters).every(([key, val]) =>
+                      key.includes('_ilike') ? true : d[key] === val
+                    )
+                  );
                   return Promise.resolve({
                     data: item || null,
                     error: item ? null : { code: 'PGRST116' },
                   });
                 }),
-              })),
-            })),
+                then: jest.fn(callback => {
+                  const filtered = mockData.filter(item =>
+                    Object.entries(filters).every(([key, val]) =>
+                      key.includes('_ilike') ? true : item[key] === val
+                    )
+                  );
+                  const result = {
+                    data: filtered,
+                    error: null,
+                    count: filtered.length,
+                  };
+                  return Promise.resolve(result).then(callback);
+                }),
+              });
+              return createChainableQuery();
+            }),
             delete: jest.fn(() => ({
               like: jest.fn(() => Promise.resolve({ error: null })),
             })),
@@ -140,20 +163,26 @@ describe('Supabase Consultations', () => {
         consultation_method: 'digital_coins',
       });
 
-      const consultations = await getUserConsultations(userId);
+      const result = await getUserConsultations(userId);
 
-      expect(consultations).toBeInstanceOf(Array);
-      expect(consultations.length).toBeGreaterThan(0);
-      if (consultations.length > 0) {
-        expect(consultations[0]!.user_id).toBe(userId);
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('count');
+      expect(result.data).toBeInstanceOf(Array);
+      expect(result.data.length).toBeGreaterThan(0);
+      expect(result.count).toBeGreaterThan(0);
+      if (result.data.length > 0) {
+        expect(result.data[0]!.user_id).toBe(userId);
       }
     });
 
     it('should handle empty results', async () => {
       const result = await getUserConsultations('non-existent-user');
 
-      expect(result).toBeInstanceOf(Array);
-      expect(result).toHaveLength(0);
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('count');
+      expect(result.data).toBeInstanceOf(Array);
+      expect(result.data).toHaveLength(0);
+      expect(result.count).toBe(0);
     });
   });
 

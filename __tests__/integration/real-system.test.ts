@@ -10,6 +10,7 @@ import {
   costTracker,
 } from '@/lib/openai/client';
 import { getCacheKey, validateResponse } from '@/lib/openai/prompts';
+import type { LineValue } from '@/types/iching';
 
 // Skip these tests if API keys are not available
 const hasAPIKeys =
@@ -61,7 +62,14 @@ describe.skip('Real System Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };
@@ -95,7 +103,14 @@ describe.skip('Real System Integration', () => {
         hexagram: {
           number: 50,
           name: 'The Caldron',
-          lines: [9, 8, 7, 6, 8, 9],
+          lines: [9, 8, 7, 6, 8, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [1, 3, 4, 6],
         },
       };
@@ -131,7 +146,14 @@ describe.skip('Real System Integration', () => {
         hexagram: {
           number: 10,
           name: 'Treading',
-          lines: [7, 8, 9, 6, 7, 8],
+          lines: [7, 8, 9, 6, 7, 8] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [2],
         },
       };
@@ -167,7 +189,14 @@ describe.skip('Real System Integration', () => {
       const hexagram = {
         number: 1,
         name: 'The Creative',
-        lines: [9, 9, 9, 9, 9, 9],
+        lines: [9, 9, 9, 9, 9, 9] as [
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+          LineValue,
+        ],
         changingLines: [],
       };
 
@@ -196,7 +225,14 @@ describe.skip('Real System Integration', () => {
         hexagram: {
           number: 2,
           name: 'The Receptive',
-          lines: [6, 6, 6, 6, 6, 6],
+          lines: [6, 6, 6, 6, 6, 6] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };
@@ -230,7 +266,14 @@ describe.skip('Real System Integration', () => {
           hexagram: {
             number: 8,
             name: 'Holding Together',
-            lines: [7, 8, 7, 8, 7, 8],
+            lines: [7, 8, 7, 8, 7, 8] as [
+              LineValue,
+              LineValue,
+              LineValue,
+              LineValue,
+              LineValue,
+              LineValue,
+            ],
             changingLines: [],
           },
         },
@@ -239,7 +282,14 @@ describe.skip('Real System Integration', () => {
           hexagram: {
             number: 31,
             name: 'Influence',
-            lines: [6, 7, 8, 9, 7, 8],
+            lines: [6, 7, 8, 9, 7, 8] as [
+              LineValue,
+              LineValue,
+              LineValue,
+              LineValue,
+              LineValue,
+              LineValue,
+            ],
             changingLines: [2, 4],
           },
         },
@@ -275,7 +325,14 @@ describe.skip('Real System Integration', () => {
         hexagram: {
           number: 1,
           name: 'The Creative',
-          lines: [9, 9, 9, 9, 9, 9],
+          lines: [9, 9, 9, 9, 9, 9] as [
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+            LineValue,
+          ],
           changingLines: [],
         },
       };
@@ -289,7 +346,7 @@ describe.skip('Real System Integration', () => {
       } catch (error) {
         // Should get a validation error, not a system crash
         expect(error).toBeInstanceOf(Error);
-        expect(error.message).toContain('empty');
+        expect((error as Error).message).toContain('empty');
       }
     }, 10000);
   });

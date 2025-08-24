@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import HexagramDisplay from './HexagramDisplay';
+import Link from 'next/link';
 import type { Hexagram, AIInterpretation } from '@/types/iching';
 
 interface ConsultationResultProps {
@@ -202,9 +203,11 @@ export default function ConsultationResult({
         <Button onClick={onStartOver} variant="outline" size="lg">
           Ask Another Question
         </Button>
-        <Button variant="secondary" size="lg">
-          Save This Consultation
-        </Button>
+        <Link href="/history">
+          <Button variant="secondary" size="lg" className="w-full">
+            View My Journey
+          </Button>
+        </Link>
       </div>
 
       {/* Cultural Attribution */}
