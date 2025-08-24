@@ -9,73 +9,76 @@ import type { GeneratedHexagram, LineValue } from '@/types/iching';
 
 /**
  * Traditional names for all 64 hexagrams
- * Based on the Wilhelm-Baynes translation
+ * Based on the Wilhelm-Baynes translation with Chinese characters
  */
-const HEXAGRAM_NAMES: Record<number, string> = {
-  1: 'The Creative',
-  2: 'The Receptive',
-  3: 'Difficulty at the Beginning',
-  4: 'Youthful Folly',
-  5: 'Waiting (Nourishment)',
-  6: 'Conflict',
-  7: 'The Army',
-  8: 'Holding Together (Union)',
-  9: 'The Taming Power of the Small',
-  10: 'Treading (Conduct)',
-  11: 'Peace',
-  12: 'Standstill (Stagnation)',
-  13: 'Fellowship with Men',
-  14: 'Possession in Great Measure',
-  15: 'Modesty',
-  16: 'Enthusiasm',
-  17: 'Following',
-  18: 'Work on What Has Been Spoiled (Decay)',
-  19: 'Approach',
-  20: 'Contemplation (View)',
-  21: 'Biting Through',
-  22: 'Grace',
-  23: 'Splitting Apart',
-  24: 'Return (The Turning Point)',
-  25: 'Innocence (The Unexpected)',
-  26: 'The Taming Power of the Great',
-  27: 'The Corners of the Mouth (Providing Nourishment)',
-  28: 'Preponderance of the Great',
-  29: 'The Abysmal (Water)',
-  30: 'The Clinging (Fire)',
-  31: 'Influence (Wooing)',
-  32: 'Duration',
-  33: 'Retreat',
-  34: 'The Power of the Great',
-  35: 'Progress',
-  36: 'Darkening of the Light',
-  37: 'The Family (The Clan)',
-  38: 'Opposition',
-  39: 'Obstruction',
-  40: 'Deliverance',
-  41: 'Decrease',
-  42: 'Increase',
-  43: 'Break-through (Resoluteness)',
-  44: 'Coming to Meet',
-  45: 'Gathering Together (Massing)',
-  46: 'Pushing Upward',
-  47: 'Oppression (Exhaustion)',
-  48: 'The Well',
-  49: 'Revolution (Molting)',
-  50: 'The Cauldron',
-  51: 'The Arousing (Shock, Thunder)',
-  52: 'Keeping Still (Mountain)',
-  53: 'Development (Gradual Progress)',
-  54: 'The Marrying Maiden',
-  55: 'Abundance (Fullness)',
-  56: 'The Wanderer',
-  57: 'The Gentle (The Penetrating, Wind)',
-  58: 'The Joyous (Lake)',
-  59: 'Dispersion (Dissolution)',
-  60: 'Limitation',
-  61: 'Inner Truth',
-  62: 'Preponderance of the Small',
-  63: 'After Completion',
-  64: 'Before Completion',
+const HEXAGRAM_NAMES: Record<number, { chinese: string; english: string }> = {
+  1: { chinese: '乾', english: 'The Creative' },
+  2: { chinese: '坤', english: 'The Receptive' },
+  3: { chinese: '屯', english: 'Difficulty at the Beginning' },
+  4: { chinese: '蒙', english: 'Youthful Folly' },
+  5: { chinese: '需', english: 'Waiting (Nourishment)' },
+  6: { chinese: '訟', english: 'Conflict' },
+  7: { chinese: '師', english: 'The Army' },
+  8: { chinese: '比', english: 'Holding Together (Union)' },
+  9: { chinese: '小畜', english: 'The Taming Power of the Small' },
+  10: { chinese: '履', english: 'Treading (Conduct)' },
+  11: { chinese: '泰', english: 'Peace' },
+  12: { chinese: '否', english: 'Standstill (Stagnation)' },
+  13: { chinese: '同人', english: 'Fellowship with Men' },
+  14: { chinese: '大有', english: 'Possession in Great Measure' },
+  15: { chinese: '謙', english: 'Modesty' },
+  16: { chinese: '豫', english: 'Enthusiasm' },
+  17: { chinese: '隨', english: 'Following' },
+  18: { chinese: '蠱', english: 'Work on What Has Been Spoiled (Decay)' },
+  19: { chinese: '臨', english: 'Approach' },
+  20: { chinese: '觀', english: 'Contemplation (View)' },
+  21: { chinese: '噬嗑', english: 'Biting Through' },
+  22: { chinese: '賁', english: 'Grace' },
+  23: { chinese: '剝', english: 'Splitting Apart' },
+  24: { chinese: '復', english: 'Return (The Turning Point)' },
+  25: { chinese: '無妄', english: 'Innocence (The Unexpected)' },
+  26: { chinese: '大畜', english: 'The Taming Power of the Great' },
+  27: {
+    chinese: '頤',
+    english: 'The Corners of the Mouth (Providing Nourishment)',
+  },
+  28: { chinese: '大過', english: 'Preponderance of the Great' },
+  29: { chinese: '坎', english: 'The Abysmal (Water)' },
+  30: { chinese: '離', english: 'The Clinging (Fire)' },
+  31: { chinese: '咸', english: 'Influence (Wooing)' },
+  32: { chinese: '恆', english: 'Duration' },
+  33: { chinese: '遯', english: 'Retreat' },
+  34: { chinese: '大壯', english: 'The Power of the Great' },
+  35: { chinese: '晉', english: 'Progress' },
+  36: { chinese: '明夷', english: 'Darkening of the Light' },
+  37: { chinese: '家人', english: 'The Family (The Clan)' },
+  38: { chinese: '睽', english: 'Opposition' },
+  39: { chinese: '蹇', english: 'Obstruction' },
+  40: { chinese: '解', english: 'Deliverance' },
+  41: { chinese: '損', english: 'Decrease' },
+  42: { chinese: '益', english: 'Increase' },
+  43: { chinese: '夬', english: 'Break-through (Resoluteness)' },
+  44: { chinese: '姤', english: 'Coming to Meet' },
+  45: { chinese: '萃', english: 'Gathering Together (Massing)' },
+  46: { chinese: '升', english: 'Pushing Upward' },
+  47: { chinese: '困', english: 'Oppression (Exhaustion)' },
+  48: { chinese: '井', english: 'The Well' },
+  49: { chinese: '革', english: 'Revolution (Molting)' },
+  50: { chinese: '鼎', english: 'The Cauldron' },
+  51: { chinese: '震', english: 'The Arousing (Shock, Thunder)' },
+  52: { chinese: '艮', english: 'Keeping Still (Mountain)' },
+  53: { chinese: '漸', english: 'Development (Gradual Progress)' },
+  54: { chinese: '歸妹', english: 'The Marrying Maiden' },
+  55: { chinese: '豐', english: 'Abundance (Fullness)' },
+  56: { chinese: '旅', english: 'The Wanderer' },
+  57: { chinese: '巽', english: 'The Gentle (The Penetrating, Wind)' },
+  58: { chinese: '兌', english: 'The Joyous (Lake)' },
+  59: { chinese: '渙', english: 'Dispersion (Dissolution)' },
+  60: { chinese: '節', english: 'Limitation' },
+  61: { chinese: '中孚', english: 'Inner Truth' },
+  62: { chinese: '小過', english: 'Preponderance of the Small' },
+  63: { chinese: '既濟', english: 'After Completion' },
+  64: { chinese: '未濟', english: 'Before Completion' },
 };
 
 /**
@@ -252,11 +255,42 @@ export function getHexagramName(number: number): string {
     );
   }
 
-  const name = HEXAGRAM_NAMES[number];
-  if (!name) {
+  const hexagram = HEXAGRAM_NAMES[number];
+  if (!hexagram) {
     throw new Error(`No name found for hexagram ${number}`);
   }
-  return name;
+  return hexagram.english;
+}
+
+export function getHexagramChineseName(number: number): string {
+  if (number < 1 || number > 64 || !Number.isInteger(number)) {
+    throw new Error(
+      `Invalid hexagram number: ${number}. Must be integer between 1 and 64.`
+    );
+  }
+
+  const hexagram = HEXAGRAM_NAMES[number];
+  if (!hexagram) {
+    throw new Error(`No name found for hexagram ${number}`);
+  }
+  return hexagram.chinese;
+}
+
+export function getHexagramFullName(number: number): {
+  chinese: string;
+  english: string;
+} {
+  if (number < 1 || number > 64 || !Number.isInteger(number)) {
+    throw new Error(
+      `Invalid hexagram number: ${number}. Must be integer between 1 and 64.`
+    );
+  }
+
+  const hexagram = HEXAGRAM_NAMES[number];
+  if (!hexagram) {
+    throw new Error(`No name found for hexagram ${number}`);
+  }
+  return hexagram;
 }
 
 /**

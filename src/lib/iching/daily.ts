@@ -3,7 +3,11 @@
  * Provides deterministic daily hexagrams with timezone awareness
  */
 
-import { generateHexagram, getHexagramName } from './hexagram';
+import {
+  generateHexagram,
+  getHexagramName,
+  getHexagramChineseName,
+} from './hexagram';
 import type { Hexagram, LineValue } from '@/types/iching';
 
 /**
@@ -32,6 +36,7 @@ export function generateDailyHexagram(
   return {
     number: hexagramNumber,
     name: getHexagramName(hexagramNumber),
+    chineseName: getHexagramChineseName(hexagramNumber),
     lines,
     changingLines,
   };

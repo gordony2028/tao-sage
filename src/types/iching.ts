@@ -22,6 +22,8 @@ export interface Hexagram {
   number: number;
   /** Traditional name of the hexagram */
   name: string;
+  /** Chinese name of the hexagram */
+  chineseName: string;
   /** Array of 6 line values, from bottom to top */
   lines: [LineValue, LineValue, LineValue, LineValue, LineValue, LineValue];
   /** Positions (1-6) of changing lines, if any */

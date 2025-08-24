@@ -1,183 +1,170 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { supabase } from '@/lib/supabase/client';
-import { usePerformanceMonitoring } from '@/lib/monitoring/performance';
-import type { DailyGuidance } from '@/lib/iching/daily';
-import type { AIPersonality } from '@/lib/ai/personalities';
-import { AI_PERSONALITIES, selectAIPersonality } from '@/lib/ai/personalities';
 
-interface DailyGuidanceDashboardProps {
-  userId: string;
+interface HexagramReading {
+  hexagram: {
+    number: number;
+    name: string;
+    chineseName: string;
+    lines: number[];
+    changingLines: number[];
+    upperTrigram?: string;
+    lowerTrigram?: string;
+  };
+  wisdom?: string;
+  focus?: string;
+  reflection?: string;
+  interpretation?: {
+    general: string;
+    guidance: string;
+    cultural: string;
+  };
+  date?: string;
+  timestamp?: string;
 }
 
-interface DailyGuidanceResponse {
-  guidance: DailyGuidance;
-  accessed_today: boolean;
-  streak: number;
-}
-
-export default function DailyGuidanceDashboard({
-  userId,
-}: DailyGuidanceDashboardProps) {
-  const [guidance, setGuidance] = useState<DailyGuidanceResponse | null>(null);
+export default function DailyGuidanceDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedPersonality, setSelectedPersonality] =
-    useState<AIPersonality | null>(null);
-  const [showReflection, setShowReflection] = useState(false);
-  const [reflectionText, setReflectionText] = useState('');
-  const [reflectionComplete, setReflectionComplete] = useState(false);
-  const [showMeditation, setShowMeditation] = useState(false);
-  const [meditationTime, setMeditationTime] = useState(300); // 5 minutes default
-  const [meditationActive, setMeditationActive] = useState(false);
-  const [meditationTimeLeft, setMeditationTimeLeft] = useState(0);
+  const [dailyReading, setDailyReading] = useState<HexagramReading | null>(
+    null
+  );
+  const [reflection, setReflection] = useState('');
+  const [affirmation, setAffirmation] = useState('');
+  const [meditationTimer, setMeditationTimer] = useState(0);
+  const [isTimerActive, setIsTimerActive] = useState(false);
+  const [showReflectionInput, setShowReflectionInput] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
-  const { trackAPIStart, trackAPIEnd, trackInteraction } =
-    usePerformanceMonitoring();
-
-  // Meditation timer effect
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (meditationActive && meditationTimeLeft > 0) {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      if (!user) {
+        setError('Please sign in to view your daily guidance');
+        setLoading(false);
+      }
+    };
+    getUser();
+  }, []);
+
+  // Fetch daily guidance when user is available
+  useEffect(() => {
+    if (user) {
+      fetchDailyGuidance();
+    }
+  }, [user]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerActive) {
       interval = setInterval(() => {
-        setMeditationTimeLeft(time => {
-          if (time <= 1) {
-            setMeditationActive(false);
-            // Optional: Play a gentle sound or notification
-            return 0;
-          }
-          return time - 1;
-        });
+        setMeditationTimer(seconds => seconds + 1);
       }, 1000);
+    } else if (!isTimerActive && meditationTimer !== 0) {
+      if (interval) clearInterval(interval);
     }
-    return () => clearInterval(interval);
-  }, [meditationActive, meditationTimeLeft]);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerActive, meditationTimer]);
 
-  const fetchDailyGuidance = useCallback(async () => {
-    // Guard: Don't make API calls if userId is undefined
-    if (!userId) {
-      setLoading(false);
-      setError('User ID is required');
-      return;
-    }
-
+  const fetchDailyGuidance = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const endpoint = `/api/guidance/daily?user_id=${userId}&timezone=${timezone}`;
+      if (!user) {
+        throw new Error('User not authenticated');
+      }
 
-      trackAPIStart(endpoint);
-      const response = await fetch(endpoint);
+      console.log('Fetching daily guidance for user:', user.id);
+      const response = await fetch(`/api/guidance/daily?user_id=${user.id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
+        const errorData = await response.text();
+        console.error('API error:', errorData);
         throw new Error('Failed to fetch daily guidance');
       }
 
       const data = await response.json();
-      trackAPIEnd(endpoint);
-      setGuidance(data);
+      const guidance = data.guidance || data;
+      setDailyReading(guidance);
+
+      // Generate a simple affirmation based on the hexagram
+      const affirmations = [
+        `I embrace the wisdom of ${guidance.hexagram.name} today`,
+        `The energy of ${guidance.hexagram.name} guides my path`,
+        `I am aligned with the flow of ${guidance.hexagram.name}`,
+        `Today, I embody the essence of ${guidance.hexagram.name}`,
+      ];
+      setAffirmation(
+        affirmations[Math.floor(Math.random() * affirmations.length)]
+      );
     } catch (err) {
+      console.error('Error fetching daily guidance:', err);
       setError(
         err instanceof Error ? err.message : 'Failed to load daily guidance'
       );
     } finally {
       setLoading(false);
     }
-  }, [userId, trackAPIStart, trackAPIEnd]);
+  };
 
-  useEffect(() => {
-    if (userId) {
-      fetchDailyGuidance();
-    }
-  }, [userId, fetchDailyGuidance]);
-
-  useEffect(() => {
-    if (guidance) {
-      // Select AI personality based on today's hexagram
-      const personality = selectAIPersonality(
-        guidance.guidance.hexagram,
-        guidance.guidance.focus
-      );
-      setSelectedPersonality(personality);
-    }
-  }, [guidance]);
-
-  const handleReflectionSubmit = async () => {
-    if (!guidance || !reflectionText.trim()) return;
+  const saveReflection = async () => {
+    if (!reflection.trim() || !user) return;
 
     try {
-      await fetch('/api/guidance/daily', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: userId,
-          action: 'mark_reflection_complete',
-          data: {
-            hexagram_number: guidance.guidance.hexagram.number,
-            reflection_text: reflectionText,
-            completion_time: new Date().toISOString(),
-          },
-        }),
+      // Track the reflection submission
+      await supabase.from('user_events').insert({
+        user_id: user.id,
+        event_type: 'daily_reflection_completed',
+        event_data: {
+          reflection: reflection,
+          hexagram_number: dailyReading?.hexagram.number,
+          date: new Date().toISOString(),
+        },
       });
 
-      setReflectionComplete(true);
-      setShowReflection(false);
+      setShowReflectionInput(false);
+      setReflection('');
+      alert('Your reflection has been saved 🙏');
     } catch (error) {
-      console.error('Failed to save reflection:', error);
+      console.error('Error saving reflection:', error);
+      alert('Failed to save reflection. Please try again.');
     }
   };
 
-  const handleShareWisdom = async (platform: string) => {
-    if (!guidance) return;
+  const trackMeditationSession = async () => {
+    if (meditationTimer < 60 || !user) return; // Minimum 1 minute
 
     try {
-      await fetch('/api/guidance/daily', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: userId,
-          action: 'share_daily_wisdom',
-          data: {
-            hexagram_number: guidance.guidance.hexagram.number,
-            platform,
-            type: 'daily_wisdom',
-          },
-        }),
+      await supabase.from('user_events').insert({
+        user_id: user.id,
+        event_type: 'meditation_completed',
+        event_data: {
+          duration_seconds: meditationTimer,
+          hexagram_number: dailyReading?.hexagram.number,
+          date: new Date().toISOString(),
+        },
       });
 
-      // Create shareable text
-      const shareText = `Today's I Ching Wisdom:\n\n"${guidance.guidance.wisdom}"\n\n- Hexagram ${guidance.guidance.hexagram.number}: ${guidance.guidance.hexagram.name}\n\nFrom Sage - AI-powered I Ching guidance`;
-
-      if (navigator.share) {
-        await navigator.share({
-          title: "Today's I Ching Wisdom",
-          text: shareText,
-          url: window.location.origin,
-        });
-      } else {
-        await navigator.clipboard.writeText(shareText);
-        alert('Wisdom copied to clipboard!');
-      }
+      alert(`Meditation session completed: ${formatTime(meditationTimer)} 🧘`);
+      setMeditationTimer(0);
     } catch (error) {
-      console.error('Failed to share wisdom:', error);
+      console.error('Error tracking meditation:', error);
     }
-  };
-
-  const startMeditation = () => {
-    setMeditationTimeLeft(meditationTime);
-    setMeditationActive(true);
-    trackInteraction('start-meditation');
-  };
-
-  const stopMeditation = () => {
-    setMeditationActive(false);
-    setMeditationTimeLeft(0);
-    trackInteraction('stop-meditation');
   };
 
   const formatTime = (seconds: number) => {
@@ -280,75 +267,77 @@ export default function DailyGuidanceDashboard({
 
     return (
       <div className="space-y-6">
-        {/* Main Hexagram */}
-        <div className="flex flex-col items-center space-y-2">
-          {hexagram.lines.map((line: number, index: number) => {
-            const isChanging = hexagram.changingLines.includes(6 - index);
-            return (
-              <div
-                key={index}
-                className="flex w-full max-w-xs items-center justify-between"
-              >
-                {/* Line position number - left aligned */}
-                <span className="w-8 text-center text-xs font-medium text-soft-gray">
-                  {6 - index}
-                </span>
+        {/* Main Hexagram - positioned to align with Lower Trigram */}
+        <div className="flex justify-center">
+          <div className="ml-16 flex w-64 flex-col items-center space-y-2">
+            {hexagram.lines.map((line: number, index: number) => {
+              const isChanging = hexagram.changingLines.includes(6 - index);
+              return (
+                <div
+                  key={index}
+                  className="flex w-full items-center justify-between"
+                >
+                  {/* Line position number - left aligned */}
+                  <span className="w-8 text-center text-xs font-medium text-soft-gray">
+                    {6 - index}
+                  </span>
 
-                {/* Hexagram line - centered */}
-                <div className="flex w-20 items-center justify-center">
-                  {line === 6 ? (
-                    // Old Yin (broken, changing)
-                    <div className="flex gap-1">
+                  {/* Hexagram line - centered */}
+                  <div className="flex w-28 items-center justify-center">
+                    {line === 6 ? (
+                      // Old Yin (broken, changing)
+                      <div className="flex w-24 gap-1">
+                        <div
+                          className={`h-2 flex-1 rounded-sm transition-all duration-500 ${
+                            isChanging
+                              ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
+                              : 'bg-gentle-silver'
+                          }`}
+                        ></div>
+                        <div
+                          className={`h-2 flex-1 rounded-sm transition-all duration-500 ${
+                            isChanging
+                              ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
+                              : 'bg-gentle-silver'
+                          }`}
+                        ></div>
+                      </div>
+                    ) : line === 7 ? (
+                      // Young Yang (solid)
+                      <div className="h-2 w-24 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
+                    ) : line === 8 ? (
+                      // Young Yin (broken)
+                      <div className="flex w-24 gap-1">
+                        <div className="h-2 flex-1 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
+                        <div className="h-2 flex-1 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
+                      </div>
+                    ) : (
+                      // Old Yang (solid, changing)
                       <div
-                        className={`h-2 w-8 rounded-sm transition-all duration-500 ${
+                        className={`h-2 w-24 rounded-sm transition-all duration-500 ${
                           isChanging
                             ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
-                            : 'bg-gentle-silver'
+                            : 'bg-gradient-to-r from-ink-black to-mountain-stone'
                         }`}
                       ></div>
-                      <div
-                        className={`h-2 w-8 rounded-sm transition-all duration-500 ${
-                          isChanging
-                            ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
-                            : 'bg-gentle-silver'
-                        }`}
-                      ></div>
-                    </div>
-                  ) : line === 7 ? (
-                    // Young Yang (solid)
-                    <div className="h-2 w-20 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
-                  ) : line === 8 ? (
-                    // Young Yin (broken)
-                    <div className="flex gap-1">
-                      <div className="h-2 w-8 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
-                      <div className="h-2 w-8 rounded-sm bg-gradient-to-r from-ink-black to-mountain-stone"></div>
-                    </div>
-                  ) : (
-                    // Old Yang (solid, changing)
-                    <div
-                      className={`h-2 w-20 rounded-sm transition-all duration-500 ${
-                        isChanging
-                          ? 'bg-gradient-to-r from-flowing-water to-bamboo-green shadow-lg'
-                          : 'bg-gradient-to-r from-ink-black to-mountain-stone'
-                      }`}
-                    ></div>
-                  )}
-                </div>
+                    )}
+                  </div>
 
-                {/* Changing indicator - right aligned */}
-                <div className="flex w-24 justify-end">
-                  {isChanging && (
-                    <div className="flex items-center gap-1">
-                      <div className="h-2 w-2 animate-pulse rounded-full bg-flowing-water"></div>
-                      <span className="text-xs font-medium text-flowing-water">
-                        Changing
-                      </span>
-                    </div>
-                  )}
+                  {/* Changing indicator - right aligned */}
+                  <div className="flex w-24 justify-end">
+                    {isChanging && (
+                      <div className="flex items-center gap-1">
+                        <div className="h-2 w-2 animate-pulse rounded-full bg-flowing-water"></div>
+                        <span className="text-xs font-medium text-flowing-water">
+                          Changing
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
         {/* Trigram Breakdown */}
@@ -357,7 +346,7 @@ export default function DailyGuidanceDashboard({
             hexagram.changingLines.length > 0
               ? 'md:grid-cols-3'
               : 'md:grid-cols-2'
-          }`}
+          } mx-auto max-w-4xl`}
         >
           {/* Upper Trigram */}
           <div className="text-center">
@@ -368,26 +357,18 @@ export default function DailyGuidanceDashboard({
               <div className="mb-2 text-lg font-bold text-ink-black">
                 {upperTrigramInfo?.name || upperTrigram}
               </div>
-              <div className="mb-2 text-xs text-soft-gray">
+              <div className="mb-2 text-sm text-soft-gray">
                 {upperTrigramInfo?.element} • {upperTrigramInfo?.nature}
               </div>
               {upperTrigramInfo && (
                 <div className="space-y-2">
-                  <div className="text-xs text-soft-gray">
+                  <div className="text-sm text-soft-gray">
                     <strong>Symbolizes:</strong> {upperTrigramInfo.represents}
                   </div>
-                  <div className="grid grid-cols-2 gap-1 text-xs text-soft-gray">
-                    <div>
-                      <strong>Direction:</strong> {upperTrigramInfo.direction}
-                    </div>
-                    <div>
-                      <strong>Season:</strong> {upperTrigramInfo.season}
-                    </div>
-                  </div>
-                  <div className="border-t pt-2 text-xs italic text-soft-gray">
+                  <div className="border-t pt-2 text-sm italic text-soft-gray">
                     {upperTrigramInfo.meaning}
                   </div>
-                  <div className="rounded bg-white/50 px-2 py-1 text-xs font-medium text-mountain-stone">
+                  <div className="rounded bg-white/50 px-2 py-1 text-sm font-medium text-mountain-stone">
                     Outer influence • Approach to situations
                   </div>
                 </div>
@@ -404,26 +385,18 @@ export default function DailyGuidanceDashboard({
               <div className="mb-2 text-lg font-bold text-ink-black">
                 {lowerTrigramInfo?.name || lowerTrigram}
               </div>
-              <div className="mb-2 text-xs text-soft-gray">
+              <div className="mb-2 text-sm text-soft-gray">
                 {lowerTrigramInfo?.element} • {lowerTrigramInfo?.nature}
               </div>
               {lowerTrigramInfo && (
                 <div className="space-y-2">
-                  <div className="text-xs text-soft-gray">
+                  <div className="text-sm text-soft-gray">
                     <strong>Symbolizes:</strong> {lowerTrigramInfo.represents}
                   </div>
-                  <div className="grid grid-cols-2 gap-1 text-xs text-soft-gray">
-                    <div>
-                      <strong>Direction:</strong> {lowerTrigramInfo.direction}
-                    </div>
-                    <div>
-                      <strong>Season:</strong> {lowerTrigramInfo.season}
-                    </div>
-                  </div>
-                  <div className="border-t pt-2 text-xs italic text-soft-gray">
+                  <div className="border-t pt-2 text-sm italic text-soft-gray">
                     {lowerTrigramInfo.meaning}
                   </div>
-                  <div className="rounded bg-white/50 px-2 py-1 text-xs font-medium text-mountain-stone">
+                  <div className="rounded bg-white/50 px-2 py-1 text-sm font-medium text-mountain-stone">
                     Inner foundation • Core energy source
                   </div>
                 </div>
@@ -441,15 +414,15 @@ export default function DailyGuidanceDashboard({
                 <div className="mb-2 text-lg font-bold text-flowing-water">
                   變 Biàn
                 </div>
-                <div className="mb-2 text-xs text-soft-gray">
+                <div className="mb-2 text-sm text-soft-gray">
                   Transformation • Dynamic Change
                 </div>
-                <div className="text-xs text-soft-gray">
+                <div className="text-sm text-soft-gray">
                   {hexagram.changingLines.length === 1
                     ? `Line ${hexagram.changingLines[0]} is changing`
                     : `Lines ${hexagram.changingLines.join(', ')} are changing`}
                 </div>
-                <div className="mt-2 text-xs font-medium text-soft-gray">
+                <div className="border-t pt-2 text-sm font-medium text-soft-gray">
                   Focus on areas of transition and emerging potential
                 </div>
               </div>
@@ -486,390 +459,222 @@ export default function DailyGuidanceDashboard({
     );
   }
 
-  if (!guidance) {
-    return null;
+  if (!dailyReading) {
+    return (
+      <Card variant="default">
+        <CardContent className="py-8 text-center">
+          <p className="text-soft-gray">No guidance available</p>
+          <Button
+            onClick={fetchDailyGuidance}
+            variant="outline"
+            className="mt-4"
+          >
+            Refresh
+          </Button>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header with Streak */}
+      {/* Main Hexagram Display */}
       <Card variant="elevated">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">🌅</span>
-                Today&apos;s Guidance
-              </CardTitle>
-              <p className="text-sm text-soft-gray">
-                {new Date().toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
+          <CardTitle className="space-y-3 text-center">
+            <div className="text-4xl font-bold text-ink-black">
+              Today&apos;s Hexagram
             </div>
-            <div className="text-center">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🔥</span>
-                <div>
-                  <div className="text-2xl font-bold text-flowing-water">
-                    {guidance.streak}
-                  </div>
-                  <div className="text-xs text-soft-gray">day streak</div>
-                </div>
-              </div>
+            <div className="text-5xl font-bold text-flowing-water">
+              {dailyReading.hexagram.number}
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {guidance.accessed_today && (
-            <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-3">
-              <p className="text-sm text-green-700">
-                ✅ You&apos;ve already accessed your daily guidance today! Keep
-                your streak going tomorrow.
-              </p>
+            <div className="text-2xl font-semibold text-ink-black">
+              {dailyReading.hexagram.chineseName} • {dailyReading.hexagram.name}
             </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Hexagram Display */}
-      <Card variant="default">
-        <CardContent className="pt-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Hexagram Visualization */}
-            <div className="text-center">
-              <div className="mb-4 flex items-center justify-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-flowing-water text-2xl font-bold text-white">
-                  {guidance.guidance.hexagram.number}
-                </div>
-              </div>
-              <h2 className="mb-2 text-xl font-bold text-ink-black">
-                {guidance.guidance.hexagram.name}
-              </h2>
-              <div className="mb-4">
-                {renderHexagramVisualization(guidance.guidance.hexagram)}
-              </div>
-            </div>
-
-            {/* AI Personality & Focus */}
-            <div className="space-y-4">
-              {selectedPersonality && (
-                <div className="rounded-lg bg-gentle-silver/10 p-4">
-                  <div className="mb-2 flex items-center gap-2">
-                    <span className="text-xl">{selectedPersonality.emoji}</span>
-                    <div>
-                      <h3 className="font-medium text-mountain-stone">
-                        {selectedPersonality.name}
-                      </h3>
-                      <p className="text-xs text-soft-gray">
-                        Your AI guide for today
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-soft-gray">
-                    {selectedPersonality.description}
-                  </p>
-                </div>
-              )}
-
-              <div>
-                <h3 className="mb-2 font-medium text-mountain-stone">
-                  Today&apos;s Focus
-                </h3>
-                <p className="rounded-lg bg-flowing-water/10 p-3 text-sm font-medium text-flowing-water">
-                  {guidance.guidance.focus}
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ancient Wisdom Quote */}
-      <Card variant="default">
-        <CardContent className="pt-6">
-          <div className="mb-6 text-center">
-            <div className="mb-3 text-2xl">📜</div>
-            <h3 className="mb-4 text-lg font-medium text-mountain-stone">
-              Ancient Wisdom
-            </h3>
-            <blockquote className="relative text-base italic text-gentle-silver">
-              <span className="absolute -left-2 -top-2 text-3xl text-flowing-water opacity-50">
-                &ldquo;
-              </span>
-              {guidance.guidance.wisdom}
-              <span className="absolute -bottom-4 -right-2 text-3xl text-flowing-water opacity-50">
-                &rdquo;
-              </span>
-            </blockquote>
-            <p className="mt-4 text-xs text-soft-gray">
-              — Traditional I Ching Wisdom
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Today's Guidance Sections */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {/* Practical Application */}
-        <Card variant="default">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">⚡</span>
-              Today&apos;s Application
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div>
-                <h4 className="mb-1 font-medium text-mountain-stone">
-                  Morning Intention
-                </h4>
-                <p className="text-sm text-soft-gray">
-                  Begin your day by embodying the essence of{' '}
-                  {guidance.guidance.hexagram.name}. Focus on{' '}
-                  {guidance.guidance.focus.toLowerCase()}.
-                </p>
-              </div>
-              <div>
-                <h4 className="mb-1 font-medium text-mountain-stone">
-                  Key Actions
-                </h4>
-                <ul className="space-y-1 text-sm text-soft-gray">
-                  <li>• Observe moments of change throughout your day</li>
-                  <li>• Practice mindful decision-making</li>
-                  <li>• Stay open to unexpected opportunities</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Seasonal Context */}
-        <Card variant="default">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span className="text-xl">🌸</span>
-              Seasonal Energy
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              <div>
-                <h4 className="mb-1 font-medium text-mountain-stone">
-                  Current Phase
-                </h4>
-                <p className="text-sm text-soft-gray">
-                  {new Date().toLocaleDateString('en-US', { month: 'long' })}{' '}
-                  brings energy of
-                  {new Date().getMonth() < 3 || new Date().getMonth() > 10
-                    ? ' reflection and inner growth'
-                    : new Date().getMonth() < 6
-                      ? ' renewal and expansion'
-                      : new Date().getMonth() < 9
-                        ? ' abundance and activity'
-                        : ' harvest and preparation'}
-                </p>
-              </div>
-              <div>
-                <h4 className="mb-1 font-medium text-mountain-stone">
-                  Alignment
-                </h4>
-                <p className="text-sm text-soft-gray">
-                  Today&apos;s hexagram harmonizes with the natural rhythm of
-                  this season, encouraging balanced action and mindful
-                  awareness.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Deep Reflection Section */}
-      <Card variant="default">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <span className="text-xl">🤔</span>
-            Reflection & Contemplation
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          {/* Hexagram Visualization */}
+          {renderHexagramVisualization(dailyReading.hexagram)}
+        </CardContent>
+      </Card>
+
+      {/* Interpretation */}
+      <Card variant="default">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="text-xl">🔮</span>
+            Today&apos;s Wisdom
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {dailyReading.wisdom && (
             <div>
               <h4 className="mb-2 font-medium text-mountain-stone">
-                Today&apos;s Question
+                Daily Wisdom
               </h4>
-              <p className="mb-4 text-soft-gray">
-                {guidance.guidance.reflection}
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-flowing-water/5 p-4">
-              <h4 className="mb-2 font-medium text-mountain-stone">
-                Additional Contemplations
-              </h4>
-              <ul className="space-y-2 text-sm text-soft-gray">
-                <li>
-                  • How can I embody the qualities of{' '}
-                  {guidance.guidance.hexagram.name} today?
-                </li>
-                <li>• What patterns of change am I noticing in my life?</li>
-                <li>• Where can I practice greater acceptance and flow?</li>
-                <li>• What wisdom is this moment trying to teach me?</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <Button
-              onClick={() => {
-                trackInteraction('toggle-reflection');
-                setShowReflection(!showReflection);
-              }}
-              variant={reflectionComplete ? 'default' : 'outline'}
-              size="sm"
-            >
-              {reflectionComplete ? '✅ Reflected' : '📝 Reflect'}
-            </Button>
-
-            <Button
-              onClick={() => {
-                trackInteraction('toggle-meditation');
-                setShowMeditation(!showMeditation);
-              }}
-              variant="outline"
-              size="sm"
-            >
-              🧘 Meditate
-            </Button>
-
-            <Button
-              onClick={() => {
-                trackInteraction('share-wisdom');
-                handleShareWisdom('general');
-              }}
-              variant="outline"
-              size="sm"
-            >
-              🔗 Share Wisdom
-            </Button>
-          </div>
-
-          {/* Meditation Timer */}
-          {showMeditation && (
-            <div className="mt-6 space-y-4 border-t border-stone-gray/20 pt-6">
-              <div className="text-center">
-                <h4 className="mb-4 font-medium text-mountain-stone">
-                  🧘 Mindful Meditation with {guidance.guidance.hexagram.name}
-                </h4>
-
-                {!meditationActive ? (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-mountain-stone">
-                        Meditation Duration
-                      </label>
-                      <div className="flex justify-center gap-2">
-                        {[180, 300, 600, 900].map(duration => (
-                          <button
-                            key={duration}
-                            onClick={() => setMeditationTime(duration)}
-                            className={`rounded-md px-3 py-1 text-sm transition-colors ${
-                              meditationTime === duration
-                                ? 'bg-flowing-water text-white'
-                                : 'bg-gentle-silver/20 text-soft-gray hover:bg-gentle-silver/30'
-                            }`}
-                          >
-                            {duration / 60}min
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <Button onClick={startMeditation} className="w-full">
-                      Start Meditation ({formatTime(meditationTime)})
-                    </Button>
-
-                    <p className="text-xs text-soft-gray">
-                      Focus on the qualities of{' '}
-                      {guidance.guidance.hexagram.name}:
-                      {selectedPersonality?.description.toLowerCase()}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="relative mx-auto h-32 w-32">
-                      <div className="absolute inset-0 rounded-full border-4 border-gentle-silver/20"></div>
-                      <div
-                        className="absolute inset-0 animate-spin rounded-full border-4 border-flowing-water border-t-transparent"
-                        style={{
-                          animation: 'spin 2s linear infinite',
-                        }}
-                      ></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-flowing-water">
-                            {formatTime(meditationTimeLeft)}
-                          </div>
-                          <div className="text-xs text-soft-gray">
-                            remaining
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="text-center text-sm text-soft-gray">
-                        Breathe deeply and reflect on today&apos;s wisdom...
-                      </p>
-                      <Button
-                        onClick={stopMeditation}
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                      >
-                        End Meditation
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              <p className="text-soft-gray">{dailyReading.wisdom}</p>
             </div>
           )}
+          {dailyReading.focus && (
+            <div>
+              <h4 className="mb-2 font-medium text-mountain-stone">
+                Today&apos;s Focus
+              </h4>
+              <p className="text-soft-gray">{dailyReading.focus}</p>
+            </div>
+          )}
+          {dailyReading.reflection && (
+            <div>
+              <h4 className="mb-2 font-medium text-mountain-stone">
+                Reflection Point
+              </h4>
+              <p className="text-soft-gray">{dailyReading.reflection}</p>
+            </div>
+          )}
+          {dailyReading.interpretation && (
+            <>
+              {dailyReading.interpretation.general && (
+                <div>
+                  <h4 className="mb-2 font-medium text-mountain-stone">
+                    General Meaning
+                  </h4>
+                  <p className="text-soft-gray">
+                    {dailyReading.interpretation.general}
+                  </p>
+                </div>
+              )}
+              {dailyReading.interpretation.guidance && (
+                <div>
+                  <h4 className="mb-2 font-medium text-mountain-stone">
+                    Personal Guidance
+                  </h4>
+                  <p className="text-soft-gray">
+                    {dailyReading.interpretation.guidance}
+                  </p>
+                </div>
+              )}
+              {dailyReading.interpretation.cultural && (
+                <div>
+                  <h4 className="mb-2 font-medium text-mountain-stone">
+                    Cultural Insight
+                  </h4>
+                  <p className="text-soft-gray">
+                    {dailyReading.interpretation.cultural}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </CardContent>
+      </Card>
 
-          {/* Reflection Input */}
-          {showReflection && (
-            <div className="mt-4 space-y-3 border-t border-stone-gray/20 pt-4">
+      {/* Daily Affirmation */}
+      <Card
+        variant="default"
+        className="border-bamboo-green/20 bg-bamboo-green/5"
+      >
+        <CardContent className="py-4 text-center">
+          <div className="mb-2 text-sm font-medium text-bamboo-green">
+            Daily Affirmation
+          </div>
+          <p className="text-lg font-medium text-mountain-stone">
+            {affirmation}
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Meditation Timer */}
+      <Card variant="default">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="text-xl">🧘</span>
+            Meditation Timer
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <div className="mb-4 text-3xl font-bold text-flowing-water">
+            {formatTime(meditationTimer)}
+          </div>
+          <div className="flex justify-center gap-2">
+            <Button
+              onClick={() => setIsTimerActive(!isTimerActive)}
+              variant={isTimerActive ? 'secondary' : 'primary'}
+            >
+              {isTimerActive ? 'Pause' : 'Start'}
+            </Button>
+            <Button
+              onClick={() => {
+                setIsTimerActive(false);
+                trackMeditationSession();
+              }}
+              variant="outline"
+              disabled={meditationTimer < 60}
+            >
+              Complete
+            </Button>
+            <Button
+              onClick={() => {
+                setIsTimerActive(false);
+                setMeditationTimer(0);
+              }}
+              variant="ghost"
+            >
+              Reset
+            </Button>
+          </div>
+          <p className="mt-2 text-xs text-soft-gray">
+            Meditate on today&apos;s hexagram for deeper understanding
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Daily Reflection */}
+      <Card variant="default">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span className="text-xl">📝</span>
+            Daily Reflection
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!showReflectionInput ? (
+            <div className="text-center">
+              <p className="mb-4 text-soft-gray">
+                Take a moment to reflect on how today&apos;s guidance applies to
+                your life
+              </p>
+              <Button
+                onClick={() => setShowReflectionInput(true)}
+                variant="outline"
+              >
+                Write Reflection
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
               <textarea
-                value={reflectionText}
-                onChange={e => setReflectionText(e.target.value)}
-                placeholder="Write your thoughts and insights about today's wisdom..."
-                className="min-h-[100px] w-full rounded-lg border border-stone-gray/30 p-3 text-sm focus:border-flowing-water focus:outline-none focus:ring-2 focus:ring-flowing-water/50"
+                value={reflection}
+                onChange={e => setReflection(e.target.value)}
+                placeholder="How does today's hexagram relate to your current situation? What insights have you gained?"
+                className="min-h-32 w-full rounded-lg border border-stone-gray/20 bg-paper-white p-3 text-ink-black placeholder:text-soft-gray focus:border-flowing-water focus:outline-none focus:ring-2 focus:ring-flowing-water/20"
               />
-              <div className="flex gap-2">
+              <div className="flex justify-end gap-2">
                 <Button
                   onClick={() => {
-                    trackInteraction('submit-reflection');
-                    handleReflectionSubmit();
+                    setShowReflectionInput(false);
+                    setReflection('');
                   }}
-                  disabled={!reflectionText.trim()}
-                  size="sm"
-                >
-                  Save Reflection
-                </Button>
-                <Button
-                  onClick={() => {
-                    trackInteraction('cancel-reflection');
-                    setShowReflection(false);
-                  }}
-                  variant="outline"
-                  size="sm"
+                  variant="ghost"
                 >
                   Cancel
+                </Button>
+                <Button
+                  onClick={saveReflection}
+                  disabled={!reflection.trim()}
+                  variant="primary"
+                >
+                  Save Reflection
                 </Button>
               </div>
             </div>
