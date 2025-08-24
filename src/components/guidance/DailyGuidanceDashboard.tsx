@@ -57,6 +57,13 @@ export default function DailyGuidanceDashboard({
   }, [meditationActive, meditationTimeLeft]);
 
   const fetchDailyGuidance = useCallback(async () => {
+    // Guard: Don't make API calls if userId is undefined
+    if (!userId) {
+      setLoading(false);
+      setError('User ID is required');
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -84,7 +91,9 @@ export default function DailyGuidanceDashboard({
   }, [userId, trackAPIStart, trackAPIEnd]);
 
   useEffect(() => {
-    fetchDailyGuidance();
+    if (userId) {
+      fetchDailyGuidance();
+    }
   }, [userId, fetchDailyGuidance]);
 
   useEffect(() => {

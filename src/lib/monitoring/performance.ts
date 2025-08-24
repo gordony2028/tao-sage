@@ -3,6 +3,8 @@
  * Real-time performance metrics tracking and analysis
  */
 
+import { useCallback } from 'react';
+
 export interface PerformanceMetrics {
   pageLoadTime: number;
   apiResponseTime: number;
@@ -438,14 +440,39 @@ export const performanceMonitor = new PerformanceMonitor();
 
 // Utility functions for React components
 export const usePerformanceMonitoring = () => {
+  const trackAPIStart = useCallback(
+    (endpoint: string) => performanceMonitor.trackAPIStart(endpoint),
+    []
+  );
+
+  const trackAPIEnd = useCallback(
+    (endpoint: string) => performanceMonitor.trackAPIEnd(endpoint),
+    []
+  );
+
+  const trackInteraction = useCallback(
+    (type: string) => performanceMonitor.trackInteraction(type),
+    []
+  );
+
+  const getCurrentMetrics = useCallback(
+    () => performanceMonitor.getCurrentMetrics(),
+    []
+  );
+
+  const getWebVitals = useCallback(() => performanceMonitor.getWebVitals(), []);
+
+  const getPerformanceGrade = useCallback(
+    () => performanceMonitor.getPerformanceGrade(),
+    []
+  );
+
   return {
-    trackAPIStart: (endpoint: string) =>
-      performanceMonitor.trackAPIStart(endpoint),
-    trackAPIEnd: (endpoint: string) => performanceMonitor.trackAPIEnd(endpoint),
-    trackInteraction: (type: string) =>
-      performanceMonitor.trackInteraction(type),
-    getCurrentMetrics: () => performanceMonitor.getCurrentMetrics(),
-    getWebVitals: () => performanceMonitor.getWebVitals(),
-    getPerformanceGrade: () => performanceMonitor.getPerformanceGrade(),
+    trackAPIStart,
+    trackAPIEnd,
+    trackInteraction,
+    getCurrentMetrics,
+    getWebVitals,
+    getPerformanceGrade,
   };
 };
