@@ -61,37 +61,37 @@ export default function Header() {
               href="/consultation"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              Consultation
+              卜 Consultation
             </Link>
             <Link
               href="/guidance"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              Daily Guidance
+              導 Daily Guidance
             </Link>
             <Link
               href="/history"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              History
+              史 History
             </Link>
             <Link
               href="/learn"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              Learn
+              學 Learn
             </Link>
             <Link
               href="/cultural-progress"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              Progress
+              進 Progress
             </Link>
             <Link
               href="/notifications"
               className="text-mountain-stone transition-colors hover:text-flowing-water"
             >
-              Notifications
+              知 Notifications
             </Link>
           </nav>
 
@@ -139,37 +139,37 @@ export default function Header() {
             href="/consultation"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            Consultation
+            卜 Consultation
           </Link>
           <Link
             href="/guidance"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            Daily Guidance
+            導 Daily Guidance
           </Link>
           <Link
             href="/history"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            History
+            史 History
           </Link>
           <Link
             href="/learn"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            Learn
+            學 Learn
           </Link>
           <Link
             href="/cultural-progress"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            Progress
+            進 Progress
           </Link>
           <Link
             href="/notifications"
             className="whitespace-nowrap text-sm text-mountain-stone transition-colors hover:text-flowing-water"
           >
-            Notifications
+            知 Notifications
           </Link>
         </nav>
       </div>
