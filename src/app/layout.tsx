@@ -15,9 +15,11 @@ export const metadata: Metadata = {
   authors: [{ name: 'Sage Team' }],
   manifest: '/manifest.json',
   appleWebApp: {
-    capable: true,
     statusBarStyle: 'default',
     title: 'Sage - I Ching Guidance',
+  },
+  other: {
+    'mobile-web-app-capable': 'yes',
   },
   icons: {
     icon: [{ url: '/icons/sage-icon.svg', type: 'image/svg+xml' }],
