@@ -198,8 +198,8 @@ export class MindfulNotificationManager {
     // Create browser notification
     const browserNotification = new Notification(notification.title, {
       body: notification.body,
-      icon: notification.icon || '/icon-192x192.png',
-      badge: notification.badge || '/icon-72x72.png',
+      icon: notification.icon || '/icons/sage-icon.svg',
+      badge: notification.badge || '/icons/sage-icon.svg',
       tag: notification.category,
       requireInteraction: notification.priority === 'high',
       silent: notification.mindfulnessLevel === 'gentle',

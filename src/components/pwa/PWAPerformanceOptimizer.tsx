@@ -73,11 +73,7 @@ export default function PWAPerformanceOptimizer({
 
   // Preload critical resources
   const preloadCriticalResources = useCallback(() => {
-    const criticalResources = [
-      '/api/guidance/daily',
-      '/manifest.json',
-      '/icons/sage-icon.svg',
-    ];
+    const criticalResources = ['/manifest.json', '/icons/sage-icon.svg'];
 
     criticalResources.forEach(resource => {
       // Use fetch to warm up the cache
