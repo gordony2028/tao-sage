@@ -135,57 +135,11 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Also add implicit concepts based on usage patterns (fallback for existing users)
-    // Basic concepts for all users who have done consultations
-    if (consultations.length > 0) {
-      if (!conceptsMastered.includes('yin-yang'))
-        conceptsMastered.push('yin-yang');
-      if (!conceptsMastered.includes('change')) conceptsMastered.push('change');
-    }
+    // DO NOT auto-add implicit concepts - only use explicit study completions
+    // This prevents auto-seeding and fake progress data
 
-    // Intermediate concepts - removed trigrams as it's not in philosophy content
-
-    if (consultations.length >= 10 && !conceptsMastered.includes('wu-wei')) {
-      conceptsMastered.push('wu-wei');
-    }
-
-    if (consultations.length >= 15 && !conceptsMastered.includes('timing')) {
-      conceptsMastered.push('timing');
-    }
-
-    // Advanced concepts
-    if (
-      consultations.length >= 30 &&
-      uniqueHexagrams.size >= 25 &&
-      !conceptsMastered.includes('five-elements')
-    ) {
-      conceptsMastered.push('five-elements');
-    }
-
-    if (
-      consultations.length >= 50 &&
-      activeDays >= 90 &&
-      !conceptsMastered.includes('seasonal-wisdom')
-    ) {
-      conceptsMastered.push('seasonal-wisdom');
-    }
-
-    // Master concepts
-    if (
-      consultations.length >= 75 &&
-      activeDays >= 150 &&
-      !conceptsMastered.includes('emptiness')
-    ) {
-      conceptsMastered.push('emptiness');
-    }
-
-    if (
-      consultations.length >= 100 &&
-      activeDays >= 180 &&
-      !conceptsMastered.includes('dao')
-    ) {
-      conceptsMastered.push('dao');
-    }
+    // All concept mastery must be explicit through study completion events
+    // No auto-awarding based on usage patterns to prevent fake progress
 
     // Create user progress object
     const userProgress: UserCulturalProgress = {

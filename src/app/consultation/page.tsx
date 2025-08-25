@@ -46,14 +46,67 @@ export default function ConsultationPage() {
     getUser();
   }, [router]);
 
-  const handleQuestionSubmit = (questionText: string) => {
+  const handleQuestionSubmit = async (questionText: string) => {
     setQuestion(questionText);
+
+    // Check usage limits BEFORE starting casting animation
+    if (user?.id) {
+      try {
+        const response = await fetch('/api/consultation/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question: questionText,
+            userId: user.id,
+            checkOnly: true, // New flag to only check limits, not create consultation
+          }),
+        });
+
+        if (!response.ok && response.status === 429) {
+          const errorData = await response.json();
+          const upgradeNow = confirm(
+            `${
+              errorData.message || 'You have reached your consultation limit.'
+            }\n\nYour free weekly consultations have been used. Would you like to upgrade to Sage+ for unlimited access?\n\nClick OK to visit the pricing page, or Cancel to wait until Monday when your consultations reset.`
+          );
+
+          if (upgradeNow) {
+            router.push('/pricing');
+          }
+          return; // Stay on question step
+        }
+      } catch (error) {
+        console.error('Usage check error:', error);
+        // Continue to casting if check fails (fail open)
+      }
+    }
+
     setCurrentStep('casting');
   };
 
   const handleCastingComplete = async (generatedHexagram: Hexagram) => {
     setHexagram(generatedHexagram);
     setIsLoading(true);
+
+    // Check if user is authenticated before creating consultation
+    if (!user?.id) {
+      console.error('No user ID available for consultation');
+      setInterpretation({
+        interpretation:
+          'Please sign in to create a consultation. Your spiritual journey deserves to be saved and tracked.',
+        guidance:
+          'Authentication is required to access personalized I Ching guidance.',
+        practicalAdvice:
+          'Click the sign in link to create your account and start your consultation.',
+        culturalContext:
+          'The I Ching values the continuity of wisdom. A personal account helps track your spiritual development.',
+      });
+      setCurrentStep('result');
+      setIsLoading(false);
+      return;
+    }
 
     try {
       // Call our backend consultation service
@@ -79,7 +132,8 @@ export default function ConsultationPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create consultation');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create consultation');
       }
 
       const result = await response.json();

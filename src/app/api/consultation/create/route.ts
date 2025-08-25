@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createConsultation } from '@/lib/consultation/service';
 import {
-  checkUsageLimit,
-  trackConsultation,
-  getUserUsageData,
-} from '@/lib/subscription/usage-tracking';
+  checkSubscriptionLimits,
+  trackConsultationUsage,
+} from '@/lib/middleware/subscription-guard';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { question, userId, hexagram, metadata } = body;
+    const { question, userId, hexagram, metadata, checkOnly } = body;
 
     // Debug logging to track hexagram data flow
     if (process.env.NODE_ENV === 'development') {
@@ -41,23 +40,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check usage limits for freemium model
-    const canCreate = await checkUsageLimit(userId);
-    if (!canCreate) {
-      const usageData = await getUserUsageData(userId);
-
+    // Check subscription limits for freemium model
+    const subscriptionCheck = await checkSubscriptionLimits(userId);
+    if (!subscriptionCheck.allowed) {
       return NextResponse.json(
         {
           error: 'Usage limit reached',
           message:
-            usageData.subscriptionTier === 'free'
-              ? 'You have reached your weekly limit of 3 consultations. Upgrade to Sage+ for unlimited access!'
+            subscriptionCheck.tier.tier === 'free'
+              ? `You have reached your weekly limit of ${subscriptionCheck.tier.consultationsPerWeek} consultations. Upgrade to Sage+ for unlimited access!`
               : 'Please check your subscription status.',
-          usageData,
-          upgradeRequired: true,
+          subscriptionData: subscriptionCheck,
+          upgradeRequired: subscriptionCheck.upgradeRequired,
         },
         { status: 429 } // Too Many Requests
       );
+    }
+
+    // If this is just a usage check (not actual consultation creation), return success
+    if (checkOnly) {
+      return NextResponse.json({
+        success: true,
+        checkOnly: true,
+        subscriptionData: subscriptionCheck,
+      });
     }
 
     // Extract IP address for metadata
@@ -83,21 +89,21 @@ export async function POST(request: NextRequest) {
 
     // Track the consultation usage for freemium limits
     try {
-      await trackConsultation(userId);
+      await trackConsultationUsage(userId);
     } catch (trackingError) {
       console.error('Usage tracking failed (non-fatal):', trackingError);
       // Don't fail the consultation if tracking fails
     }
 
-    // Get updated usage data to return to client
-    const usageData = await getUserUsageData(userId);
+    // Get updated subscription data to return to client
+    const updatedSubscriptionData = await checkSubscriptionLimits(userId);
 
     return NextResponse.json({
       success: true,
       consultation: result.consultation,
       hexagram: result.hexagram,
       interpretation: result.interpretation,
-      usageData,
+      subscriptionData: updatedSubscriptionData,
     });
   } catch (error) {
     console.error('Consultation creation error:', error);

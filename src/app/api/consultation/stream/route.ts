@@ -10,6 +10,10 @@ import {
 } from '@/lib/openai/consultation';
 import { Hexagram } from '@/types/iching';
 import { z } from 'zod';
+import {
+  checkSubscriptionLimits,
+  trackConsultationUsage,
+} from '@/lib/middleware/subscription-guard';
 
 // Force Node.js runtime to avoid Edge Runtime compatibility issues with OpenAI SDK
 export const runtime = 'nodejs';
@@ -17,6 +21,7 @@ export const runtime = 'nodejs';
 // Request validation schema
 const ConsultationRequestSchema = z.object({
   question: z.string().min(1).max(500),
+  userId: z.string().uuid('User ID must be a valid UUID'),
   hexagram: z.object({
     number: z.number().min(1).max(64),
     name: z.string().min(1),
@@ -52,10 +57,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const consultation = validationResult.data as ConsultationInput;
+    const { userId, ...consultation } = validationResult.data;
+
+    // Check subscription limits for freemium model
+    const subscriptionCheck = await checkSubscriptionLimits(userId);
+    if (!subscriptionCheck.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: 'Usage limit reached',
+          message:
+            subscriptionCheck.tier.tier === 'free'
+              ? `You have reached your weekly limit of ${subscriptionCheck.tier.consultationsPerWeek} consultations. Upgrade to Sage+ for unlimited access!`
+              : 'Please check your subscription status.',
+          subscriptionData: subscriptionCheck,
+          upgradeRequired: subscriptionCheck.upgradeRequired,
+        }),
+        {
+          status: 429, // Too Many Requests
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     // Get streaming response
     const stream = await streamConsultationInterpretation(consultation);
+
+    // Track the consultation usage after successful creation
+    try {
+      await trackConsultationUsage(userId);
+    } catch (trackingError) {
+      console.error('Usage tracking failed (non-fatal):', trackingError);
+      // Don't fail the consultation if tracking fails
+    }
 
     // Return as streaming response
     return new Response(stream as any, {

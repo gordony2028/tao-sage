@@ -55,13 +55,32 @@ function isCurrentWeek(dateString: string): boolean {
  * Track a consultation usage
  */
 export async function trackConsultation(userId: string): Promise<void> {
-  const { data: profile, error } = await supabase
+  let { data: profile, error } = await supabase
     .from('user_profiles')
     .select('consultations_this_week, week_reset_date, subscription_tier')
     .eq('id', userId)
     .single();
 
-  if (error) {
+  // If profile doesn't exist, create it with default values
+  if (error && error.code === 'PGRST116') {
+    const { data: newProfile, error: createError } = await supabase
+      .from('user_profiles')
+      .insert({
+        id: userId,
+        consultations_this_week: 0,
+        week_reset_date: getWeekStart().toISOString(),
+        subscription_tier: 'free',
+      })
+      .select('consultations_this_week, week_reset_date, subscription_tier')
+      .single();
+
+    if (createError) {
+      console.error('Error creating user profile:', createError);
+      throw new Error('Failed to create user profile for tracking');
+    }
+
+    profile = newProfile;
+  } else if (error) {
     console.error('Error fetching user profile:', error);
     throw new Error('Failed to track consultation');
   }

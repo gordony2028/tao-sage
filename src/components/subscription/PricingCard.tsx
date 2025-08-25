@@ -25,7 +25,7 @@ export default function PricingCard({
 
   const getButtonText = (plan: SubscriptionPlan) => {
     if (plan.id === 'free') return 'Start Free';
-    if (plan.id === 'sage_plus') return 'Start 14-Day Trial';
+    if (plan.id === 'sage_plus') return 'Start Full Experience';
     return 'Start Pro Trial';
   };
 
