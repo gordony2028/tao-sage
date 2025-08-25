@@ -13,9 +13,11 @@ export type Database = {
             daily_guidance: boolean;
             consultation_reminders: boolean;
           };
-          subscription_tier: 'free' | 'premium' | 'pro';
+          subscription_tier: 'free' | 'sage_plus' | 'premium';
           subscription_status: string;
           consultation_count: number;
+          consultations_this_week: number;
+          week_reset_date: string;
           created_at: string;
           updated_at: string;
         };
@@ -30,9 +32,11 @@ export type Database = {
             daily_guidance?: boolean;
             consultation_reminders?: boolean;
           };
-          subscription_tier?: 'free' | 'premium' | 'pro';
+          subscription_tier?: 'free' | 'sage_plus' | 'premium';
           subscription_status?: string;
           consultation_count?: number;
+          consultations_this_week?: number;
+          week_reset_date?: string;
           created_at?: string;
           updated_at?: string;
         };
@@ -47,9 +51,11 @@ export type Database = {
             daily_guidance?: boolean;
             consultation_reminders?: boolean;
           };
-          subscription_tier?: 'free' | 'premium' | 'pro';
+          subscription_tier?: 'free' | 'sage_plus' | 'premium';
           subscription_status?: string;
           consultation_count?: number;
+          consultations_this_week?: number;
+          week_reset_date?: string;
           created_at?: string;
           updated_at?: string;
         };

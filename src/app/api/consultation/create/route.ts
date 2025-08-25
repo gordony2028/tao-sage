@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createConsultation } from '@/lib/consultation/service';
+import {
+  checkUsageLimit,
+  trackConsultation,
+  getUserUsageData,
+} from '@/lib/subscription/usage-tracking';
 
 export async function POST(request: NextRequest) {
   try {
@@ -36,6 +41,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check usage limits for freemium model
+    const canCreate = await checkUsageLimit(userId);
+    if (!canCreate) {
+      const usageData = await getUserUsageData(userId);
+
+      return NextResponse.json(
+        {
+          error: 'Usage limit reached',
+          message:
+            usageData.subscriptionTier === 'free'
+              ? 'You have reached your weekly limit of 3 consultations. Upgrade to Sage+ for unlimited access!'
+              : 'Please check your subscription status.',
+          usageData,
+          upgradeRequired: true,
+        },
+        { status: 429 } // Too Many Requests
+      );
+    }
+
     // Extract IP address for metadata
     const forwarded = request.headers.get('x-forwarded-for');
     const ip = forwarded
@@ -57,11 +81,23 @@ export async function POST(request: NextRequest) {
     // Create and save consultation to database
     const result = await createConsultation(consultationInput);
 
+    // Track the consultation usage for freemium limits
+    try {
+      await trackConsultation(userId);
+    } catch (trackingError) {
+      console.error('Usage tracking failed (non-fatal):', trackingError);
+      // Don't fail the consultation if tracking fails
+    }
+
+    // Get updated usage data to return to client
+    const usageData = await getUserUsageData(userId);
+
     return NextResponse.json({
       success: true,
       consultation: result.consultation,
       hexagram: result.hexagram,
       interpretation: result.interpretation,
+      usageData,
     });
   } catch (error) {
     console.error('Consultation creation error:', error);
