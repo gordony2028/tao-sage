@@ -16,7 +16,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 OPENAI_API_KEY=your_openai_api_key
 
 # Email (Required)
-RESEND_API_KEY=re_fgwMjaNR_MWtRnDK4epJgy8Z1kvgxVRe4
+RESEND_API_KEY=your-new-resend-api-key
 ADMIN_EMAIL=gordony2028@gmail.com
 
 # App Config
