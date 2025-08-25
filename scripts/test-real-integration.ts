@@ -27,6 +27,7 @@ async function testRealIntegration() {
         hexagram: {
           number: 1,
           name: 'The Creative',
+          chineseName: '乾',
           lines: [9, 9, 9, 9, 9, 9] as [
             LineValue,
             LineValue,
@@ -47,6 +48,7 @@ async function testRealIntegration() {
         hexagram: {
           number: 50,
           name: 'The Caldron',
+          chineseName: '鼎',
           lines: [9, 8, 7, 6, 8, 9] as [
             LineValue,
             LineValue,
@@ -66,6 +68,7 @@ async function testRealIntegration() {
         hexagram: {
           number: 1,
           name: 'The Creative',
+          chineseName: '乾',
           lines: [9, 9, 9, 9, 9, 9] as [
             LineValue,
             LineValue,

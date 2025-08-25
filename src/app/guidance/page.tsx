@@ -33,7 +33,7 @@ export default function GuidancePage() {
   if (loading) {
     return (
       <Layout>
-        <div className="from-paper-white flex min-h-screen items-center justify-center bg-gradient-to-br to-gentle-silver/10">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-paper-white to-gentle-silver/10">
           <div className="py-8 text-center">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-flowing-water"></div>
             <p className="text-soft-gray">Loading your daily guidance...</p>
@@ -49,9 +49,9 @@ export default function GuidancePage() {
 
   return (
     <Layout>
-      <div className="from-paper-white min-h-screen bg-gradient-to-br to-gentle-silver/10">
+      <div className="min-h-screen bg-gradient-to-br from-paper-white to-gentle-silver/10">
         <div className="container mx-auto max-w-4xl px-4 py-8">
-          <DailyGuidanceDashboard userId={user.id} />
+          <DailyGuidanceDashboard />
         </div>
       </div>
     </Layout>

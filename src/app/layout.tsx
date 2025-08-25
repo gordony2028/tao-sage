@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import type { Metadata, Viewport } from 'next';
 import PerformanceMonitor from '@/components/common/PerformanceMonitor';
 import PWAPerformanceOptimizer from '@/components/pwa/PWAPerformanceOptimizer';
+import ChatProvider from '@/components/support/ChatProvider';
 
 import './globals.css';
 
@@ -43,7 +44,7 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <PerformanceMonitor />
         <PWAPerformanceOptimizer />
-        {children}
+        <ChatProvider>{children}</ChatProvider>
       </body>
     </html>
   );

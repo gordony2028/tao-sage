@@ -19,7 +19,7 @@ export async function createSupportTicket(
 ): Promise<SupportTicket> {
   // Auto-assign priority based on subscription tier
   let priority: TicketPriority = 'normal';
-  if (subscriptionTier === 'sage_plus' || subscriptionTier === 'sage_pro') {
+  if (subscriptionTier === 'sage_plus' || subscriptionTier === 'premium') {
     priority = 'high';
   }
 
@@ -89,6 +89,9 @@ export async function getSupportTicketWithMessages(
   ticketId: string,
   userId: string
 ): Promise<TicketWithMessages | null> {
+  console.log(`[DEBUG] Getting ticket ${ticketId} for user ${userId}`);
+  console.log(`[DEBUG] Using admin client:`, !!supabaseAdmin);
+
   // Get the ticket
   const { data: ticket, error: ticketError } = await supabaseAdmin
     .from('support_tickets')
@@ -99,6 +102,10 @@ export async function getSupportTicketWithMessages(
 
   if (ticketError || !ticket) {
     console.error('Error fetching support ticket:', ticketError);
+    console.log(`[DEBUG] Ticket data:`, ticket);
+    console.log(
+      `[DEBUG] Query: support_tickets where id=${ticketId} AND user_id=${userId}`
+    );
     return null;
   }
 
@@ -175,7 +182,7 @@ export async function addTicketMessage(
  * Get support statistics for user's subscription tier
  */
 export function getSupportStats(subscriptionTier: SubscriptionTier) {
-  if (subscriptionTier === 'sage_plus' || subscriptionTier === 'sage_pro') {
+  if (subscriptionTier === 'sage_plus' || subscriptionTier === 'premium') {
     return {
       responseTime: '24 hours',
       supportLevel: 'priority' as const,

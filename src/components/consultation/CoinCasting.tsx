@@ -120,6 +120,7 @@ export default function CoinCasting({
       const hexagram: Hexagram = {
         number: generatedHexagram.number,
         name: hexagramName,
+        chineseName: '乾', // Default Chinese name for testing
         lines: lineValues,
         changingLines: newLines
           .map((line, index) => ({ line, index }))

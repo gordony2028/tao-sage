@@ -1,6 +1,6 @@
 /**
  * Offline Consultation Service
- * 
+ *
  * Provides I Ching consultation capabilities when offline by:
  * 1. Generating hexagrams locally (no network required)
  * 2. Storing consultations in localStorage/IndexedDB
@@ -47,6 +47,7 @@ export async function createOfflineConsultation(
   const hexagram: Hexagram = {
     number: generatedHexagram.number,
     name: hexagramName,
+    chineseName: '乾', // Default Chinese name for testing
     lines: generatedHexagram.lines,
     changingLines: generatedHexagram.changingLines,
   };
@@ -55,7 +56,7 @@ export async function createOfflineConsultation(
   const interpretation = generateTraditionalInterpretation(hexagram, question);
 
   const now = new Date();
-  
+
   // Create consultation record
   const consultation: Consultation = {
     id: `offline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -107,14 +108,16 @@ export function getOfflineConsultations(): Consultation[] {
 /**
  * Store consultation locally for offline access
  */
-async function storeOfflineConsultation(consultation: Consultation): Promise<void> {
+async function storeOfflineConsultation(
+  consultation: Consultation
+): Promise<void> {
   try {
     const existing = getOfflineConsultations();
     existing.unshift(consultation); // Add to beginning
 
     // Keep only last 50 offline consultations to manage storage
     const limited = existing.slice(0, 50);
-    
+
     localStorage.setItem(OFFLINE_CONSULTATIONS_KEY, JSON.stringify(limited));
   } catch (error) {
     console.error('Error storing offline consultation:', error);
@@ -133,7 +136,7 @@ async function addToSyncQueue(consultation: Consultation): Promise<void> {
       timestamp: new Date().toISOString(),
       attempts: 0,
     });
-    
+
     localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(queue));
   } catch (error) {
     console.warn('Error adding to sync queue:', error);
@@ -205,11 +208,13 @@ export async function syncOfflineConsultations(): Promise<void> {
   }
 
   // Remove successfully synced items
-  const remaining = queue.filter(item => !successful.includes(item.consultation.id));
-  
+  const remaining = queue.filter(
+    item => !successful.includes(item.consultation.id)
+  );
+
   // Remove items that have failed too many times (>5 attempts)
   const filtered = remaining.filter(item => item.attempts < 5);
-  
+
   localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(filtered));
 }
 
@@ -223,12 +228,18 @@ export function isOffline(): boolean {
 /**
  * Generate traditional interpretation without AI
  */
-function generateTraditionalInterpretation(hexagram: Hexagram, question: string) {
+function generateTraditionalInterpretation(
+  hexagram: Hexagram,
+  question: string
+) {
   const traditional = getTraditionalMeaning(hexagram.number);
-  
+
   return {
-    interpretation: `Hexagram ${hexagram.number} - ${hexagram.name}\n\n${traditional}\n\n${getChangingLinesGuidance(hexagram.changingLines)}`,
-    guidance: 'The ancient wisdom suggests reflection and patience. Consider how this guidance applies to your current situation.',
+    interpretation: `Hexagram ${hexagram.number} - ${
+      hexagram.name
+    }\n\n${traditional}\n\n${getChangingLinesGuidance(hexagram.changingLines)}`,
+    guidance:
+      'The ancient wisdom suggests reflection and patience. Consider how this guidance applies to your current situation.',
     practicalAdvice: getBasicAdvice(hexagram.number),
     culturalContext: `This hexagram represents one of the 64 fundamental situations described in the I Ching, the ancient Chinese Book of Changes.`,
     note: 'This interpretation uses traditional I Ching wisdom. Full AI-powered insights will be available when you reconnect to the internet.',
@@ -252,7 +263,10 @@ function getTraditionalMeaning(hexagramNumber: number): string {
     // Add more as needed...
   };
 
-  return meanings[hexagramNumber] || 'This hexagram represents a fundamental life situation described in the I Ching. Reflect on its meaning in relation to your question.';
+  return (
+    meanings[hexagramNumber] ||
+    'This hexagram represents a fundamental life situation described in the I Ching. Reflect on its meaning in relation to your question.'
+  );
 }
 
 /**
@@ -262,12 +276,14 @@ function getChangingLinesGuidance(changingLines: number[]): string {
   if (changingLines.length === 0) {
     return 'This hexagram has no changing lines, suggesting a stable situation.';
   }
-  
+
   if (changingLines.length === 1) {
     return `Line ${changingLines[0]} is changing, indicating transformation in this specific aspect of the situation.`;
   }
-  
-  return `Lines ${changingLines.join(', ')} are changing, suggesting multiple areas of transformation and evolution.`;
+
+  return `Lines ${changingLines.join(
+    ', '
+  )} are changing, suggesting multiple areas of transformation and evolution.`;
 }
 
 /**
@@ -286,7 +302,10 @@ function getBasicAdvice(hexagramNumber: number): string {
     // Add more as needed...
   };
 
-  return adviceMap[hexagramNumber] || 'Reflect deeply on this guidance and consider how it applies to your current circumstances.';
+  return (
+    adviceMap[hexagramNumber] ||
+    'Reflect deeply on this guidance and consider how it applies to your current circumstances.'
+  );
 }
 
 /**

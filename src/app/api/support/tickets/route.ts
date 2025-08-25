@@ -5,6 +5,7 @@ import {
   getUserSupportTickets,
 } from '@/lib/support/tickets';
 import { getUserSubscriptionTier } from '@/lib/subscription/usage-tracking';
+import { sendNewTicketNotification } from '@/lib/email/notifications';
 import type { CreateTicketData } from '@/types/support';
 
 export async function POST(request: NextRequest) {
@@ -74,6 +75,11 @@ export async function POST(request: NextRequest) {
       user.id,
       normalizedTier as any,
       ticketData
+    );
+
+    // Send email notification to admin (don't await to avoid blocking user)
+    sendNewTicketNotification(ticket).catch(error =>
+      console.error('Email notification failed:', error)
     );
 
     return NextResponse.json({

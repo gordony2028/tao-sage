@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
     const hexagram = {
       number: generatedHexagram.number,
       name: hexagramName,
+      chineseName: '乾', // Default Chinese name for testing
       lines: generatedHexagram.lines,
       changingLines: generatedHexagram.changingLines,
     };

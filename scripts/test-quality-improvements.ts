@@ -18,6 +18,7 @@ async function testQualityImprovements() {
   const testHexagram = {
     number: 1,
     name: 'The Creative',
+    chineseName: '乾',
     lines: [9, 9, 9, 9, 9, 9] as [
       LineValue,
       LineValue,

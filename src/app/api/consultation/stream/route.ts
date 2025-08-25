@@ -57,7 +57,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { userId, ...consultation } = validationResult.data;
+    const { userId, ...consultationData } = validationResult.data;
+
+    // Ensure required fields are present
+    if (!consultationData.question) {
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid request',
+          details: 'Question is required',
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
 
     // Check subscription limits for freemium model
     const subscriptionCheck = await checkSubscriptionLimits(userId);
@@ -80,7 +94,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Get streaming response
-    const stream = await streamConsultationInterpretation(consultation);
+    const stream = await streamConsultationInterpretation(
+      consultationData as ConsultationInput
+    );
 
     // Track the consultation usage after successful creation
     try {

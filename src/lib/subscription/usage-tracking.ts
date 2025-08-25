@@ -7,7 +7,6 @@
  */
 
 import { supabase } from '@/lib/supabase/client';
-import { Database } from '@/types/database';
 
 export type SubscriptionTier = 'free' | 'sage_plus' | 'premium';
 

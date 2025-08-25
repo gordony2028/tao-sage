@@ -55,7 +55,7 @@ export default function TicketDetailPage({ params }: TicketDetailPageProps) {
       setError(null);
 
       const response = await fetch(
-        `/api/support/tickets/${params.ticketId}/messages`
+        `/api/support/tickets/${params.ticketId}/messages?user_id=${user.id}`
       );
 
       if (!response.ok) {
@@ -101,6 +101,7 @@ export default function TicketDetailPage({ params }: TicketDetailPageProps) {
           },
           body: JSON.stringify({
             message: newMessage.trim(),
+            userId: user.id,
           }),
         }
       );

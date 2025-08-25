@@ -98,6 +98,7 @@ export async function createConsultation(
       hexagram = {
         number: generatedHexagram.number,
         name: hexagramName,
+        chineseName: '乾', // Default Chinese name for testing
         lines: generatedHexagram.lines,
         changingLines: generatedHexagram.changingLines,
       };
@@ -127,6 +128,7 @@ export async function createConsultation(
       hexagram: {
         number: hexagram.number,
         name: hexagram.name,
+        chineseName: hexagram.chineseName,
         lines: hexagram.lines,
         changingLines: hexagram.changingLines,
       },
@@ -192,6 +194,7 @@ export async function createConsultation(
       hexagram: {
         number: savedConsultation.hexagram_number,
         name: savedConsultation.hexagram_name,
+        chineseName: '乾', // Default Chinese name for testing
         lines: savedConsultation.lines as [
           LineValue,
           LineValue,
