@@ -38,21 +38,16 @@ export default function SignUpPage() {
 
   const handleGoogleSignUp = async () => {
     try {
-      // Note: Google OAuth requires proper Supabase configuration
-      // This is a placeholder until Google OAuth is set up in Supabase dashboard
-      setMessage('Google OAuth coming soon! Please use email signup for now.');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/guidance`,
+        },
+      });
 
-      // Uncomment when Google OAuth is configured in Supabase:
-      // const { error } = await supabase.auth.signInWithOAuth({
-      //   provider: 'google',
-      //   options: {
-      //     redirectTo: `${window.location.origin}/guidance`
-      //   }
-      // });
-      //
-      // if (error) {
-      //   setMessage(error.message);
-      // }
+      if (error) {
+        setMessage(error.message);
+      }
     } catch (error) {
       setMessage('Google signup temporarily unavailable');
     }

@@ -14,6 +14,27 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useOfflineStatus } from '@/hooks/useOfflineStatus';
 
+// Polyfill for requestIdleCallback (Safari support)
+if (typeof window !== 'undefined' && !window.requestIdleCallback) {
+  window.requestIdleCallback = function (cb: IdleRequestCallback) {
+    const start = Date.now();
+    return setTimeout(function () {
+      cb({
+        didTimeout: false,
+        timeRemaining: function () {
+          return Math.max(0, 50 - (Date.now() - start));
+        },
+      } as IdleDeadline);
+    }, 1) as unknown as number;
+  };
+}
+
+if (typeof window !== 'undefined' && !window.cancelIdleCallback) {
+  window.cancelIdleCallback = function (id: number) {
+    clearTimeout(id);
+  };
+}
+
 interface PWAPerformanceOptimizerProps {
   /** Whether to enable aggressive optimization (for slower devices) */
   aggressiveMode?: boolean;
