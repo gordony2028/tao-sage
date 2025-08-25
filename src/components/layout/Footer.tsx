@@ -124,7 +124,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/support"
                   className="transition-colors hover:text-cloud-white"
                 >
                   Contact Us

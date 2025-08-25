@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -54,28 +54,7 @@ export default function DailyGuidanceDashboard() {
     getUser();
   }, []);
 
-  // Fetch daily guidance when user is available
-  useEffect(() => {
-    if (user) {
-      fetchDailyGuidance();
-    }
-  }, [user]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isTimerActive) {
-      interval = setInterval(() => {
-        setMeditationTimer(seconds => seconds + 1);
-      }, 1000);
-    } else if (!isTimerActive && meditationTimer !== 0) {
-      if (interval) clearInterval(interval);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isTimerActive, meditationTimer]);
-
-  const fetchDailyGuidance = async () => {
+  const fetchDailyGuidance = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -120,7 +99,28 @@ export default function DailyGuidanceDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  // Fetch daily guidance when user is available
+  useEffect(() => {
+    if (user) {
+      fetchDailyGuidance();
+    }
+  }, [user, fetchDailyGuidance]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerActive) {
+      interval = setInterval(() => {
+        setMeditationTimer(seconds => seconds + 1);
+      }, 1000);
+    } else if (!isTimerActive && meditationTimer !== 0) {
+      if (interval) clearInterval(interval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerActive, meditationTimer]);
 
   const saveReflection = async () => {
     if (!reflection.trim() || !user) return;
